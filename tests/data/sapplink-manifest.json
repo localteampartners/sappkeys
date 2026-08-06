@@ -1,0 +1,26 @@
+{
+  "sapplink": "1.0",
+  "name": "sappkeys",
+  "kind": "sampler",
+  "midi": {
+    "channelPolicy": "any",
+    "polyphony": 96,
+    "pitchBendRangeSemitones": 2
+  },
+  "parameters": [
+    { "id": "masterGain", "label": "Master",       "cc": 7,   "range": [-24, 12],   "curve": "linear", "tags": ["volume"] },
+    { "id": "touch",      "label": "Touch",        "cc": 14,  "range": [0, 1],      "curve": "linear", "tags": ["velocity", "response"] },
+    { "id": "lid",        "label": "Lid",          "cc": 15,  "range": [0, 1],      "curve": "linear", "tags": ["brightness", "tone", "width"] },
+    { "id": "resonance",  "label": "Resonance",    "cc": 16,  "range": [0, 1],      "curve": "linear", "tags": ["resonance", "sustain", "space"] },
+    { "id": "mechNoise",  "label": "Mechanics",    "cc": 17,  "range": [0, 1],      "curve": "linear", "tags": ["noise", "realism"] },
+    { "id": "width",      "label": "Width",        "cc": 18,  "range": [0, 2],      "curve": "linear", "tags": ["width", "space"] },
+    { "id": "roomSize",   "label": "Room Size",    "cc": 19,  "range": [0.6, 1.4],  "curve": "linear", "tags": ["space"] },
+    { "id": "roomDecay",  "label": "Room Decay",   "cc": 20,  "range": [0.2, 2.5],  "curve": "log",    "tags": ["space", "tail"] },
+    { "id": "vintage",    "label": "Vintage",      "cc": 21,  "range": [0, 1],      "curve": "linear", "tags": ["vintage", "waver", "tape"] },
+    { "id": "drive",      "label": "Drive",        "cc": 22,  "range": [0, 1],      "curve": "linear", "tags": ["drive", "saturation", "grit"] },
+    { "id": "unaCorda",   "label": "Una Corda",    "cc": 67,  "range": [0, 1],      "curve": "linear", "tags": ["soft", "pedal", "tone"] },
+    { "id": "roomLevel",  "label": "Room Level",   "cc": 91,  "range": [0, 1],      "curve": "linear", "tags": ["space", "reverb"] }
+  ],
+  "presets": [],
+  "articulations": []
+}
