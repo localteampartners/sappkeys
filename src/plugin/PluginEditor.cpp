@@ -274,7 +274,7 @@ void VelocityCurvePad::paint(juce::Graphics& g)
     g.setFont(uiFont(10.5f, true));
     const juce::String touchText =
         touch < 0.35f ? "HEAVY" : touch > 0.65f ? "LIGHT" : "NATURAL";
-    g.drawText("TOUCH  ·  " + touchText,
+    g.drawText("TOUCH: " + touchText,
                bounds.toNearestInt().reduced(14, 8), juce::Justification::topRight);
 }
 
@@ -316,7 +316,8 @@ void PedalLamps::paint(juce::Graphics& g)
         g.drawText(text, r.toNearestInt().removeFromBottom(13), juce::Justification::centred);
     };
     auto bounds = getLocalBounds().toFloat();
-    lamp(bounds.removeFromLeft(bounds.getWidth() * 0.5f), "SUSTAIN", sustainGlow_);
+    // Stack vertically: sustain above, una corda below.
+    lamp(bounds.removeFromTop(bounds.getHeight() * 0.5f), "SUSTAIN", sustainGlow_);
     lamp(bounds, "UNA CORDA", unaGlow_);
 }
 
@@ -536,10 +537,10 @@ void SappKeysEditor::resized()
     // Touch & pedals panel: the velocity curve is the hero.
     touchHeader_.setBounds(s(26), s(82), s(200), s(16));
     velocityPad_->setBounds(s(26), s(102), s(336), s(226));
-    touch_->setBounds(s(30), s(336), s(84), s(104));
-    dynamics_->setBounds(s(122), s(336), s(84), s(104));
-    expression_->setBounds(s(214), s(336), s(84), s(104));
-    pedalLamps_->setBounds(s(298), s(348), s(70), s(84));
+    touch_->setBounds(s(28), s(336), s(80), s(104));
+    dynamics_->setBounds(s(114), s(336), s(80), s(104));
+    expression_->setBounds(s(200), s(336), s(80), s(104));
+    pedalLamps_->setBounds(s(288), s(338), s(80), s(102));
 
     // Instrument panel.
     bodyHeader_.setBounds(s(396), s(82), s(200), s(16));
