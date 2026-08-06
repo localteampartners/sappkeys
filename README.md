@@ -30,6 +30,8 @@ python3 scripts/make_demo.py demo/gymnopedie.mid
 Full plugin build (Standalone/VST3/AU): see
 [_project/RUNBOOK.md](_project/RUNBOOK.md).
 
+![SappKeys UI](demo/sappkeys-ui.png)
+
 ## The instrument
 
 - **Touch** — velocity response curve (heavy ↔ light), drawn live in the UI.
