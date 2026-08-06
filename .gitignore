@@ -37,3 +37,6 @@ pids/
 .sappcode/             # plugin scratch state (plan files, disabled list)
 .sappchatbot/          # chatbot credentials (gitignored regardless of plugin state)
 .sappbackup/snapshots/ # local backup metadata, if any
+
+# demo renders are large; the MIDI + generator are the source
+demo/*.wav

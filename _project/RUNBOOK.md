@@ -1,78 +1,55 @@
-# RUNBOOK — sappkeys
+# Runbook — sappkeys
 
-<!-- UPDATE WHEN: any command here stops working, or a new operational task becomes routine enough to document -->
+<!-- UPDATE WHEN: build, run, or release steps change -->
 
-The authoritative source for "how do I operate this thing?"
-
----
-
-## Run locally
-
-### One-time setup
+## Fast loop (core + CLI + tests, no JUCE)
 
 ```bash
-# <!-- FILL IN: clone, install deps, create .env from .env.example, run migrations -->
+./verify.sh
 ```
 
-### Start the app
+## Full plugin build (Standalone / VST3 / AU + UiShot)
 
 ```bash
-# <!-- FILL IN: e.g., npm run dev -->
+cmake -S . -B build-plugin -DCMAKE_BUILD_TYPE=Release \
+  -DSAPPKEYS_BUILD_TESTS=OFF -DSAPPKEYS_BUILD_CLI=OFF \
+  -DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappsynth/build/_deps/juce-src
+cmake --build build-plugin -j8 --target SappKeysPlugin_Standalone SappKeysUiShot
+open build-plugin/SappKeysPlugin_artefacts/Release/Standalone/SappKeys.app
 ```
 
-### Run tests
+Drop `-DFETCHCONTENT_SOURCE_DIR_JUCE=...` to let CMake fetch JUCE 8.0.15
+itself (first configure downloads ~300 MB). `juce_enable_copy_plugin_step`
+installs VST3/AU into the user plugin folders on build.
+
+## UI screenshot / SappLink plugin proof
 
 ```bash
-# <!-- FILL IN -->
+./build-plugin/SappKeysUiShot_artefacts/Release/SappKeysUiShot.app/Contents/MacOS/SappKeysUiShot /tmp/sappkeys-ui.png
+./build-plugin/SappKeysUiShot_artefacts/Release/SappKeysUiShot.app/Contents/MacOS/SappKeysUiShot --cctest
 ```
 
----
-
-## Deploy
-
-**Hosting:** see [INFRASTRUCTURE.md](INFRASTRUCTURE.md) for the *where*.
-This section is the *how*.
+## Samples
 
 ```bash
-# <!-- FILL IN: deploy command or step-by-step -->
+~/apps/sappsounds/scripts/fetch-library.sh get salamander     # 707 MB grand
+~/apps/sappsounds/scripts/fetch-library.sh get fm-piano1      # 24 MB FM EP
+~/apps/sappsounds/scripts/fetch-library.sh get upright-piano  # 34 MB upright
+~/apps/sappsounds/scripts/fetch-library.sh get old-piano-fb   # 39 MB old piano
 ```
 
-### Rollback
+Samples live in `~/Samples/`, never in git.
+
+## Demo render
 
 ```bash
-# <!-- FILL IN: how to revert a bad deploy -->
+python3 scripts/make_demo.py demo/gymnopedie.mid
+./build/sappkeys render \
+  --sfz ~/Samples/salamander/SalamanderGrandPiano-SFZ+FLAC-V3+20200602/SalamanderGrandPiano-V3+20200602.sfz \
+  --midi demo/gymnopedie.mid --out demo/gymnopedie-salamander.wav \
+  --preset concert-grand --param master_gain_db=6 --seed 20260806 --tail 5
 ```
 
----
+## Rollback
 
-## Operate (if there's a VPS / running service)
-
-### Check it's alive
-
-```bash
-# <!-- FILL IN: healthcheck URL, or ssh + systemctl status -->
-```
-
-### Restart
-
-```bash
-# <!-- FILL IN -->
-```
-
-### Tail logs
-
-```bash
-# <!-- FILL IN -->
-```
-
----
-
-
-## Debug checklist
-
-When something's broken, try these in order:
-
-1. <!-- FILL IN: e.g., "check the healthcheck endpoint" -->
-2. <!-- FILL IN: e.g., "tail the last 200 log lines" -->
-3. <!-- FILL IN: e.g., "verify env vars match ENVIRONMENT.md" -->
-4. <!-- FILL IN: e.g., "check external service status pages (see DEPENDENCIES.md)" -->
+Plain git: `git log`, `git revert <sha>`. No deploy target.

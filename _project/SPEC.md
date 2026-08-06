@@ -1,44 +1,40 @@
-# SPEC — sappkeys
+# Spec — sappkeys
 
-<!-- UPDATE WHEN: goals change, scope changes, non-goals change, or the target user changes -->
+<!-- UPDATE WHEN: scope, goals, or non-goals change -->
 
-## What this is
+## What
 
-<!-- FILL IN: one paragraph. What does this project do? Who uses it? What's the core value? -->
+A beautiful piano & electric-keys instrument (JUCE Standalone / VST3 / AU)
+built on the SappSounds sample engine, following the sapporchestra
+architecture: a framework-free core policy layer, a thin JUCE wrapper, a
+deterministic agent CLI, and a SappLink manifest so sapptune can drive it.
 
-## Why it exists
+## Goals
 
-<!-- FILL IN: what problem are you solving, and why now? What happens if this doesn't exist? -->
+- **Playable and beautiful.** Salamander Grand (CC-BY) as the flagship
+  library; free FreePats keyboards (FM EP, upright, old piano — all CC0)
+  fetched by script, never committed.
+- **Piano-specific policy in the core** (no JUCE): touch velocity curve,
+  una-corda softening, lid tilt + width, sympathetic resonance on pedal-down,
+  mechanical-noise mix (release samples), small-room ambience (not a hall),
+  tape/vintage EP character + gentle drive.
+- **Agent-first API.** `sappkeys` CLI: inspect / validate / params / presets /
+  scan / render — one JSON document per command, seeded deterministic renders.
+- **SappLink contract.** Manifest at
+  `~/apps/sapptune/sapplink/manifests/sappkeys.json`; CC1/CC11/CC64 stay
+  engine-native; drift guarded by a unit test against a vendored copy.
+
+## Non-goals
+
+- No keyswitch/articulation UI (piano libraries don't use them; the engine
+  still reports them via `inspect`).
+- No concert-hall reverb — the room is deliberately small; use sapporchestra
+  for stage/hall placement.
+- No sample streaming or custom sample editing; SappSounds owns all
+  sample/SFZ behavior.
+- No VPS/service surface: this is a desktop instrument + CLI.
 
 ## Users
 
-<!-- FILL IN: who uses this? Just you? A team? Public? -->
-
-## Goals (in scope)
-
-- <!-- FILL IN: concrete things this project should do -->
-- 
-- 
-
-## Non-goals (explicitly out of scope)
-
-Stating what you're *not* building saves more time than stating what you are.
-
-- <!-- FILL IN: things people might expect but that you're deliberately not doing -->
-- 
-
-## Success criteria
-
-How do you know it's working? Measurable if possible.
-
-- <!-- FILL IN: e.g., "handles 10 req/s", "I use it daily for X", "paying customer uses it weekly" -->
-- 
-
-## Constraints
-
-Hard limits that shape every decision.
-
-- Budget: <!-- FILL IN: e.g., "$0", "<$20/mo" -->
-- Time: <!-- FILL IN: e.g., "weekend project", "must ship by X" -->
-- Platform: <!-- FILL IN: e.g., "must run on my existing VPS", "browser-only" -->
-- Other: <!-- FILL IN -->
+- Michael, playing and producing.
+- MIDI-generation agents (sapptune) rendering piano/EP parts offline.

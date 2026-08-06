@@ -1,32 +1,20 @@
-# CONVENTIONS — sappkeys
+# Conventions — sappkeys
 
-<!-- UPDATE WHEN: you learn (or are corrected on) a non-obvious workflow fact — a deploy quirk, version pin, build gotcha, naming rule, or "never do X here." If a session had to rediscover it, it belongs in this file. -->
+<!-- UPDATE WHEN: a workflow rule or gotcha is learned -->
 
-How we work on this project — facts that aren't derivable from the code and
-that every new session would otherwise relearn the hard way. One or two lines
-per entry: the rule, then the why (when the why isn't obvious).
-
-## Deploy & operations
-
-<!-- FILL IN: e.g., "Deploy = commit, push, then `vps-proxy run 'git pull && pm2 reload'`. Never rsync/scp files to the server." -->
--
-
-## Toolchain & versions
-
-<!-- FILL IN: e.g., "Node 22 (`nvm use 22`) — the shell default is older", "builds need the iPhone 17 / iOS 26.2 simulator" -->
--
-
-## Build / test gotchas
-
-<!-- FILL IN: e.g., "verify.sh only covers the API — the worker has its own test entry point" -->
--
-
-## Code & naming rules
-
-<!-- FILL IN: repo-specific rules Claude has been taught, e.g., "sync Xcode file groups; never hand-edit project.pbxproj" -->
--
-
-## Never do
-
-<!-- FILL IN: hard prohibitions with the reason, e.g., "never raw ssh/scp — always vps-proxy (credential + approval gates)" -->
--
+- **Parameter IDs are contracts** (APVTS ids = SappLink manifest ids = CLI
+  `id` fields). Never rename or renumber; add new ones instead.
+- **SappLink changes are three-file changes**: sapptune manifest +
+  `tests/data/sapplink-manifest.json` + `src/core/SappLinkCCMap.cpp`. The
+  drift test fails if any one moves alone.
+- **Reserved CCs**: 1, 11, 64 engine-native; 102 internal (mech noise).
+  Don't map them in SappLink.
+- **No JUCE in `src/core/`** — the CLI and tests must link without it.
+- **verify.sh is the loop** (core+CLI+tests, plugin off). Full plugin builds
+  go in `build-plugin/` so the fast loop's `build/` stays lean.
+- Sibling repos: engine fixes belong in `../sappsounds` (own repo/session);
+  keep this repo product-policy only.
+- Samples stay in `~/Samples/` (fetch-library.sh); WAVs in `demo/` are
+  gitignored, the demo MIDI + generator script are committed.
+- Strict warnings (`sappkeys_set_warnings`) on all our targets; third-party
+  noise from sappsounds' dr_flac is expected and not ours to fix.

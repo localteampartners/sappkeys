@@ -1,25 +1,17 @@
-# CHANGELOG — sappkeys
+# Changelog — sappkeys
 
-<!-- UPDATE WHEN: you ship a meaningful change — feature, fix, migration, dependency bump that users/operators would care about. Trivial refactors don't belong here. -->
+<!-- UPDATE WHEN: anything meaningful ships -->
 
-Newest first. Format: `## YYYY-MM-DD — short title`, then bullets.
+## 2026-08-06
 
----
-
-## Unreleased
-
-<!-- Working list of changes not yet deployed. Move to a dated section on deploy. -->
-
-- 
-
----
-
-<!-- Example — delete once you have real entries.
-
-## 2026-01-15 — v0.1 deployed
-
-- Initial deploy to Hetzner VPS.
-- Added /healthz endpoint.
-- Set up nightly Postgres backups to S3.
-
--->
+- v0.1.0: initial release.
+- Core keys engine (touch curve, una corda, lid, sympathetic resonance,
+  mech-noise policy, vintage/drive, small room) on SappSounds.
+- `sappkeys` agent CLI (inspect/validate/params/presets/scan/render, JSON,
+  seeded deterministic).
+- JUCE 8.0.15 plugin (Standalone/VST3/AU) with ivory/ebony editor: velocity-
+  curve display, pedal lamps, 88-key keyboard. UiShot + --cctest.
+- SappLink manifest (12 params; CC1/11/64 native) + vendored drift guard.
+- 28 Catch2 tests. Demo: Gymnopédie No. 1 through Salamander + FM EP.
+- Added fm-piano1 / upright-piano / old-piano-fb (all CC0) to sappsounds
+  fetch-library.sh.

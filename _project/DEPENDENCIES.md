@@ -1,49 +1,27 @@
-# DEPENDENCIES — sappkeys
+# Dependencies — sappkeys
 
-<!-- UPDATE WHEN: an external service/API is added or removed, an account changes hands, billing changes, or credentials rotate -->
+<!-- UPDATE WHEN: an external service, API, or library dependency changes -->
 
-External systems this project depends on. If access to any of these is lost,
-part or all of the project stops working. This file tells you what to recover.
+## Code (no accounts, no paid services)
 
-Runtime library dependencies live in `package.json` / `requirements.txt` /
-similar — don't duplicate them here.
-
----
-
-## External services
-
-| Service | What it does | Account (email) | Paid with | Monthly cost | Status page |
-|---|---|---|---|---|---|
-| <!-- e.g., Stripe --> | <!-- e.g., payments --> | <!-- email on the account --> | <!-- card ending 1234 --> | <!-- $X/mo --> | <!-- URL --> |
-|  |  |  |  |  |  |
-
-## Domain / DNS
-
-See [INFRASTRUCTURE.md](INFRASTRUCTURE.md) for the primary domain. If this
-project uses additional domains or subdomains from different registrars, list
-them here.
-
-- <!-- FILL IN or "none" -->
-
-## APIs & credentials
-
-For each external API, point to where the credentials live (never paste them here).
-
-| API | Credential type | Where it lives |
+| Dependency | Version | How |
 |---|---|---|
-| <!-- e.g., OpenAI --> | <!-- API key --> | <!-- e.g., "1Password > sappkeys > OPENAI_API_KEY" --> |
-|  |  |  |
+| SappSounds | sibling `main` | `add_subdirectory(../sappsounds)`; FetchContent from GitHub otherwise |
+| JUCE | 8.0.15 (pinned) | FetchContent; local builds share sappsynth's checkout |
+| Catch2 | v3.7.1 | FetchContent (tests only) |
 
-## Single points of failure
+## Sample libraries (fetched, never committed)
 
-If any one of these goes down or we lose access, what breaks?
+| Library | License | Fetch |
+|---|---|---|
+| Salamander Grand Piano V3 | CC-BY 3.0 | `fetch-library.sh get salamander` |
+| FreePats FM-Piano1 (EP) | CC0 | `fetch-library.sh get fm-piano1` |
+| FreePats Upright Piano KW | CC0 | `fetch-library.sh get upright-piano` |
+| FreePats Old Piano FB | CC0 | `fetch-library.sh get old-piano-fb` |
 
-- <!-- FILL IN: e.g., "Stripe down → checkout broken (read-only mode still works)" -->
-- 
+`fetch-library.sh` lives in the sappsounds repo (`scripts/`).
 
-## Account recovery
+## Cross-repo contracts
 
-Who / what can recover access if the primary account is locked out?
-
-- <!-- FILL IN: e.g., "all provider accounts use localteampartners@gmail.com; recovery email is X" -->
-- 
+- `~/apps/sapptune/sapplink/manifests/sappkeys.json` — SappLink source of
+  truth; vendored copy in `tests/data/` is drift-guarded by a unit test.

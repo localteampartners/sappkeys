@@ -1,38 +1,33 @@
-# CURRENT STATE — sappkeys
+# Current state — sappkeys
 
-<!-- UPDATE WHEN: a feature ships, a deploy happens, something breaks, or something gets fixed. This file answers "what's the project like *right now*?" -->
+<!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
-**Last verified:** <!-- FILL IN: YYYY-MM-DD, the date the info below was confirmed -->
+## Works (2026-08-06)
 
----
+- Core engine, CLI, plugin (Standalone/VST3/AU), UiShot all build clean
+  (strict warnings) on macOS against sibling SappSounds + pinned JUCE 8.0.15.
+- 28 Catch2 tests green (`./verify.sh` ~30 s cold).
+- Salamander Grand V3 loads: 641 regions, 0 missing samples, release samples
+  driven by the mech-noise knob. FM-Piano1 + Upright-Piano-KW fetched and
+  render fine.
+- SappLink CC-in proven end-to-end: unit tests (render path) and
+  `SappKeysUiShot --cctest` (plugin path, CC7 sweep).
+- Demo renders: `demo/gymnopedie-salamander.wav` (concert-grand preset),
+  `demo/gymnopedie-ep.wav` (ep-tine preset) from `demo/gymnopedie.mid`.
 
-## What's built and working
+## Known issues / rough edges
 
-- <!-- FILL IN: features that exist and function -->
-- 
-- 
+- Salamander's pedal-noise regions use `on_locc64/on_hicc64` — unsupported by
+  SappSounds, so pedal down/up thumps are silent (key-release noises work).
+  `rt_decay` and `pitch_keytrack` are also ignored (minor).
+- Resonance comb release fade is tuned for 48 kHz (fixed coefficient); at
+  96 kHz the pedal-up fade is ~2× longer. Cosmetic.
+- UiShot needs a windowless-capable session (it is offscreen but still a GUI
+  app); run from a normal user session.
+- AU/VST3 not yet smoke-tested in a third-party host (Standalone verified).
 
-## What's deployed
+## Not built (see TODO)
 
-- **Environment:** <!-- FILL IN: e.g., "production on VPS (see INFRASTRUCTURE.md)", "local only", "staging at staging.example.com" -->
-- **Version / commit:** <!-- FILL IN: short SHA or tag, if relevant -->
-- **Deployed at:** <!-- FILL IN: YYYY-MM-DD -->
-
-## What's in progress
-
-- <!-- FILL IN: things actively being worked on but not done -->
-- 
-
-## What's known broken / flaky
-
-Separate from backlog in TODO.md — these are things that *should* work but don't.
-
-- <!-- FILL IN: e.g., "login breaks on Safari after a 401 refresh" -->
-- 
-
-## Half-finished or abandoned
-
-Code that exists but isn't wired up. Future-you will be confused by this.
-
-- <!-- FILL IN: e.g., "billing/ directory is a dead prototype, don't use" -->
-- 
+- Pedal down/up noise support (needs SappSounds `on_loccN` trigger support).
+- Half-pedal (CC64 continuous) behavior.
+- Preset save/load in the plugin UI (presets exist in the CLI only).
