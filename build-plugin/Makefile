@@ -57,13 +57,23 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/bin/ctest $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -132,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/build-plugin/CMakeFiles /Users/michael/apps/sappkeys/build-plugin//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -158,7 +168,7 @@ preinstall/fast:
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/VerifyGlobs.cmake
+	$(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/VerifyGlobs.cmake
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
@@ -174,6 +184,32 @@ sappkeys_core: cmake_check_build_system
 sappkeys_core/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sappkeys_core.dir/build.make CMakeFiles/sappkeys_core.dir/build
 .PHONY : sappkeys_core/fast
+
+#=============================================================================
+# Target rules for targets named sappkeys-cli
+
+# Build rule for target.
+sappkeys-cli: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sappkeys-cli
+.PHONY : sappkeys-cli
+
+# fast build rule for target.
+sappkeys-cli/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sappkeys-cli.dir/build.make CMakeFiles/sappkeys-cli.dir/build
+.PHONY : sappkeys-cli/fast
+
+#=============================================================================
+# Target rules for targets named SappKeysTests
+
+# Build rule for target.
+SappKeysTests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappKeysTests
+.PHONY : SappKeysTests
+
+# fast build rule for target.
+SappKeysTests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/build
+.PHONY : SappKeysTests/fast
 
 #=============================================================================
 # Target rules for targets named SappKeysPlugin
@@ -278,6 +314,32 @@ SappSounds: cmake_check_build_system
 SappSounds/fast:
 	$(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/build
 .PHONY : SappSounds/fast
+
+#=============================================================================
+# Target rules for targets named Catch2
+
+# Build rule for target.
+Catch2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Catch2
+.PHONY : Catch2
+
+# fast build rule for target.
+Catch2/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/catch2-build/src/CMakeFiles/Catch2.dir/build.make _deps/catch2-build/src/CMakeFiles/Catch2.dir/build
+.PHONY : Catch2/fast
+
+#=============================================================================
+# Target rules for targets named Catch2WithMain
+
+# Build rule for target.
+Catch2WithMain: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Catch2WithMain
+.PHONY : Catch2WithMain
+
+# fast build rule for target.
+Catch2WithMain/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build.make _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build
+.PHONY : Catch2WithMain/fast
 
 Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.o: Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o
 .PHONY : Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.o
@@ -1203,6 +1265,30 @@ Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gu
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysUiShot.dir/build.make CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.s
 .PHONY : Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.s
 
+src/cli/main.o: src/cli/main.cpp.o
+.PHONY : src/cli/main.o
+
+# target to build an object file
+src/cli/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sappkeys-cli.dir/build.make CMakeFiles/sappkeys-cli.dir/src/cli/main.cpp.o
+.PHONY : src/cli/main.cpp.o
+
+src/cli/main.i: src/cli/main.cpp.i
+.PHONY : src/cli/main.i
+
+# target to preprocess a source file
+src/cli/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sappkeys-cli.dir/build.make CMakeFiles/sappkeys-cli.dir/src/cli/main.cpp.i
+.PHONY : src/cli/main.cpp.i
+
+src/cli/main.s: src/cli/main.cpp.s
+.PHONY : src/cli/main.s
+
+# target to generate assembly for a file
+src/cli/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sappkeys-cli.dir/build.make CMakeFiles/sappkeys-cli.dir/src/cli/main.cpp.s
+.PHONY : src/cli/main.cpp.s
+
 src/core/KeysEngine.o: src/core/KeysEngine.cpp.o
 .PHONY : src/core/KeysEngine.o
 
@@ -1353,6 +1439,153 @@ src/plugin/PluginProcessor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysUiShot.dir/build.make CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.s
 .PHONY : src/plugin/PluginProcessor.cpp.s
 
+src/plugin/SoundsPanel.o: src/plugin/SoundsPanel.cpp.o
+.PHONY : src/plugin/SoundsPanel.o
+
+# target to build an object file
+src/plugin/SoundsPanel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysPlugin.dir/build.make CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysUiShot.dir/build.make CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.o
+.PHONY : src/plugin/SoundsPanel.cpp.o
+
+src/plugin/SoundsPanel.i: src/plugin/SoundsPanel.cpp.i
+.PHONY : src/plugin/SoundsPanel.i
+
+# target to preprocess a source file
+src/plugin/SoundsPanel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysPlugin.dir/build.make CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysUiShot.dir/build.make CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.i
+.PHONY : src/plugin/SoundsPanel.cpp.i
+
+src/plugin/SoundsPanel.s: src/plugin/SoundsPanel.cpp.s
+.PHONY : src/plugin/SoundsPanel.s
+
+# target to generate assembly for a file
+src/plugin/SoundsPanel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysPlugin.dir/build.make CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysUiShot.dir/build.make CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.s
+.PHONY : src/plugin/SoundsPanel.cpp.s
+
+tests/unit/test_keys_engine.o: tests/unit/test_keys_engine.cpp.o
+.PHONY : tests/unit/test_keys_engine.o
+
+# target to build an object file
+tests/unit/test_keys_engine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_keys_engine.cpp.o
+.PHONY : tests/unit/test_keys_engine.cpp.o
+
+tests/unit/test_keys_engine.i: tests/unit/test_keys_engine.cpp.i
+.PHONY : tests/unit/test_keys_engine.i
+
+# target to preprocess a source file
+tests/unit/test_keys_engine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_keys_engine.cpp.i
+.PHONY : tests/unit/test_keys_engine.cpp.i
+
+tests/unit/test_keys_engine.s: tests/unit/test_keys_engine.cpp.s
+.PHONY : tests/unit/test_keys_engine.s
+
+# target to generate assembly for a file
+tests/unit/test_keys_engine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_keys_engine.cpp.s
+.PHONY : tests/unit/test_keys_engine.cpp.s
+
+tests/unit/test_render.o: tests/unit/test_render.cpp.o
+.PHONY : tests/unit/test_render.o
+
+# target to build an object file
+tests/unit/test_render.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_render.cpp.o
+.PHONY : tests/unit/test_render.cpp.o
+
+tests/unit/test_render.i: tests/unit/test_render.cpp.i
+.PHONY : tests/unit/test_render.i
+
+# target to preprocess a source file
+tests/unit/test_render.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_render.cpp.i
+.PHONY : tests/unit/test_render.cpp.i
+
+tests/unit/test_render.s: tests/unit/test_render.cpp.s
+.PHONY : tests/unit/test_render.s
+
+# target to generate assembly for a file
+tests/unit/test_render.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_render.cpp.s
+.PHONY : tests/unit/test_render.cpp.s
+
+tests/unit/test_resonance.o: tests/unit/test_resonance.cpp.o
+.PHONY : tests/unit/test_resonance.o
+
+# target to build an object file
+tests/unit/test_resonance.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_resonance.cpp.o
+.PHONY : tests/unit/test_resonance.cpp.o
+
+tests/unit/test_resonance.i: tests/unit/test_resonance.cpp.i
+.PHONY : tests/unit/test_resonance.i
+
+# target to preprocess a source file
+tests/unit/test_resonance.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_resonance.cpp.i
+.PHONY : tests/unit/test_resonance.cpp.i
+
+tests/unit/test_resonance.s: tests/unit/test_resonance.cpp.s
+.PHONY : tests/unit/test_resonance.s
+
+# target to generate assembly for a file
+tests/unit/test_resonance.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_resonance.cpp.s
+.PHONY : tests/unit/test_resonance.cpp.s
+
+tests/unit/test_room.o: tests/unit/test_room.cpp.o
+.PHONY : tests/unit/test_room.o
+
+# target to build an object file
+tests/unit/test_room.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_room.cpp.o
+.PHONY : tests/unit/test_room.cpp.o
+
+tests/unit/test_room.i: tests/unit/test_room.cpp.i
+.PHONY : tests/unit/test_room.i
+
+# target to preprocess a source file
+tests/unit/test_room.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_room.cpp.i
+.PHONY : tests/unit/test_room.cpp.i
+
+tests/unit/test_room.s: tests/unit/test_room.cpp.s
+.PHONY : tests/unit/test_room.s
+
+# target to generate assembly for a file
+tests/unit/test_room.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_room.cpp.s
+.PHONY : tests/unit/test_room.cpp.s
+
+tests/unit/test_sapplink.o: tests/unit/test_sapplink.cpp.o
+.PHONY : tests/unit/test_sapplink.o
+
+# target to build an object file
+tests/unit/test_sapplink.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_sapplink.cpp.o
+.PHONY : tests/unit/test_sapplink.cpp.o
+
+tests/unit/test_sapplink.i: tests/unit/test_sapplink.cpp.i
+.PHONY : tests/unit/test_sapplink.i
+
+# target to preprocess a source file
+tests/unit/test_sapplink.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_sapplink.cpp.i
+.PHONY : tests/unit/test_sapplink.cpp.i
+
+tests/unit/test_sapplink.s: tests/unit/test_sapplink.cpp.s
+.PHONY : tests/unit/test_sapplink.s
+
+# target to generate assembly for a file
+tests/unit/test_sapplink.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SappKeysTests.dir/build.make CMakeFiles/SappKeysTests.dir/tests/unit/test_sapplink.cpp.s
+.PHONY : tests/unit/test_sapplink.cpp.s
+
 tools/uishot/main.o: tools/uishot/main.cpp.o
 .PHONY : tools/uishot/main.o
 
@@ -1389,14 +1622,19 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... SappKeysPlugin_All"
 	@echo "... SappKeysPlugin_vst3_helper"
+	@echo "... Catch2"
+	@echo "... Catch2WithMain"
 	@echo "... SappKeysPlugin"
 	@echo "... SappKeysPlugin_AU"
 	@echo "... SappKeysPlugin_Standalone"
 	@echo "... SappKeysPlugin_VST3"
+	@echo "... SappKeysTests"
 	@echo "... SappKeysUiShot"
 	@echo "... SappSounds"
+	@echo "... sappkeys-cli"
 	@echo "... sappkeys_core"
 	@echo "... Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.o"
 	@echo "... Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.i"
@@ -1497,6 +1735,9 @@ help:
 	@echo "... Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.o"
 	@echo "... Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.i"
 	@echo "... Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.s"
+	@echo "... src/cli/main.o"
+	@echo "... src/cli/main.i"
+	@echo "... src/cli/main.s"
 	@echo "... src/core/KeysEngine.o"
 	@echo "... src/core/KeysEngine.i"
 	@echo "... src/core/KeysEngine.s"
@@ -1515,6 +1756,24 @@ help:
 	@echo "... src/plugin/PluginProcessor.o"
 	@echo "... src/plugin/PluginProcessor.i"
 	@echo "... src/plugin/PluginProcessor.s"
+	@echo "... src/plugin/SoundsPanel.o"
+	@echo "... src/plugin/SoundsPanel.i"
+	@echo "... src/plugin/SoundsPanel.s"
+	@echo "... tests/unit/test_keys_engine.o"
+	@echo "... tests/unit/test_keys_engine.i"
+	@echo "... tests/unit/test_keys_engine.s"
+	@echo "... tests/unit/test_render.o"
+	@echo "... tests/unit/test_render.i"
+	@echo "... tests/unit/test_render.s"
+	@echo "... tests/unit/test_resonance.o"
+	@echo "... tests/unit/test_resonance.i"
+	@echo "... tests/unit/test_resonance.s"
+	@echo "... tests/unit/test_room.o"
+	@echo "... tests/unit/test_room.i"
+	@echo "... tests/unit/test_room.s"
+	@echo "... tests/unit/test_sapplink.o"
+	@echo "... tests/unit/test_sapplink.i"
+	@echo "... tests/unit/test_sapplink.s"
 	@echo "... tools/uishot/main.o"
 	@echo "... tools/uishot/main.i"
 	@echo "... tools/uishot/main.s"
@@ -1529,7 +1788,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/VerifyGlobs.cmake
+	$(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/VerifyGlobs.cmake
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

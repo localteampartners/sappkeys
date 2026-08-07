@@ -47,6 +47,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o.d"
   "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o"
   "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o.d"
+  "CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o"
+  "CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o.d"
   "SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a"
   "SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.pdb"
 )

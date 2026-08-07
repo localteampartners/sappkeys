@@ -2,6 +2,14 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-06 (later)
+
+- GET SOUNDS panel: in-plugin library downloads + instrument browser (ported
+  from sapporchestra). Registry: Salamander Grand Piano (707 MB, CC-BY,
+  tar.gz), FreePats Upright Piano KW / FM Piano 1 / Old Piano FB (CC0, zips).
+  Shared Sapp samples root (~/Samples, persisted in Application Support/Sapp).
+  UiShot gained `--sounds`.
+
 ## 2026-08-06
 
 - v0.1.0: initial release.

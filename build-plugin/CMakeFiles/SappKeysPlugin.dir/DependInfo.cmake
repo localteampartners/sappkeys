@@ -30,8 +30,9 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o.d"
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o.d"
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o.d"
-  "/Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o.d"
-  "/Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp" "CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o" "gcc" "CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 # Utility rule file for SappKeysPlugin_All.
 
@@ -81,6 +81,6 @@ CMakeFiles/SappKeysPlugin_All.dir/clean:
 .PHONY : CMakeFiles/SappKeysPlugin_All.dir/clean
 
 CMakeFiles/SappKeysPlugin_All.dir/depend:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/SappKeysPlugin_All.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin_All
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/SappKeysPlugin_All.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin_All
 .PHONY : CMakeFiles/SappKeysPlugin_All.dir/depend
 

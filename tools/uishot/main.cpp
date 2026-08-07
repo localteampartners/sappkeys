@@ -1,10 +1,12 @@
 // SappKeysUiShot — renders the plugin editor offscreen and writes a PNG.
 // Used to verify UI changes without a screen-recording session.
 //   SappKeysUiShot [output.png]
+//   SappKeysUiShot --sounds [output.png]   (snapshot with the GET SOUNDS panel open)
 //   SappKeysUiShot --cctest     (SappLink CC-in proof through the plugin path)
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
+#include "PluginEditor.h"
 #include "PluginProcessor.h"
 
 class UiShotApp : public juce::JUCEApplication
@@ -75,12 +77,17 @@ public:
             return;
         }
 
-        const juce::String outPath = commandLine.trim().isNotEmpty()
-            ? commandLine.trim().unquoted() : juce::String("/tmp/sappkeys-ui.png");
+        const bool showSounds = commandLine.contains("--sounds");
+        const juce::String rest = commandLine.replace("--sounds", "").trim();
+        const juce::String outPath = rest.isNotEmpty()
+            ? rest.unquoted() : juce::String("/tmp/sappkeys-ui.png");
 
         processor = std::make_unique<sappkeys::SappKeysProcessor>();
         processor->prepareToPlay(48000.0, 512);
         editor.reset(processor->createEditor());
+        if (showSounds)
+            if (auto* keysEditor = dynamic_cast<sappkeys::SappKeysEditor*>(editor.get()))
+                keysEditor->openSoundsPanel();
 
         // Give the async diagnostic-instrument load and fonts time to settle,
         // then play a pedaled chord so the meter, velocity dots, and pedal

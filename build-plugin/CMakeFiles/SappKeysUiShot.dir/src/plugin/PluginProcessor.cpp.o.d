@@ -1,6 +1,6 @@
 CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o: \
-  /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp \
-  /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/array \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \
@@ -1624,12 +1624,12 @@ CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o: \
   /Users/michael/apps/sappsounds/include/sapp/sounds/SampleData.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/Types.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/SfzParser.h \
-  /Users/michael/apps/sappkeys/src/plugin/../core/KeysEngine.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/KeysEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/PlaybackEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticSnapshot.h \
-  /Users/michael/apps/sappkeys/src/plugin/../core/Resonance.h \
-  /Users/michael/apps/sappkeys/src/plugin/../core/Room.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/Resonance.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/Room.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticInstrument.h \
-  /Users/michael/apps/sappkeys/src/plugin/../core/KeysInstrument.h \
-  /Users/michael/apps/sappkeys/src/plugin/../core/SappLinkCCMap.h \
-  /Users/michael/apps/sappkeys/src/plugin/PluginEditor.h
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/KeysInstrument.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/SappLinkCCMap.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.h

@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 # Include any dependencies generated for this target.
 include CMakeFiles/SappKeysPlugin.dir/depend.make
@@ -73,37 +73,51 @@ CMakeFiles/SappKeysPlugin.dir/codegen:
 .PHONY : CMakeFiles/SappKeysPlugin.dir/codegen
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
-CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o: /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp
+CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o -c /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp > CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp > CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.i
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.s
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
-CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o: /Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp
+CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o -c /Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp > CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp > CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.i
 
 CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp -o CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.s
+
+CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
+CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp
+CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp
+
+CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp > CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.i
+
+CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp -o CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.s
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.i: cmake_force
@@ -117,7 +131,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.i: cmake_force
@@ -131,7 +145,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.i: cmake_force
@@ -145,7 +159,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_3.cpp.i: cmake_force
@@ -159,7 +173,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.i: cmake_force
@@ -173,7 +187,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.i: cmake_force
@@ -215,7 +229,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.i: cmake_force
@@ -229,7 +243,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.i: cmake_force
@@ -243,7 +257,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_events/juce_events.mm.i: cmake_force
@@ -257,7 +271,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.i: cmake_force
@@ -271,7 +285,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_core/juce_core.mm.i: cmake_force
@@ -285,7 +299,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_ara.cpp.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless_lv2_libs.cpp.i: cmake_force
@@ -327,7 +341,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors_headless/juce_audio_processors_headless.mm.i: cmake_force
@@ -341,7 +355,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.i: cmake_force
@@ -355,7 +369,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.i: cmake_force
@@ -369,7 +383,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.i: cmake_force
@@ -383,7 +397,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.i: cmake_force
@@ -397,7 +411,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o: CMakeFiles/SappKeysPlugin.dir/flags.make
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o: /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o: CMakeFiles/SappKeysPlugin.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o -MF CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o.d -o CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o -c /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm
 
 CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.i: cmake_force
@@ -412,6 +426,7 @@ CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/
 SappKeysPlugin_OBJECTS = \
 "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o" \
 "CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o" \
+"CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o" \
 "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o" \
 "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o" \
 "CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o" \
@@ -440,6 +455,7 @@ SappKeysPlugin_EXTERNAL_OBJECTS =
 
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginProcessor.cpp.o
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/src/plugin/PluginEditor.cpp.o
+SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/src/plugin/SoundsPanel.cpp.o
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_2.cpp.o
@@ -464,7 +480,7 @@ SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPl
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_dsp/juce_dsp.mm.o
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/build.make
 SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a: CMakeFiles/SappKeysPlugin.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX static library SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Linking CXX static library SappKeysPlugin_artefacts/Release/libSappKeys_SharedCode.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/SappKeysPlugin.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/SappKeysPlugin.dir/link.txt --verbose=$(VERBOSE)
 
@@ -477,6 +493,6 @@ CMakeFiles/SappKeysPlugin.dir/clean:
 .PHONY : CMakeFiles/SappKeysPlugin.dir/clean
 
 CMakeFiles/SappKeysPlugin.dir/depend:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/SappKeysPlugin.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/SappKeysPlugin.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin
 .PHONY : CMakeFiles/SappKeysPlugin.dir/depend
 

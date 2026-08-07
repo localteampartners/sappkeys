@@ -1,6 +1,6 @@
 CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: \
-  /Users/michael/apps/sappkeys/src/core/KeysRender.cpp \
-  /Users/michael/apps/sappkeys/src/core/KeysRender.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.cpp \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdint \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -997,12 +997,12 @@ CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path_iterator.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/u8path.h \
-  /Users/michael/apps/sappkeys/src/core/KeysEngine.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/InstrumentDefinition.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/SampleData.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/Types.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/PlaybackEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticSnapshot.h \
-  /Users/michael/apps/sappkeys/src/core/Resonance.h \
-  /Users/michael/apps/sappkeys/src/core/Room.h \
-  /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.h
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Resonance.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Room.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.h

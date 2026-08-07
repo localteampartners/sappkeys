@@ -52,7 +52,7 @@ add_executable(juce_tools::juceaide IMPORTED)
 # Import target "juce_tools::juceaide" for configuration "Custom"
 set_property(TARGET juce_tools::juceaide APPEND PROPERTY IMPORTED_CONFIGURATIONS CUSTOM)
 set_target_properties(juce_tools::juceaide PROPERTIES
-  IMPORTED_LOCATION_CUSTOM "/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/tools/extras/Build/juceaide/juceaide_artefacts/Custom/juceaide"
+  IMPORTED_LOCATION_CUSTOM "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/tools/extras/Build/juceaide/juceaide_artefacts/Custom/juceaide"
   )
 
 # This file does not depend on other imported targets which have

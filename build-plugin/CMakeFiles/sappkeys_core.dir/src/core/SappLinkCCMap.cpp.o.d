@@ -1,6 +1,6 @@
 CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: \
-  /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.cpp \
-  /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.cpp \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/array \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \
@@ -783,7 +783,7 @@ CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/ranges_uninitialized_algorithms.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/uses_allocator_construction.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/optional \
-  /Users/michael/apps/sappkeys/src/core/KeysEngine.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/comparison.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/vector.h \
@@ -905,5 +905,5 @@ CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: \
   /Users/michael/apps/sappsounds/include/sapp/sounds/Types.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/PlaybackEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticSnapshot.h \
-  /Users/michael/apps/sappkeys/src/core/Resonance.h \
-  /Users/michael/apps/sappkeys/src/core/Room.h
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Resonance.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Room.h

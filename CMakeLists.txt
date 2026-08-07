@@ -111,6 +111,7 @@ if(SAPPKEYS_BUILD_PLUGIN)
   target_sources(SappKeysPlugin PRIVATE
     src/plugin/PluginProcessor.cpp
     src/plugin/PluginEditor.cpp
+    src/plugin/SoundsPanel.cpp
   )
   target_link_libraries(SappKeysPlugin PRIVATE
     sappkeys_core
@@ -134,6 +135,7 @@ if(SAPPKEYS_BUILD_PLUGIN)
       tools/uishot/main.cpp
       src/plugin/PluginProcessor.cpp
       src/plugin/PluginEditor.cpp
+      src/plugin/SoundsPanel.cpp
     )
     target_include_directories(SappKeysUiShot PRIVATE src/plugin)
     target_link_libraries(SappKeysUiShot PRIVATE

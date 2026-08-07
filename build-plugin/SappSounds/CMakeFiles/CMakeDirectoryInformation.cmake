@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/Users/michael/apps/sappsounds")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/Users/michael/apps/sappkeys/build-plugin")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

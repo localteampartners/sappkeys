@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 # Utility rule file for SappKeysPlugin_vst3_helper.
 
@@ -67,9 +67,9 @@ include CMakeFiles/SappKeysPlugin_vst3_helper.dir/compiler_depend.make
 include CMakeFiles/SappKeysPlugin_vst3_helper.dir/progress.make
 
 CMakeFiles/SappKeysPlugin_vst3_helper:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building VST3 manifest helper for SappKeysPlugin"
-	/opt/homebrew/bin/cmake "-GUnix Makefiles" -S/Users/michael/apps/sappsynth/build/_deps/juce-src/extras/Build/CMake/juce_vst3_helper -B/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin -Dhelper_name=vst3_helper -Dsource_file=/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.cpp -Dshared_defs_file=/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/shared_defs_Release.txt -Dshared_incs_file=/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/shared_incs_Release.txt -DCMAKE_CXX_COMPILER=/usr/bin/c++
-	/opt/homebrew/bin/cmake --build /Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building VST3 manifest helper for SappKeysPlugin"
+	/opt/homebrew/bin/cmake "-GUnix Makefiles" -S/Users/michael/apps/sappsynth/build/_deps/juce-src/extras/Build/CMake/juce_vst3_helper -B/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/vst3_helpers/SappKeysPlugin -Dhelper_name=vst3_helper -Dsource_file=/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.cpp -Dshared_defs_file=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/vst3_helpers/SappKeysPlugin/shared_defs_Release.txt -Dshared_incs_file=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/vst3_helpers/SappKeysPlugin/shared_incs_Release.txt -DCMAKE_CXX_COMPILER=/usr/bin/c++
+	/opt/homebrew/bin/cmake --build /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/vst3_helpers/SappKeysPlugin
 
 CMakeFiles/SappKeysPlugin_vst3_helper.dir/codegen:
 .PHONY : CMakeFiles/SappKeysPlugin_vst3_helper.dir/codegen
@@ -87,6 +87,6 @@ CMakeFiles/SappKeysPlugin_vst3_helper.dir/clean:
 .PHONY : CMakeFiles/SappKeysPlugin_vst3_helper.dir/clean
 
 CMakeFiles/SappKeysPlugin_vst3_helper.dir/depend:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/SappKeysPlugin_vst3_helper.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin_vst3_helper
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/SappKeysPlugin_vst3_helper.dir/DependInfo.cmake "--color=$(COLOR)" SappKeysPlugin_vst3_helper
 .PHONY : CMakeFiles/SappKeysPlugin_vst3_helper.dir/depend
 

@@ -39,18 +39,18 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/modules/cmake_install.cmake")
+  include("/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/modules/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/extras/Build/cmake_install.cmake")
+  include("/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/extras/Build/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/JUCE-8.0.15" TYPE FILE FILES
-    "/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/JUCEConfigVersion.cmake"
-    "/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/JUCEConfig.cmake"
+    "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/JUCEConfigVersion.cmake"
+    "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/JUCEConfig.cmake"
     "/Users/michael/apps/sappsynth/build/_deps/juce-src/extras/Build/CMake/FindCppwinrt.cmake"
     "/Users/michael/apps/sappsynth/build/_deps/juce-src/extras/Build/CMake/FindWebView2.cmake"
     "/Users/michael/apps/sappsynth/build/_deps/juce-src/extras/Build/CMake/FindWindowsMIDIServices.cmake"
@@ -80,6 +80,6 @@ endif()
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/michael/apps/sappkeys/build-plugin/_deps/juce-build/install_local_manifest.txt"
+  file(WRITE "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/_deps/juce-build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

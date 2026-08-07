@@ -57,13 +57,23 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/bin/ctest $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -132,14 +142,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/build-plugin/CMakeFiles /Users/michael/apps/sappkeys/build-plugin/SappSounds//CMakeFiles/progress.marks
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/build-plugin/CMakeFiles 0
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds//CMakeFiles/progress.marks
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/clean
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/clean
 .PHONY : clean
 
 # The main clean target
@@ -148,23 +158,23 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/preinstall
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/preinstall
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/VerifyGlobs.cmake
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/VerifyGlobs.cmake
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 SappSounds/CMakeFiles/SappSounds.dir/rule:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/CMakeFiles/SappSounds.dir/rule
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SappSounds/CMakeFiles/SappSounds.dir/rule
 .PHONY : SappSounds/CMakeFiles/SappSounds.dir/rule
 
 # Convenience name for target.
@@ -173,7 +183,7 @@ SappSounds: SappSounds/CMakeFiles/SappSounds.dir/rule
 
 # fast build rule for target.
 SappSounds/fast:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/build
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/build
 .PHONY : SappSounds/fast
 
 src/DiagnosticInstrument.o: src/DiagnosticInstrument.cpp.o
@@ -181,7 +191,7 @@ src/DiagnosticInstrument.o: src/DiagnosticInstrument.cpp.o
 
 # target to build an object file
 src/DiagnosticInstrument.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.o
 .PHONY : src/DiagnosticInstrument.cpp.o
 
 src/DiagnosticInstrument.i: src/DiagnosticInstrument.cpp.i
@@ -189,7 +199,7 @@ src/DiagnosticInstrument.i: src/DiagnosticInstrument.cpp.i
 
 # target to preprocess a source file
 src/DiagnosticInstrument.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.i
 .PHONY : src/DiagnosticInstrument.cpp.i
 
 src/DiagnosticInstrument.s: src/DiagnosticInstrument.cpp.s
@@ -197,7 +207,7 @@ src/DiagnosticInstrument.s: src/DiagnosticInstrument.cpp.s
 
 # target to generate assembly for a file
 src/DiagnosticInstrument.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/DiagnosticInstrument.cpp.s
 .PHONY : src/DiagnosticInstrument.cpp.s
 
 src/FlacDecode.o: src/FlacDecode.cpp.o
@@ -205,7 +215,7 @@ src/FlacDecode.o: src/FlacDecode.cpp.o
 
 # target to build an object file
 src/FlacDecode.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.o
 .PHONY : src/FlacDecode.cpp.o
 
 src/FlacDecode.i: src/FlacDecode.cpp.i
@@ -213,7 +223,7 @@ src/FlacDecode.i: src/FlacDecode.cpp.i
 
 # target to preprocess a source file
 src/FlacDecode.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.i
 .PHONY : src/FlacDecode.cpp.i
 
 src/FlacDecode.s: src/FlacDecode.cpp.s
@@ -221,7 +231,7 @@ src/FlacDecode.s: src/FlacDecode.cpp.s
 
 # target to generate assembly for a file
 src/FlacDecode.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/FlacDecode.cpp.s
 .PHONY : src/FlacDecode.cpp.s
 
 src/InstrumentLoader.o: src/InstrumentLoader.cpp.o
@@ -229,7 +239,7 @@ src/InstrumentLoader.o: src/InstrumentLoader.cpp.o
 
 # target to build an object file
 src/InstrumentLoader.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.o
 .PHONY : src/InstrumentLoader.cpp.o
 
 src/InstrumentLoader.i: src/InstrumentLoader.cpp.i
@@ -237,7 +247,7 @@ src/InstrumentLoader.i: src/InstrumentLoader.cpp.i
 
 # target to preprocess a source file
 src/InstrumentLoader.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.i
 .PHONY : src/InstrumentLoader.cpp.i
 
 src/InstrumentLoader.s: src/InstrumentLoader.cpp.s
@@ -245,7 +255,7 @@ src/InstrumentLoader.s: src/InstrumentLoader.cpp.s
 
 # target to generate assembly for a file
 src/InstrumentLoader.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/InstrumentLoader.cpp.s
 .PHONY : src/InstrumentLoader.cpp.s
 
 src/MidiFile.o: src/MidiFile.cpp.o
@@ -253,7 +263,7 @@ src/MidiFile.o: src/MidiFile.cpp.o
 
 # target to build an object file
 src/MidiFile.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.o
 .PHONY : src/MidiFile.cpp.o
 
 src/MidiFile.i: src/MidiFile.cpp.i
@@ -261,7 +271,7 @@ src/MidiFile.i: src/MidiFile.cpp.i
 
 # target to preprocess a source file
 src/MidiFile.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.i
 .PHONY : src/MidiFile.cpp.i
 
 src/MidiFile.s: src/MidiFile.cpp.s
@@ -269,7 +279,7 @@ src/MidiFile.s: src/MidiFile.cpp.s
 
 # target to generate assembly for a file
 src/MidiFile.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/MidiFile.cpp.s
 .PHONY : src/MidiFile.cpp.s
 
 src/OfflineRender.o: src/OfflineRender.cpp.o
@@ -277,7 +287,7 @@ src/OfflineRender.o: src/OfflineRender.cpp.o
 
 # target to build an object file
 src/OfflineRender.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.o
 .PHONY : src/OfflineRender.cpp.o
 
 src/OfflineRender.i: src/OfflineRender.cpp.i
@@ -285,7 +295,7 @@ src/OfflineRender.i: src/OfflineRender.cpp.i
 
 # target to preprocess a source file
 src/OfflineRender.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.i
 .PHONY : src/OfflineRender.cpp.i
 
 src/OfflineRender.s: src/OfflineRender.cpp.s
@@ -293,7 +303,7 @@ src/OfflineRender.s: src/OfflineRender.cpp.s
 
 # target to generate assembly for a file
 src/OfflineRender.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/OfflineRender.cpp.s
 .PHONY : src/OfflineRender.cpp.s
 
 src/PlaybackEngine.o: src/PlaybackEngine.cpp.o
@@ -301,7 +311,7 @@ src/PlaybackEngine.o: src/PlaybackEngine.cpp.o
 
 # target to build an object file
 src/PlaybackEngine.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.o
 .PHONY : src/PlaybackEngine.cpp.o
 
 src/PlaybackEngine.i: src/PlaybackEngine.cpp.i
@@ -309,7 +319,7 @@ src/PlaybackEngine.i: src/PlaybackEngine.cpp.i
 
 # target to preprocess a source file
 src/PlaybackEngine.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.i
 .PHONY : src/PlaybackEngine.cpp.i
 
 src/PlaybackEngine.s: src/PlaybackEngine.cpp.s
@@ -317,7 +327,7 @@ src/PlaybackEngine.s: src/PlaybackEngine.cpp.s
 
 # target to generate assembly for a file
 src/PlaybackEngine.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/PlaybackEngine.cpp.s
 .PHONY : src/PlaybackEngine.cpp.s
 
 src/SfzParser.o: src/SfzParser.cpp.o
@@ -325,7 +335,7 @@ src/SfzParser.o: src/SfzParser.cpp.o
 
 # target to build an object file
 src/SfzParser.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.o
 .PHONY : src/SfzParser.cpp.o
 
 src/SfzParser.i: src/SfzParser.cpp.i
@@ -333,7 +343,7 @@ src/SfzParser.i: src/SfzParser.cpp.i
 
 # target to preprocess a source file
 src/SfzParser.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.i
 .PHONY : src/SfzParser.cpp.i
 
 src/SfzParser.s: src/SfzParser.cpp.s
@@ -341,7 +351,7 @@ src/SfzParser.s: src/SfzParser.cpp.s
 
 # target to generate assembly for a file
 src/SfzParser.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/SfzParser.cpp.s
 .PHONY : src/SfzParser.cpp.s
 
 src/WavIo.o: src/WavIo.cpp.o
@@ -349,7 +359,7 @@ src/WavIo.o: src/WavIo.cpp.o
 
 # target to build an object file
 src/WavIo.cpp.o:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.o
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.o
 .PHONY : src/WavIo.cpp.o
 
 src/WavIo.i: src/WavIo.cpp.i
@@ -357,7 +367,7 @@ src/WavIo.i: src/WavIo.cpp.i
 
 # target to preprocess a source file
 src/WavIo.cpp.i:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.i
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.i
 .PHONY : src/WavIo.cpp.i
 
 src/WavIo.s: src/WavIo.cpp.s
@@ -365,7 +375,7 @@ src/WavIo.s: src/WavIo.cpp.s
 
 # target to generate assembly for a file
 src/WavIo.cpp.s:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.s
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(MAKE) $(MAKESILENT) -f SappSounds/CMakeFiles/SappSounds.dir/build.make SappSounds/CMakeFiles/SappSounds.dir/src/WavIo.cpp.s
 .PHONY : src/WavIo.cpp.s
 
 # Help Target
@@ -380,6 +390,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... SappSounds"
 	@echo "... src/DiagnosticInstrument.o"
 	@echo "... src/DiagnosticInstrument.i"
@@ -416,7 +427,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/VerifyGlobs.cmake
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -P /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/VerifyGlobs.cmake
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

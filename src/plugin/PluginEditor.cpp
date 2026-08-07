@@ -1,5 +1,7 @@
 #include "PluginEditor.h"
 
+#include "SoundsPanel.h"
+
 namespace sappkeys {
 
 namespace {
@@ -374,6 +376,8 @@ SappKeysEditor::SappKeysEditor(SappKeysProcessor& processor)
     addAndMakeVisible(loadButton_);
     diagButton_.onClick = [this] { processor_.loadDiagnosticInstrument(); };
     addAndMakeVisible(diagButton_);
+    soundsButton_.onClick = [this] { openSoundsPanel(); };
+    addAndMakeVisible(soundsButton_);
 
     auto header = [&](juce::Label& label, const juce::String& text) {
         label.setText(text, juce::dontSendNotification);
@@ -444,6 +448,24 @@ SappKeysEditor::~SappKeysEditor()
 {
     processor_.onInstrumentChanged = nullptr;
     setLookAndFeel(nullptr);
+}
+
+SoundsPanel& SappKeysEditor::ensureSoundsPanel()
+{
+    if (soundsPanel_ == nullptr) {
+        soundsPanel_ = std::make_unique<SoundsPanel>(
+            processor_, [this] { soundsPanel_->setVisible(false); });
+        addChildComponent(*soundsPanel_);
+    }
+    return *soundsPanel_;
+}
+
+void SappKeysEditor::openSoundsPanel()
+{
+    auto& panel = ensureSoundsPanel();
+    panel.setBounds(getLocalBounds().reduced(14));
+    panel.setVisible(true);
+    panel.toFront(true);
 }
 
 void SappKeysEditor::chooseSfz()
@@ -531,6 +553,7 @@ void SappKeysEditor::resized()
     subtitle_.setBounds(s(21), s(42), s(240), s(16));
     loadButton_.setBounds(s(268), s(20), s(92), s(28));
     diagButton_.setBounds(s(366), s(20), s(84), s(28));
+    soundsButton_.setBounds(s(456), s(20), s(100), s(28));
     instrumentName_.setBounds(getWidth() - s(400), s(12), s(384), s(24));
     status_.setBounds(getWidth() - s(400), s(36), s(384), s(18));
 
@@ -572,6 +595,9 @@ void SappKeysEditor::resized()
 
     voicesLabel_.setBounds(s(14), s(588), s(90), s(20));
     meterArea_ = {s(110), s(592), s(150), s(14)};
+
+    if (soundsPanel_ != nullptr)
+        soundsPanel_->setBounds(getLocalBounds().reduced(14));
 }
 
 } // namespace sappkeys

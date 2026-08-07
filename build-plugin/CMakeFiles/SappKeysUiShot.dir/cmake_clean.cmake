@@ -47,6 +47,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o.d"
   "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o"
   "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o.d"
+  "CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.o"
+  "CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.o.d"
   "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o"
   "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o.d"
   "SappKeysUiShot_artefacts/JuceLibraryCode/SappKeysUiShot/PkgInfo"

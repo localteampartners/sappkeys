@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys
+CMAKE_SOURCE_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/build-plugin
+CMAKE_BINARY_DIR = /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin
 
 # Include any dependencies generated for this target.
 include CMakeFiles/sappkeys_core.dir/depend.make
@@ -73,60 +73,60 @@ CMakeFiles/sappkeys_core.dir/codegen:
 .PHONY : CMakeFiles/sappkeys_core.dir/codegen
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: CMakeFiles/sappkeys_core.dir/flags.make
-CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: /Users/michael/apps/sappkeys/src/core/KeysEngine.cpp
+CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.cpp
 CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: CMakeFiles/sappkeys_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o -c /Users/michael/apps/sappkeys/src/core/KeysEngine.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.cpp
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/core/KeysEngine.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.i
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/core/KeysEngine.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.s
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o: CMakeFiles/sappkeys_core.dir/flags.make
-CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o: /Users/michael/apps/sappkeys/src/core/KeysInstrument.cpp
+CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysInstrument.cpp
 CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o: CMakeFiles/sappkeys_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o -c /Users/michael/apps/sappkeys/src/core/KeysInstrument.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysInstrument.cpp
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/core/KeysInstrument.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysInstrument.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.i
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/core/KeysInstrument.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysInstrument.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.s
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: CMakeFiles/sappkeys_core.dir/flags.make
-CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: /Users/michael/apps/sappkeys/src/core/KeysRender.cpp
+CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.cpp
 CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o: CMakeFiles/sappkeys_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o -c /Users/michael/apps/sappkeys/src/core/KeysRender.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.cpp
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/core/KeysRender.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.cpp > CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.i
 
 CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/core/KeysRender.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysRender.cpp -o CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.s
 
 CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: CMakeFiles/sappkeys_core.dir/flags.make
-CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.cpp
+CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.cpp
 CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o: CMakeFiles/sappkeys_core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o -c /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o -MF CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o.d -o CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o -c /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.cpp
 
 CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.cpp > CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.cpp > CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.i
 
 CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/src/core/SappLinkCCMap.cpp -o CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/SappLinkCCMap.cpp -o CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.s
 
 # Object files for target sappkeys_core
 sappkeys_core_OBJECTS = \
@@ -144,7 +144,7 @@ libsappkeys_core.a: CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o
 libsappkeys_core.a: CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o
 libsappkeys_core.a: CMakeFiles/sappkeys_core.dir/build.make
 libsappkeys_core.a: CMakeFiles/sappkeys_core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/michael/apps/sappkeys/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libsappkeys_core.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libsappkeys_core.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/sappkeys_core.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sappkeys_core.dir/link.txt --verbose=$(VERBOSE)
 
@@ -157,6 +157,6 @@ CMakeFiles/sappkeys_core.dir/clean:
 .PHONY : CMakeFiles/sappkeys_core.dir/clean
 
 CMakeFiles/sappkeys_core.dir/depend:
-	cd /Users/michael/apps/sappkeys/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin /Users/michael/apps/sappkeys/build-plugin/CMakeFiles/sappkeys_core.dir/DependInfo.cmake "--color=$(COLOR)" sappkeys_core
+	cd /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7 /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/CMakeFiles/sappkeys_core.dir/DependInfo.cmake "--color=$(COLOR)" sappkeys_core
 .PHONY : CMakeFiles/sappkeys_core.dir/depend
 

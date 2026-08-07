@@ -12,6 +12,11 @@
   render fine.
 - SappLink CC-in proven end-to-end: unit tests (render path) and
   `SappKeysUiShot --cctest` (plugin path, CC7 sweep).
+- GET SOUNDS panel in the plugin (port of sapporchestra's SoundsPanel):
+  one-click download → extract → rescan for Salamander Grand (tar.gz) and
+  FreePats Upright/FM/Old pianos (zips), plus an installed-instruments
+  browser over the shared ~/Samples root (filter + double-click to load).
+  `SappKeysUiShot --sounds` snapshots the panel open.
 - Demo renders: `demo/gymnopedie-salamander.wav` (concert-grand preset),
   `demo/gymnopedie-ep.wav` (ep-tine preset) from `demo/gymnopedie.mid`.
 

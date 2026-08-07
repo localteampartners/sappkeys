@@ -38,7 +38,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/Users/michael/apps/sappkeys/build-plugin/SappSounds/libSappSounds.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds/libSappSounds.a")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libSappSounds.a" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libSappSounds.a")
     execute_process(COMMAND "/usr/bin/ranlib" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libSappSounds.a")
@@ -53,7 +53,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds/SappSoundsTargets.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds/SappSoundsTargets.cmake"
-         "/Users/michael/apps/sappkeys/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets.cmake")
+         "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds/SappSoundsTargets-*.cmake")
       if(_cmake_old_config_files)
@@ -66,15 +66,15 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds" TYPE FILE FILES "/Users/michael/apps/sappkeys/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds" TYPE FILE FILES "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets.cmake")
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds" TYPE FILE FILES "/Users/michael/apps/sappkeys/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets-release.cmake")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/SappSounds" TYPE FILE FILES "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds/CMakeFiles/Export/6a19a10153ddbfe5cd77eace99befe73/SappSoundsTargets-release.cmake")
   endif()
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/michael/apps/sappkeys/build-plugin/SappSounds/install_local_manifest.txt"
+  file(WRITE "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/build-plugin/SappSounds/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

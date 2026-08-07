@@ -1,6 +1,6 @@
 CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: \
-  /Users/michael/apps/sappkeys/src/core/KeysEngine.cpp \
-  /Users/michael/apps/sappkeys/src/core/KeysEngine.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.cpp \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/KeysEngine.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/atomic \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -904,5 +904,5 @@ CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o: \
   /Users/michael/apps/sappsounds/include/sapp/sounds/Types.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/PlaybackEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticSnapshot.h \
-  /Users/michael/apps/sappkeys/src/core/Resonance.h \
-  /Users/michael/apps/sappkeys/src/core/Room.h
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Resonance.h \
+  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/core/Room.h

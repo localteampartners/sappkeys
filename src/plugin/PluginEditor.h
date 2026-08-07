@@ -8,6 +8,8 @@
 
 namespace sappkeys {
 
+class SoundsPanel;
+
 // ------------------------------------------------------------------ palette --
 namespace palette {
 const juce::Colour ivory{0xfff3ecdd};        // warm ivory background
@@ -115,9 +117,12 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
+    void openSoundsPanel();   // public: UiShot snapshots the panel via --sounds
+
 private:
     void timerCallback() override;
     void chooseSfz();
+    SoundsPanel& ensureSoundsPanel();
 
     SappKeysProcessor& processor_;
     KeysLookAndFeel lookAndFeel_;
@@ -125,6 +130,8 @@ private:
     juce::Label title_, subtitle_, instrumentName_, status_;
     juce::TextButton loadButton_{"LOAD SFZ"};
     juce::TextButton diagButton_{"BUILT-IN"};
+    juce::TextButton soundsButton_{"GET SOUNDS"};
+    std::unique_ptr<SoundsPanel> soundsPanel_;
 
     juce::Label touchHeader_, bodyHeader_, characterHeader_, roomHeader_;
 

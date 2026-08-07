@@ -30,9 +30,10 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_4.cpp.o.d"
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics_5.cpp.o.d"
   "/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o.d"
-  "/Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o.d"
-  "/Users/michael/apps/sappkeys/src/plugin/PluginProcessor.cpp" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o.d"
-  "/Users/michael/apps/sappkeys/tools/uishot/main.cpp" "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.cpp" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginProcessor.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.cpp" "CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/src/plugin/SoundsPanel.cpp.o.d"
+  "/Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/tools/uishot/main.cpp" "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o" "gcc" "CMakeFiles/SappKeysUiShot.dir/tools/uishot/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
