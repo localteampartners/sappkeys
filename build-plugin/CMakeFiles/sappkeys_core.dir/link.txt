@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsappkeys_core.a CMakeFiles/sappkeys_core.dir/src/core/KeysEngine.cpp.o CMakeFiles/sappkeys_core.dir/src/core/KeysInstrument.cpp.o CMakeFiles/sappkeys_core.dir/src/core/KeysRender.cpp.o CMakeFiles/sappkeys_core.dir/src/core/SappLinkCCMap.cpp.o
-/usr/bin/ranlib libsappkeys_core.a

@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

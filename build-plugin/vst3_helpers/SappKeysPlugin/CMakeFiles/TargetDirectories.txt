@@ -1,3 +1,0 @@
-/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/CMakeFiles/vst3_helper.dir
-/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/CMakeFiles/edit_cache.dir
-/Users/michael/apps/sappkeys/build-plugin/vst3_helpers/SappKeysPlugin/CMakeFiles/rebuild_cache.dir
