@@ -2,6 +2,13 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-07 — v0.3.0
+- In-plugin UPDATE button: daily GitHub release check (click the version
+  number to check on demand); one click downloads and installs the new
+  build (macOS: plug-in folders + quarantine cleared; Windows: loaded
+  .vst3 swapped via rename), standalone relaunches itself on macOS.
+- Plugin version now tracks release tags (0.3.0).
+
 ## 2026-08-06 (later)
 
 - GET SOUNDS panel: in-plugin library downloads + instrument browser (ported

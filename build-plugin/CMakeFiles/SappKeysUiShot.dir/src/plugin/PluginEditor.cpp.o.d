@@ -1,6 +1,6 @@
 CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o: \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.cpp \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginEditor.h \
+  /Users/michael/apps/sappkeys/src/plugin/PluginEditor.cpp \
+  /Users/michael/apps/sappkeys/src/plugin/PluginEditor.h \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.h \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.h \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_graphics/juce_graphics.h \
@@ -1601,7 +1601,7 @@ CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o: \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/players/juce_AudioProcessorPlayer.h \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/audio_cd/juce_AudioCDBurner.h \
   /Users/michael/apps/sappsynth/build/_deps/juce-src/modules/juce_audio_utils/audio_cd/juce_AudioCDReader.h \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/PluginProcessor.h \
+  /Users/michael/apps/sappkeys/src/plugin/PluginProcessor.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/InstrumentLoader.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/copy_options.h \
@@ -1625,9 +1625,10 @@ CMakeFiles/SappKeysUiShot.dir/src/plugin/PluginEditor.cpp.o: \
   /Users/michael/apps/sappsounds/include/sapp/sounds/SampleData.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/Types.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/SfzParser.h \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/KeysEngine.h \
+  /Users/michael/apps/sappkeys/src/plugin/../core/KeysEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/PlaybackEngine.h \
   /Users/michael/apps/sappsounds/include/sapp/sounds/DiagnosticSnapshot.h \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/Resonance.h \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/../core/Room.h \
-  /Users/michael/apps/sappkeys/.claude/worktrees/admiring-noether-77a6b7/src/plugin/SoundsPanel.h
+  /Users/michael/apps/sappkeys/src/plugin/../core/Resonance.h \
+  /Users/michael/apps/sappkeys/src/plugin/../core/Room.h \
+  /Users/michael/apps/sappkeys/src/plugin/UpdateManager.h \
+  /Users/michael/apps/sappkeys/src/plugin/../core/VersionCompare.h

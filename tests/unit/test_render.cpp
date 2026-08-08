@@ -105,3 +105,13 @@ TEST_CASE("quality draft/normal both render finite audio", "[render]")
         for (float v : out.left) REQUIRE(std::isfinite(v));
     }
 }
+
+#include "core/VersionCompare.h"
+
+TEST_CASE("updater version comparison", "[updater]")
+{
+    CHECK(sapp::keys::isNewerVersion("v0.3.1", "0.3.0"));
+    CHECK(sapp::keys::isNewerVersion("v1.0.0", "0.9.9"));
+    CHECK_FALSE(sapp::keys::isNewerVersion("v0.3.0", "0.3.0"));
+    CHECK_FALSE(sapp::keys::isNewerVersion("v0.2.9", "0.3.0"));
+}

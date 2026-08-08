@@ -53,3 +53,9 @@ python3 scripts/make_demo.py demo/gymnopedie.mid
 ## Rollback
 
 Plain git: `git log`, `git revert <sha>`. No deploy target.
+
+## Release rule (in-plugin updater)
+
+Bump `project(SappKeys VERSION X.Y.Z)` in CMakeLists.txt to match every
+release tag — the in-plugin updater compares JucePlugin_VersionString
+against the latest GitHub tag, so the two MUST stay in sync.
