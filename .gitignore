@@ -40,3 +40,5 @@ pids/
 
 # demo renders are large; the MIDI + generator are the source
 demo/*.wav
+build-plugin/
+build-*/

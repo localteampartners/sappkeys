@@ -16,7 +16,8 @@
 
 namespace sappkeys {
 
-class SappKeysProcessor : public juce::AudioProcessor
+class SappKeysProcessor : public juce::AudioProcessor,
+                          private juce::Timer
 {
 public:
     SappKeysProcessor();
@@ -37,11 +38,19 @@ public:
     bool isMidiEffect() const override { return false; }
     double getTailLengthSeconds() const override { return 4.0; }
 
-    int getNumPrograms() override { return 1; }
-    int getCurrentProgram() override { return 0; }
-    void setCurrentProgram(int) override {}
-    const juce::String getProgramName(int) override { return "Default"; }
+    // Factory-preset programs (see FactoryPresets.h): program N applies
+    // preset N — parameter starting points plus an instrument hint when the
+    // matching library is installed. Reachable from the host program API and
+    // via MIDI program change (SappLink set_patches). CCs keep working on
+    // top after a program change.
+    int getNumPrograms() override;
+    int getCurrentProgram() override { return currentProgram_.load(); }
+    void setCurrentProgram(int index) override;
+    const juce::String getProgramName(int index) override;
     void changeProgramName(int, const juce::String&) override {}
+
+    // Apply factory preset N now. Message thread only.
+    void applyFactoryPreset(int index);
 
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
@@ -106,6 +115,12 @@ private:
     void advanceCcSlews(int numSamples);
 
     std::vector<sapp::sounds::MidiEvent> eventScratch_;
+
+    // MIDI program change lands on the audio thread; the preset itself is
+    // applied on the message thread (timer), sappstep-style.
+    void timerCallback() override;
+    std::atomic<int> pendingProgram_{-1};
+    std::atomic<int> currentProgram_{0};
 
     juce::String sfzPath_;                 // "" = diagnostic instrument
     juce::String instrumentName_{"(loading)"};

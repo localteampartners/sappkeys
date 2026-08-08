@@ -4,7 +4,9 @@
 
 #include "../core/KeysInstrument.h"
 #include "../core/SappLinkCCMap.h"
+#include "FactoryPresets.h"
 #include "PluginEditor.h"
+#include "SoundsPanel.h"
 
 namespace sappkeys {
 
@@ -86,6 +88,66 @@ SappKeysProcessor::SappKeysProcessor()
         ccSlews_[i].parameter = apvts_.getParameter(table[i].paramId);
 
     loadDiagnosticInstrument();
+    startTimerHz(30);   // deferred program-change apply (message thread)
+}
+
+// ------------------------------------------------------- factory programs --
+
+int SappKeysProcessor::getNumPrograms()
+{
+    return int(presets::all().size());
+}
+
+const juce::String SappKeysProcessor::getProgramName(int index)
+{
+    const auto& bank = presets::all();
+    if (index < 0 || index >= int(bank.size()))
+        return {};
+    return bank[size_t(index)].name;
+}
+
+void SappKeysProcessor::setCurrentProgram(int index)
+{
+    // Hosts may call this from any thread; defer to the timer like a MIDI
+    // program change. currentProgram_ updates immediately so hosts that read
+    // it straight back see the new value.
+    if (index < 0 || index >= getNumPrograms() || index == currentProgram_.load())
+        return;
+    currentProgram_.store(index);
+    pendingProgram_.store(index);
+}
+
+void SappKeysProcessor::applyFactoryPreset(int index)
+{
+    const auto& bank = presets::all();
+    if (index < 0 || index >= int(bank.size()))
+        return;
+    const auto& preset = bank[size_t(index)];
+
+    for (auto* parameter : getParameters())
+        if (auto* withId = dynamic_cast<juce::RangedAudioParameter*>(parameter))
+            withId->setValueNotifyingHost(withId->getDefaultValue());
+
+    for (const auto& [id, value] : preset.values)
+        if (auto* parameter = apvts_.getParameter(id))
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
+
+    // Instrument hint: swap libraries when the preferred one is installed
+    // and not already loaded. Otherwise keep the current instrument — the
+    // parameter starting points still apply.
+    const auto sfz = presets::resolveInstrument(preset, SoundsPanel::samplesRoot());
+    if (sfz.existsAsFile() && sfz.getFullPathName() != sfzPath_)
+        loadSfzInstrument(sfz);
+
+    currentProgram_.store(index);
+    updateHostDisplay(ChangeDetails{}.withProgramChanged(true));
+}
+
+void SappKeysProcessor::timerCallback()
+{
+    const int program = pendingProgram_.exchange(-1);
+    if (program >= 0)
+        applyFactoryPreset(program);
 }
 
 void SappKeysProcessor::handleSappLinkCc(int ccNumber, int ccValue)
@@ -217,6 +279,10 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             e.type = MidiEvent::Type::AllNotesOff;
         } else if (msg.isAllSoundOff()) {
             e.type = MidiEvent::Type::AllSoundOff;
+        } else if (msg.isProgramChange()) {
+            // Factory-preset select; applied on the message thread (timer).
+            pendingProgram_.store(msg.getProgramChangeNumber());
+            continue;
         } else {
             continue;
         }

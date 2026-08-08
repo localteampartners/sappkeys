@@ -21,6 +21,15 @@
     { "id": "unaCorda",   "label": "Una Corda",    "cc": 67,  "range": [0, 1],      "curve": "linear", "tags": ["soft", "pedal", "tone"] },
     { "id": "roomLevel",  "label": "Room Level",   "cc": 91,  "range": [0, 1],      "curve": "linear", "tags": ["space", "reverb"] }
   ],
-  "presets": [],
+  "presets": [
+    { "name": "Grand Concert", "program": 0 },
+    { "name": "Intimate Grand", "program": 1 },
+    { "name": "Bright Grand", "program": 2 },
+    { "name": "EP Mark I", "program": 3 },
+    { "name": "EP Dyno", "program": 4 },
+    { "name": "EP Crunchy", "program": 5 },
+    { "name": "Una Corda Soft", "program": 6 },
+    { "name": "Honky Tonk", "program": 7 }
+  ],
   "articulations": []
 }
