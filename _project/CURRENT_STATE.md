@@ -2,6 +2,11 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+- In-plugin updater (v0.3.0): footer version button checks GitHub daily
+  (or on click); UPDATE button downloads + installs the newest release
+  (macOS install + quarantine clear, Windows rename-trick swap).
+  CMake project VERSION must be bumped with every release tag.
+
 ## Works (2026-08-06)
 
 - Core engine, CLI, plugin (Standalone/VST3/AU), UiShot all build clean
