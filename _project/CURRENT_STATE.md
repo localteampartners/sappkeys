@@ -2,6 +2,24 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-08-08 — user presets (uncommitted)
+
+- Suite-shared user-preset format (sapptune/sapplink/PRESETS.md) in
+  `src/plugin/UserPresets.{h,cpp}` (verbatim copy of sappsynth's), wired
+  through `SappKeysProcessor`: `saveUserPreset` / `loadUserPreset` /
+  `userPresets()` / `applyPresetChoice`, plus a `preset`
+  AudioParameterChoice added LAST in `makeLayout()`. No existing
+  parameter id, order or CC moved.
+- Presets store normalised values plus the loaded SFZ path (`sfz`), so a
+  saved sound restores its sample library when it is still installed.
+- Editor footer has a PRESET chooser (fresh disk scan on open; user
+  entries read "<name> (user)") and a SAVE button with an async name
+  dialog.
+- Proven headless by `SappKeysUiShot --presettest`: 16/16 parameters
+  round-trip with max |diff| = 0; `preset` parameter, MIDI program
+  change and host-state round-trip all still good. AU passes
+  `auval -v aumu Skys Ltpr`.
+
 ## Shipped 2026-08-07 — v0.3.0 (in-plugin updater)
 
 - Footer version button checks GitHub daily (or on click); UPDATE

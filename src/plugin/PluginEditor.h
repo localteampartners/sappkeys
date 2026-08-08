@@ -108,6 +108,20 @@ public:
     explicit KeysKeyboard(juce::MidiKeyboardState& state);
 };
 
+// ------------------------------------------------------------ preset chooser -
+// A combo box that rebuilds its list every time it is opened, so a preset
+// saved this session shows up without reopening the plugin.
+class PresetChooser : public juce::ComboBox
+{
+public:
+    std::function<void()> onBeforePopup;
+    void showPopup() override
+    {
+        if (onBeforePopup) onBeforePopup();
+        juce::ComboBox::showPopup();
+    }
+};
+
 // ------------------------------------------------------------------- editor --
 class SappKeysEditor : public juce::AudioProcessorEditor, private juce::Timer
 {
@@ -124,6 +138,11 @@ private:
     void timerCallback() override;
     void chooseSfz();
     SoundsPanel& ensureSoundsPanel();
+
+    // Presets: factory bank + saved user sounds (sapplink/PRESETS.md).
+    void refreshPresetList();          // fresh disk scan, message thread
+    void promptSaveUserPreset();       // async name dialog, then save
+    void showPresetMessage(const juce::String& text);   // ~5 s in the status line
 
     SappKeysProcessor& processor_;
     KeysLookAndFeel lookAndFeel_;
@@ -145,6 +164,13 @@ private:
     juce::ComboBox quality_;
     juce::ToggleButton limiter_{"limiter"};
     std::unique_ptr<KeysKeyboard> keyboard_;
+
+    juce::Label presetHeader_;
+    PresetChooser presetBox_;
+    juce::TextButton savePresetButton_{"SAVE"};
+    juce::StringArray userPresetNames_;   // parallel to ids 1001+
+    juce::String presetMessage_;
+    juce::uint32 presetMessageUntilMs_ = 0;
 
     juce::TextButton versionButton_{"v" JucePlugin_VersionString};
     juce::TextButton updateButton_{"UPDATE"};

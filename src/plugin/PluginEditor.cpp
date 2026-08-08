@@ -432,6 +432,33 @@ SappKeysEditor::SappKeysEditor(SappKeysProcessor& processor)
     voicesLabel_.setColour(juce::Label::textColourId, palette::dim);
     addAndMakeVisible(voicesLabel_);
 
+    // --- presets: factory bank + saved user sounds --------------------------
+    header(presetHeader_, "PRESET");
+    presetBox_.setTextWhenNothingSelected("SELECT...");
+    presetBox_.onBeforePopup = [this] { refreshPresetList(); };
+    presetBox_.onChange = [this] {
+        const int id = presetBox_.getSelectedId();
+        if (id <= 0)
+            return;
+        if (id < 1000) {
+            processor_.applyFactoryPreset(id - 1);
+            showPresetMessage("Factory preset: " + presetBox_.getText());
+            return;
+        }
+        const auto name = userPresetNames_[id - 1001];
+        juce::String error;
+        if (processor_.loadUserPreset(name, error))
+            showPresetMessage("Loaded user preset \"" + name + "\"");
+        else
+            showPresetMessage(error);
+    };
+    addAndMakeVisible(presetBox_);
+    refreshPresetList();
+
+    savePresetButton_.setTooltip("Save the current sound as a user preset");
+    savePresetButton_.onClick = [this] { promptSaveUserPreset(); };
+    addAndMakeVisible(savePresetButton_);
+
     // --- in-plugin updater --------------------------------------------------
     versionButton_.setTooltip("Click to check for updates");
     versionButton_.onClick = [this] { updater_->checkForUpdate(); };
@@ -504,9 +531,103 @@ void SappKeysEditor::chooseSfz()
                               });
 }
 
+// ----------------------------------------------------------------- presets --
+
+void SappKeysEditor::refreshPresetList()
+{
+    // Fresh scan every time the list opens: a preset saved this session must
+    // be selectable immediately (the host-automatable `preset` parameter's own
+    // list stays fixed for the instance's lifetime — sapplink/PRESETS.md 3).
+    const int previous = presetBox_.getSelectedId();
+    presetBox_.clear(juce::dontSendNotification);
+    userPresetNames_.clear();
+
+    presetBox_.addSectionHeading("FACTORY");
+    for (int i = 0; i < processor_.factoryPresetCount(); ++i)
+        presetBox_.addItem(processor_.getProgramName(i), i + 1);
+
+    const auto user = processor_.userPresets();
+    if (!user.empty()) {
+        presetBox_.addSeparator();
+        presetBox_.addSectionHeading("USER PRESETS");
+        for (const auto& preset : user) {
+            userPresetNames_.add(preset.name);
+            presetBox_.addItem(preset.name + " (user)", 1000 + userPresetNames_.size());
+        }
+    }
+
+    if (previous > 0)
+        presetBox_.setSelectedId(previous, juce::dontSendNotification);
+}
+
+void SappKeysEditor::showPresetMessage(const juce::String& text)
+{
+    presetMessage_ = text;
+    presetMessageUntilMs_ = juce::Time::getMillisecondCounter() + 5000;
+    status_.setText(text, juce::dontSendNotification);
+}
+
+void SappKeysEditor::promptSaveUserPreset()
+{
+    const auto dir = sapp::userpresets::presetDir(SappKeysProcessor::kInstrument);
+    juce::String suggested = sapp::userpresets::nameFromChoiceLabel(presetBox_.getText());
+    if (suggested.isEmpty())
+        suggested = "My Sound";
+
+    // Async: never block the message thread (JUCE_MODAL_LOOPS_PERMITTED is 0
+    // in a plugin). The window deletes itself after the callback.
+    auto* window = new juce::AlertWindow("SAVE USER PRESET",
+                                         "Name this sound. It is saved to:\n"
+                                             + dir.getFullPathName(),
+                                         juce::MessageBoxIconType::NoIcon);
+    window->addTextEditor("name", suggested, "Preset name");
+    window->addButton("SAVE", 1, juce::KeyPress(juce::KeyPress::returnKey));
+    window->addButton("CANCEL", 0, juce::KeyPress(juce::KeyPress::escapeKey));
+
+    juce::Component::SafePointer<SappKeysEditor> safeThis(this);
+    window->enterModalState(
+        true,
+        juce::ModalCallbackFunction::create([safeThis, window](int result) {
+            if (result == 0 || safeThis == nullptr)
+                return;
+            const auto name = window->getTextEditorContents("name").trim();
+            if (name.isEmpty()) {
+                safeThis->showPresetMessage("Preset not saved: a preset needs a name");
+                return;
+            }
+            juce::String error;
+            if (!safeThis->processor_.saveUserPreset(name, {}, error)) {
+                safeThis->showPresetMessage("Save failed: " + error);
+                juce::AlertWindow::showAsync(
+                    juce::MessageBoxOptions()
+                        .withIconType(juce::MessageBoxIconType::WarningIcon)
+                        .withTitle("SAVE USER PRESET")
+                        .withMessage("Could not save \"" + name + "\":\n" + error)
+                        .withButton("OK"),
+                    nullptr);
+                return;
+            }
+            const auto file =
+                sapp::userpresets::presetDir(SappKeysProcessor::kInstrument)
+                    .getChildFile(sapp::userpresets::sanitiseFileName(name) + ".json");
+            safeThis->showPresetMessage("Saved: " + file.getFullPathName());
+            safeThis->refreshPresetList();
+            for (int i = 0; i < safeThis->userPresetNames_.size(); ++i)
+                if (safeThis->userPresetNames_[i].equalsIgnoreCase(name))
+                    safeThis->presetBox_.setSelectedId(1001 + i, juce::dontSendNotification);
+        }),
+        true);
+}
+
 void SappKeysEditor::timerCallback()
 {
-    status_.setText(processor_.loadStatus(), juce::dontSendNotification);
+    // A preset message owns the status line for a few seconds, then the
+    // instrument loader gets it back.
+    if (presetMessage_.isNotEmpty()
+        && juce::Time::getMillisecondCounter() >= presetMessageUntilMs_)
+        presetMessage_.clear();
+    status_.setText(presetMessage_.isNotEmpty() ? presetMessage_ : processor_.loadStatus(),
+                    juce::dontSendNotification);
     instrumentName_.setText(processor_.currentInstrumentName(), juce::dontSendNotification);
 
     sapp::sounds::DiagnosticSnapshot snap;
@@ -652,6 +773,11 @@ void SappKeysEditor::resized()
     versionButton_.setBounds(s(270), s(586), s(170), s(24));
     updateButton_.setBounds(s(446), s(585), s(150), s(26));
     meterArea_ = {s(110), s(592), s(150), s(14)};
+
+    // Presets live in the footer, right of the updater strip.
+    presetHeader_.setBounds(s(602), s(590), s(50), s(16));
+    presetBox_.setBounds(s(650), s(585), s(184), s(26));
+    savePresetButton_.setBounds(s(840), s(585), s(64), s(26));
 
     if (soundsPanel_ != nullptr)
         soundsPanel_->setBounds(getLocalBounds().reduced(14));

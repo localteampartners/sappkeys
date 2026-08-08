@@ -112,6 +112,7 @@ if(SAPPKEYS_BUILD_PLUGIN)
     src/plugin/PluginProcessor.cpp
     src/plugin/PluginEditor.cpp
     src/plugin/FactoryPresets.cpp
+    src/plugin/UserPresets.cpp
     src/plugin/SoundsPanel.cpp
   )
   target_link_libraries(SappKeysPlugin PRIVATE
@@ -137,6 +138,7 @@ if(SAPPKEYS_BUILD_PLUGIN)
       src/plugin/PluginProcessor.cpp
       src/plugin/PluginEditor.cpp
       src/plugin/FactoryPresets.cpp
+      src/plugin/UserPresets.cpp
       src/plugin/SoundsPanel.cpp
     )
     target_include_directories(SappKeysUiShot PRIVATE src/plugin)

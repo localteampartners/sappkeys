@@ -2,6 +2,31 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-08 — user presets
+
+- SappLink user presets (sapptune/sapplink/PRESETS.md): save the current
+  sound to `<Documents>/SappSounds/presets/sappkeys/<name>.json` as
+  normalised values, load it by name from any instance.
+  `src/plugin/UserPresets.{h,cpp}` is the suite-shared implementation,
+  copied verbatim from sappsynth.
+- New `preset` APVTS parameter (AudioParameterChoice, added LAST in the
+  layout so no existing parameter index moves, no CC): factory bank in
+  program order, then the user presets found at construction. Host- and
+  SappLink-automatable; applied on the message thread by the existing
+  30 Hz timer.
+- Saved presets record the loaded SFZ library in the file's `sfz` field
+  and restore it on load when the path still resolves.
+- Editor footer: PRESET chooser (rescans on open, user entries marked
+  "(user)") + SAVE with an async name dialog; outcome shown in the status
+  line.
+- Manifest gained a top-level `hostParameters` entry for `preset` (not
+  `parameters` — it carries no CC).
+- `SappKeysUiShot --presettest`: headless round-trip proof (capture ->
+  disk -> fresh processor, max |diff| 0) plus `preset`-parameter, MIDI
+  program-change and host-state regressions. `--cctest` now waits for the
+  instrument load instead of a fixed 2.5 s (it measured silence on a busy
+  machine).
+
 ## 2026-08-07 — v0.3.0
 - In-plugin UPDATE button: daily GitHub release check (click the version
   number to check on demand); one click downloads and installs the new

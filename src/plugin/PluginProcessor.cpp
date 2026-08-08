@@ -53,6 +53,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout SappKeysProcessor::makeLayou
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{"quality", 1}, "Quality",
         juce::StringArray{"Draft", "Normal"}, 1));
+
+    // Host-automatable sound selection (sapptune issue #13). ADDED LAST so no
+    // existing parameter's index moves — automation lanes are a contract.
+    // The factory bank in program order, then the user presets that exist
+    // right now; the list is fixed for this instance's lifetime because a
+    // choice parameter cannot change its choices without breaking lanes.
+    juce::StringArray presetChoices;
+    for (const auto& preset : presets::all())
+        presetChoices.add(preset.name);
+    presetChoices.addArray(sapp::userpresets::choiceLabels(SappKeysProcessor::kInstrument));
+    layout.add(std::make_unique<juce::AudioParameterChoice>(
+        juce::ParameterID{sapp::userpresets::kPresetParamId, 1}, "Preset",
+        presetChoices, 0));
     return layout;
 }
 
@@ -86,6 +99,10 @@ SappKeysProcessor::SappKeysProcessor()
                   "ccSlews_ must match the SappLink mapping table size");
     for (size_t i = 0; i < table.size(); ++i)
         ccSlews_[i].parameter = apvts_.getParameter(table[i].paramId);
+
+    // Host-automatable sound selection (sapptune issue #13). The callback can
+    // arrive on the audio thread; it only stores an index.
+    apvts_.addParameterListener(sapp::userpresets::kPresetParamId, this);
 
     loadDiagnosticInstrument();
     startTimerHz(30);   // deferred program-change apply (message thread)
@@ -126,7 +143,10 @@ void SappKeysProcessor::applyFactoryPreset(int index)
 
     for (auto* parameter : getParameters())
         if (auto* withId = dynamic_cast<juce::RangedAudioParameter*>(parameter))
-            withId->setValueNotifyingHost(withId->getDefaultValue());
+            // `preset` is the chooser, not part of the sound: resetting it
+            // here would snap the selection back to program 0 on every load.
+            if (withId->paramID != sapp::userpresets::kPresetParamId)
+                withId->setValueNotifyingHost(withId->getDefaultValue());
 
     for (const auto& [id, value] : preset.values)
         if (auto* parameter = apvts_.getParameter(id))
@@ -140,7 +160,90 @@ void SappKeysProcessor::applyFactoryPreset(int index)
         loadSfzInstrument(sfz);
 
     currentProgram_.store(index);
+    syncPresetParameter(index);
     updateHostDisplay(ChangeDetails{}.withProgramChanged(true));
+}
+
+// ----------------------------------------------------------- user presets --
+
+int SappKeysProcessor::factoryPresetCount() const
+{
+    return int(presets::all().size());
+}
+
+std::vector<sapp::userpresets::UserPreset> SappKeysProcessor::userPresets() const
+{
+    return sapp::userpresets::scan(kInstrument);
+}
+
+bool SappKeysProcessor::saveUserPreset(const juce::String& name, const juce::String& notes,
+                                       juce::String& error)
+{
+    auto preset = sapp::userpresets::capture(*this, name.trim(), notes);
+    // capture() is instrument-agnostic and never fills `sfz`: record which
+    // sample library this sound was captured with, so loading it elsewhere can
+    // put the same instrument back (PRESETS.md section 1).
+    preset.sfz = sfzPath_;
+    juce::File written;
+    return sapp::userpresets::save(preset, kInstrument, written, error);
+}
+
+bool SappKeysProcessor::loadUserPreset(const juce::String& name, juce::String& error)
+{
+    const auto preset = sapp::userpresets::findByName(kInstrument, name);
+    if (!preset.has_value()) {
+        error = "no user preset named \"" + name + "\" in "
+                + sapp::userpresets::presetDir(kInstrument).getFullPathName();
+        return false;
+    }
+    sapp::userpresets::apply(*preset, apvts_);
+    // Optional resource hint: swap libraries when the captured one is still
+    // where it was. A missing path is not an error — the parameters still
+    // apply on top of whatever instrument is loaded.
+    const juce::File sfz(preset->sfz);
+    if (preset->sfz.isNotEmpty() && sfz.existsAsFile()
+        && sfz.getFullPathName() != sfzPath_)
+        loadSfzInstrument(sfz);
+    return true;
+}
+
+void SappKeysProcessor::applyPresetChoice(int index)
+{
+    if (index < 0)
+        return;
+    if (index < factoryPresetCount()) {
+        applyFactoryPreset(index);
+        return;
+    }
+    // Beyond the factory bank: resolve the choice label back to a name and
+    // load from disk, so the file is the source of truth even if it changed
+    // since this instance was constructed.
+    auto* choice = dynamic_cast<juce::AudioParameterChoice*>(
+        apvts_.getParameter(sapp::userpresets::kPresetParamId));
+    if (choice == nullptr || index >= choice->choices.size())
+        return;
+    juce::String error;
+    loadUserPreset(sapp::userpresets::nameFromChoiceLabel(choice->choices[index]), error);
+    syncPresetParameter(index);
+}
+
+void SappKeysProcessor::syncPresetParameter(int choiceIndex)
+{
+    auto* choice = dynamic_cast<juce::AudioParameterChoice*>(
+        apvts_.getParameter(sapp::userpresets::kPresetParamId));
+    if (choice == nullptr || choiceIndex < 0 || choiceIndex >= choice->choices.size())
+        return;
+    if (choice->getIndex() == choiceIndex)
+        return;
+    const juce::ScopedValueSetter<bool> guard(applyingPreset_, true);
+    choice->setValueNotifyingHost(choice->convertTo0to1(float(choiceIndex)));
+}
+
+void SappKeysProcessor::parameterChanged(const juce::String& parameterId, float newValue)
+{
+    if (applyingPreset_ || parameterId != sapp::userpresets::kPresetParamId)
+        return;
+    pendingPresetChoice_.store(int(newValue));
 }
 
 void SappKeysProcessor::timerCallback()
@@ -148,6 +251,10 @@ void SappKeysProcessor::timerCallback()
     const int program = pendingProgram_.exchange(-1);
     if (program >= 0)
         applyFactoryPreset(program);
+
+    const int choice = pendingPresetChoice_.exchange(-1);
+    if (choice >= 0)
+        applyPresetChoice(choice);
 }
 
 void SappKeysProcessor::handleSappLinkCc(int ccNumber, int ccValue)
@@ -183,7 +290,10 @@ void SappKeysProcessor::advanceCcSlews(int numSamples)
     }
 }
 
-SappKeysProcessor::~SappKeysProcessor() = default;
+SappKeysProcessor::~SappKeysProcessor()
+{
+    apvts_.removeParameterListener(sapp::userpresets::kPresetParamId, this);
+}
 
 void SappKeysProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
