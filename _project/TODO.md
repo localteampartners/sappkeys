@@ -4,6 +4,8 @@
 
 ## Next
 
+- [ ] One manual UPDATE-button click on a Windows machine (rename-trick
+      .vst3 swap is untested on real Windows; macOS path verified).
 - [ ] Smoke-test VST3/AU in a third-party host (Logic / Reaper).
 - [ ] Pedal down/up noise samples: needs `on_loccN`/`on_hiccN` trigger
       support in SappSounds; then extend `applyKeysPolicy` to tag them.

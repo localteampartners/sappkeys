@@ -2,10 +2,20 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
-- In-plugin updater (v0.3.0): footer version button checks GitHub daily
-  (or on click); UPDATE button downloads + installs the newest release
-  (macOS install + quarantine clear, Windows rename-trick swap).
-  CMake project VERSION must be bumped with every release tag.
+## Shipped 2026-08-07 — v0.3.0 (in-plugin updater)
+
+- Footer version button checks GitHub daily (or on click); UPDATE
+  button downloads + installs the newest release (macOS: plug-in
+  folders + quarantine clear; Windows: rename-trick swap of the
+  loaded .vst3). Throttle key `lastUpdateCheck-sappkeys` in the shared
+  Sapp settings file.
+- v0.3.0 GitHub release carries CI-built Windows-x64 and
+  macOS-universal zips (SappKeys VST3/AU/Standalone). End-to-end
+  verified 2026-08-07 (sappkeys harness: v0.2.0 -> found v0.3.0 ->
+  downloaded + installed CI universal bundles, quarantine cleared).
+- CMake `project()` VERSION must be bumped with every release tag
+  (the updater compares JucePlugin_VersionString to the tag).
+- Build dirs (`build/`, `build-plugin/`) no longer tracked in git.
 
 ## Works (2026-08-06)
 

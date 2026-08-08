@@ -36,6 +36,12 @@ tests/unit/          Catch2: engine, resonance, room, render, sapplink
 tests/data/          vendored SappLink manifest copy (drift guard)
 scripts/make_demo.py Gymnopédie No. 1 demo MIDI generator
 ```
+- `src/plugin/UpdateManager.h` — in-plugin updater (background
+  thread): GitHub latest-release check vs JucePlugin_VersionString,
+  platform-asset download, install (SappKeys.vst3/.component on
+  macOS + xattr -rc; Windows rename-trick swap), standalone
+  self-relaunch on macOS. `src/core/VersionCompare.h` does the
+  semver-ish tag comparison.
 
 ## Key policies (where behavior lives)
 
