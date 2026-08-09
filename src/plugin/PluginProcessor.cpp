@@ -92,7 +92,9 @@ SappKeysProcessor::SappKeysProcessor()
     pLimiter_ = raw("limiter");
     pQuality_ = raw("quality");
 
-    eventScratch_.reserve(512);
+    // Sized so a MIDI flood can never make processBlock() allocate. Events past
+    // the cap are dropped here and the engine panics its voices (KeysEngine).
+    eventScratch_.reserve(size_t(sapp::keys::kMaxBlockEvents) + 2);
 
     const auto& table = sapplink::mappings();
     static_assert(std::tuple_size<decltype(ccSlews_)>::value == size_t(sapplink::kNumMappings),
@@ -363,7 +365,13 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     }
     lastExprParam_ = exprParam;
 
+    int floodedEvents = 0;
     for (const auto metadata : midi) {
+        // One slot short of the cap: the last is kept for the flood panic below.
+        if (eventScratch_.size() + 1 >= size_t(sapp::keys::kMaxBlockEvents)) {
+            ++floodedEvents;   // never grow the vector on the audio thread
+            continue;
+        }
         const auto msg = metadata.getMessage();
         MidiEvent e;
         e.frame = uint32_t(juce::jmax(0, metadata.samplePosition));
@@ -398,8 +406,23 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         }
         eventScratch_.push_back(e);
     }
-    std::stable_sort(eventScratch_.begin(), eventScratch_.end(),
-                     [](const MidiEvent& a, const MidiEvent& b) { return a.frame < b.frame; });
+    // A MidiBuffer is already ordered by sample position and the injected CC
+    // events sit at frame 0 ahead of it, so this is a check, not a sort — and
+    // it keeps std::stable_sort's temporary allocation off the audio thread in
+    // every real case.
+    const auto byFrame = [](const MidiEvent& a, const MidiEvent& b) { return a.frame < b.frame; };
+    if (!std::is_sorted(eventScratch_.begin(), eventScratch_.end(), byFrame))
+        std::stable_sort(eventScratch_.begin(), eventScratch_.end(), byFrame);
+
+    if (floodedEvents > 0) {
+        // Dropped events sort after what we kept, so the losses are note-OFFs:
+        // end every voice rather than leave notes stuck on. Fits in the two
+        // slots reserved past the cap — still no audio-thread allocation.
+        MidiEvent panic;
+        panic.type = MidiEvent::Type::AllSoundOff;
+        panic.frame = uint32_t(juce::jmax(0, buffer.getNumSamples() - 1));
+        eventScratch_.push_back(panic);
+    }
 
     buffer.clear();
     if (buffer.getNumChannels() >= 2) {

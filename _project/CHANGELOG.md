@@ -2,6 +2,38 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-08 — output safety (sapptune#17)
+
+- **Safety Limiter is now a limiter.** It was `tanh()` on the output: peak
+  stayed at 0 dBFS but a dense burst came out as a full-scale square wave.
+  64 simultaneous notes at velocity 127 (Salamander) measured **-0.00 dBFS
+  peak / -4.32 dBFS burst RMS before, -1.00 dBFS / -12.06 dBFS after**. It is
+  now block-lookahead gain reduction to -1 dBFS: no added latency, no
+  clipping, loud material turned down instead of squared off. The default was
+  already ON and is unchanged, so nothing recalls differently — but the tone
+  above roughly -6 dBFS does change, which is the point of the fix.
+- **Unconditional output guard.** Non-finite samples become 0 and every
+  filter/delay state is scrubbed so a NaN can't park inside an IIR; output is
+  clamped to ±1 even with the limiter switched off (that case measured
+  +25 dBFS with Master at +12 dB before).
+- **MIDI floods no longer strand notes on.** The per-block event buffer was a
+  fixed 300 and truncated silently — and the events that get cut are the
+  note-offs, so a burst left notes stuck on at full velocity forever. The cap
+  is now `kMaxBlockEvents` (1024, preallocated) and overflow ends every voice
+  instead of keeping the note-ons.
+- **Note-off guard.** SappSounds starts a *stolen* voice only when its 3 ms
+  steal fade finishes; a note-off arriving inside that window found no active
+  voice and was dropped, so the note sounded forever. Reproducible from ~46
+  simultaneous notes whose note-offs land in the same block. KeysEngine now
+  holds a note-off back until its note-on is 8 ms old. The underlying bug is
+  in SappSounds' `PlaybackEngine` (`triggerRegion` pending-start vs
+  `noteOff`) and affects every instrument on that engine — still worth fixing
+  there.
+- No allocation on the audio thread: the plugin's event scratch is sized to
+  the cap, and `std::stable_sort` now runs only when the buffer isn't already
+  ordered (a MidiBuffer always is).
+- New `tests/unit/test_safety.cpp` covers all of the above.
+
 ## 2026-08-09 — v0.5.1
 
 - Fixed the plugin version, which was still 0.3.0 while releases had moved

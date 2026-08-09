@@ -62,4 +62,22 @@ MIDI → (plugin: APVTS + CC slews | CLI: SappLink applyCcToParams) →
 KeysEngine.process: velocity shaping → PlaybackEngine (samples) → tone filter
 (dynamics/una-corda/vintage) → lid shelf → width → wow/flutter gain →
 drive → sympathetic resonance (added) → early + small-room FDN → master →
-soft limiter.
+safety limiter → output guard.
+
+## Output safety
+
+`KeysEngine::limitAndGuard`. The Safety Limiter parameter (default ON) is
+peak-accurate gain reduction to -1 dBFS: the block is rendered first and the
+gain comes from the block's own peak, so no sample gets past the ceiling and
+no latency is added. It replaced a `tanh` soft-clipper that held the peak at
+0 dBFS but turned a dense burst into a full-scale square wave. After it,
+unconditionally: non-finite samples become 0 (and every filter/delay state is
+scrubbed), and the output is clamped to ±1 whether the limiter is on or off.
+
+Two MIDI-burst guards sit in `KeysEngine::process`. `kMaxBlockEvents` — a block
+carrying more events than this is a flood, so the surplus is dropped and an
+AllSoundOff ends every voice, because the events that get truncated are the
+note-offs. `kNoteOffGuardSeconds` — a note-off is held back until its note-on
+is 8 ms old, because SappSounds starts a *stolen* voice only when its 3 ms
+steal fade finishes, and a note-off arriving inside that window finds no active
+voice and is lost, leaving the note sounding forever.

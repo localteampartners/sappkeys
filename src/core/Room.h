@@ -24,6 +24,14 @@ public:
         lpL_ = lpR_ = 0.0f;
     }
 
+    // Allocation-free state zero (engine non-finite recovery, audio thread).
+    void clear() noexcept
+    {
+        std::fill(buffer_.begin(), buffer_.end(), 0.0f);
+        writePos_ = 0;
+        lpL_ = lpR_ = 0.0f;
+    }
+
     void process(const float* inL, const float* inR, float* outL, float* outR, int frames)
     {
         static constexpr float tapMs[6] = {3.1f, 5.9f, 8.3f, 11.7f, 15.1f, 19.7f};
@@ -78,6 +86,19 @@ public:
         inDiffL_.prepare(sampleRate, 2.9f, 0.55f);
         inDiffR_.prepare(sampleRate, 2.1f, 0.55f);
         update();
+    }
+
+    // Allocation-free state zero (engine non-finite recovery, audio thread).
+    void clear() noexcept
+    {
+        for (int i = 0; i < kLines; ++i) {
+            std::fill(lines_[size_t(i)].begin(), lines_[size_t(i)].end(), 0.0f);
+            writePos_[i] = 0;
+            damp_[i] = 0.0f;
+        }
+        std::fill(inDiffL_.buffer.begin(), inDiffL_.buffer.end(), 0.0f);
+        std::fill(inDiffR_.buffer.begin(), inDiffR_.buffer.end(), 0.0f);
+        inDiffL_.pos = inDiffR_.pos = 0;
     }
 
     void setParams(float size, float decaySeconds)

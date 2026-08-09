@@ -43,6 +43,15 @@ public:
         nextComb_ = 0;
     }
 
+    // Zero every delay line and free the bank, keeping the pedal state. No
+    // allocation: the engine calls this from the audio thread when it has to
+    // recover from a non-finite sample.
+    void clear() noexcept
+    {
+        for (auto& c : combs_) c.reset();
+        nextComb_ = 0;
+    }
+
     void setPedal(bool down, const bool* heldNotes /*128 flags, may be null*/)
     {
         if (down == pedalDown_) return;

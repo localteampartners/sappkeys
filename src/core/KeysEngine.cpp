@@ -33,6 +33,17 @@ void KeysEngine::prepare(double sampleRate, int maxBlockFrames)
     sendL_.assign(n, 0.0f); sendR_.assign(n, 0.0f);
     earlyL_.assign(n, 0.0f); earlyR_.assign(n, 0.0f);
     tailL_.assign(n, 0.0f); tailR_.assign(n, 0.0f);
+    blockEvents_.assign(size_t(kEventScratchSlots), MidiEvent{});
+
+    sampleClock_ = 0;
+    noteOffGuardSamples_ = int64_t(kNoteOffGuardSeconds * sampleRate) + 1;
+    std::fill(std::begin(noteOnAt_), std::end(noteOnAt_), int64_t(-1) << 32);
+    std::fill(std::begin(pendingOffAt_), std::end(pendingOffAt_), int64_t(-1));
+    pendingOffCount_ = 0;
+
+    limGain_ = 1.0f;
+    limiterGainUi_.store(1.0f, std::memory_order_relaxed);
+    limReleaseCoef_ = 1.0f - std::exp(-1.0f / (float(sampleRate) * 0.15f));
 
     lpL_ = lpR_ = lidLpL_ = lidLpR_ = 0.0f;
     wowPhase_ = flutterPhase_ = 0.0f;
@@ -118,11 +129,34 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
     // Rewrite note-on velocities through the touch/una-corda curve, track the
     // sustain pedal + held keys for the resonance bank, and drive the internal
     // mech-noise controller. CC1/CC11 ride the dynamics/expression trims.
-    MidiEvent localEvents[300];
+    if (blockEvents_.size() < size_t(kEventScratchSlots)) {  // prepare() not run
+        for (int f = 0; f < frames; ++f) { outL[f] = 0.0f; outR[f] = 0.0f; }
+        return;
+    }
+    MidiEvent* const localEvents = blockEvents_.data();
     int localCount = 0;
+    // One slot always stays free for the panic event below.
+    const int capacity = kEventScratchSlots - 1;
+    const int n = std::min(frames, maxBlock_);
+
+    // Note-offs held back by the guard, released once their note-on is old
+    // enough. Emitted at frame 0 so the array stays ordered by frame.
+    if (pendingOffCount_ > 0) {
+        for (int note = 0; note < 128; ++note) {
+            if (pendingOffAt_[note] < 0 || pendingOffAt_[note] > sampleClock_ + int64_t(n))
+                continue;
+            pendingOffAt_[note] = -1;
+            --pendingOffCount_;
+            MidiEvent off;
+            off.type = MidiEvent::Type::NoteOff;
+            off.frame = 0;
+            off.note = uint8_t(note);
+            localEvents[localCount++] = off;
+        }
+    }
 
     const int mechCc = int((1.0f - std::clamp(p.mechNoise, 0.0f, 1.0f)) * 127.0f + 0.5f);
-    if (mechCc != lastMechCc_ && localCount < 300) {
+    if (mechCc != lastMechCc_) {
         lastMechCc_ = mechCc;
         MidiEvent e;
         e.type = MidiEvent::Type::Controller;
@@ -132,10 +166,14 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
         localEvents[localCount++] = e;
     }
 
-    for (int i = 0; i < eventCount && localCount < 300; ++i) {
+    const int usableEvents = std::min(eventCount, kMaxBlockEvents);
+    int consumed = 0;
+    for (int i = 0; i < usableEvents; ++i) {
+        if (localCount + 2 > capacity) break;   // cannot happen; never overrun
+        ++consumed;
         MidiEvent e = events[i];
         switch (e.type) {
-            case MidiEvent::Type::NoteOn: {
+            case MidiEvent::Type::NoteOn:
                 if (e.value > 0) {
                     const float shaped = shapeVelocity(float(e.value), p.touch, p.unaCorda);
                     const uint8_t outVel = uint8_t(std::clamp(int(shaped + 0.5f), 1, 127));
@@ -144,15 +182,36 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
                                                       std::memory_order_relaxed);
                     velWrite_.store(idx + 1, std::memory_order_release);
                     e.value = outVel;
-                    if (e.note < 128) heldNotes_[e.note] = true;
+                    if (e.note < 128) {
+                        heldNotes_[e.note] = true;
+                        // Re-trigger: let the held-back note-off out first so
+                        // the old instance is released before the new one.
+                        if (pendingOffAt_[e.note] >= 0) {
+                            pendingOffAt_[e.note] = -1;
+                            --pendingOffCount_;
+                            MidiEvent off = e;
+                            off.type = MidiEvent::Type::NoteOff;
+                            off.value = 0;
+                            localEvents[localCount++] = off;
+                        }
+                        noteOnAt_[e.note] = sampleClock_ + int64_t(e.frame);
+                    }
                     resonance_.noteOn(e.note);
-                } else if (e.note < 128) {
-                    heldNotes_[e.note] = false;
+                    break;
                 }
-                break;
-            }
+                [[fallthrough]];  // note-on with velocity 0 is a note-off
             case MidiEvent::Type::NoteOff:
-                if (e.note < 128) heldNotes_[e.note] = false;
+                if (e.note < 128) {
+                    heldNotes_[e.note] = false;
+                    // Hold the note-off back if its note-on is younger than the
+                    // guard: SappSounds may not have started the voice yet.
+                    const int64_t at = sampleClock_ + int64_t(e.frame);
+                    if (at - noteOnAt_[e.note] < noteOffGuardSamples_) {
+                        if (pendingOffAt_[e.note] < 0) ++pendingOffCount_;
+                        pendingOffAt_[e.note] = noteOnAt_[e.note] + noteOffGuardSamples_;
+                        continue;
+                    }
+                }
                 break;
             case MidiEvent::Type::Controller:
                 if (e.note == 1) liveDynamics_ = float(e.value) / 127.0f;
@@ -171,6 +230,8 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
             case MidiEvent::Type::AllNotesOff:
             case MidiEvent::Type::AllSoundOff:
                 std::fill(std::begin(heldNotes_), std::end(heldNotes_), false);
+                std::fill(std::begin(pendingOffAt_), std::end(pendingOffAt_), int64_t(-1));
+                pendingOffCount_ = 0;
                 break;
             default:
                 break;
@@ -178,11 +239,23 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
         localEvents[localCount++] = e;
     }
 
+    // MIDI flood: more events in one block than any performance produces (a
+    // controller re-enumerating, a host feedback loop). Silently truncating
+    // drops the note-OFFs — they sort after the note-ons — and leaves notes
+    // stuck on forever. Fail toward silence instead: end everything.
+    if (eventCount > consumed) {
+        MidiEvent panic;
+        panic.type = MidiEvent::Type::AllSoundOff;
+        panic.frame = uint32_t(std::max(0, frames - 1));
+        localEvents[localCount++] = panic;
+        std::fill(std::begin(heldNotes_), std::end(heldNotes_), false);
+    }
+
     const float dynamics = liveDynamics_ >= 0.0f ? liveDynamics_ : p.dynamics;
     const float expression = liveExpression_ >= 0.0f ? liveExpression_ : p.expression;
 
     // --- dry sampler render -------------------------------------------------
-    const int n = std::min(frames, maxBlock_);
+    sampleClock_ += int64_t(n);
     std::fill(dryL_.begin(), dryL_.begin() + n, 0.0f);
     std::fill(dryR_.begin(), dryR_.begin() + n, 0.0f);
     sampler_.process(localEvents, localCount, dryL_.data(), dryR_.data(), n);
@@ -301,19 +374,77 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
     room_.process(sendL_.data(), sendR_.data(), tailL_.data(), tailR_.data(), n);
 
     for (int f = 0; f < n; ++f) {
-        float l = (dryL_[size_t(f)] +
+        outL[f] = (dryL_[size_t(f)] +
                    (earlyL_[size_t(f)] * 0.8f + tailL_[size_t(f)]) * smRoom_) * smMaster_;
-        float r = (dryR_[size_t(f)] +
+        outR[f] = (dryR_[size_t(f)] +
                    (earlyR_[size_t(f)] * 0.8f + tailR_[size_t(f)]) * smRoom_) * smMaster_;
-        if (p.limiter) {
-            // Continuous soft saturation: ~transparent at low level, caps at ±1.
-            l = std::tanh(l);
-            r = std::tanh(r);
-        }
-        outL[f] = l;
-        outR[f] = r;
     }
     for (int f = n; f < frames; ++f) { outL[f] = 0.0f; outR[f] = 0.0f; }
+
+    limitAndGuard(outL, outR, frames, p.limiter);
+}
+
+void KeysEngine::limitAndGuard(float* outL, float* outR, int frames, bool enabled) noexcept
+{
+    if (enabled) {
+        // Peak-accurate limiting. The whole block is already rendered, so the
+        // gain is chosen from the block's own peak and applied from its first
+        // sample: no sample can slip through above the ceiling, and there is
+        // no added latency. Loud material is turned DOWN, not squared off.
+        float peak = 0.0f;
+        for (int f = 0; f < frames; ++f) {
+            const float l = std::abs(outL[f]);
+            const float r = std::abs(outR[f]);
+            if (std::isfinite(l) && l > peak) peak = l;
+            if (std::isfinite(r) && r > peak) peak = r;
+        }
+        const float target = peak > kSafetyCeiling ? kSafetyCeiling / peak : 1.0f;
+        if (target < limGain_) limGain_ = target;   // instant attack
+        for (int f = 0; f < frames; ++f) {
+            limGain_ += limReleaseCoef_ * (target - limGain_);
+            if (limGain_ > target) limGain_ = target;   // never above the block's
+            outL[f] *= limGain_;
+            outR[f] *= limGain_;
+        }
+        limiterGainUi_.store(limGain_, std::memory_order_relaxed);
+    } else {
+        limGain_ = 1.0f;
+        limiterGainUi_.store(1.0f, std::memory_order_relaxed);
+    }
+
+    // Unconditional guard. Non-finite audio never leaves the plugin, and the
+    // output is bounded even with the limiter switched off — a host, a rack or
+    // an interface would clip it anyway, and full-scale is the safety line.
+    bool sawNonFinite = false;
+    for (int f = 0; f < frames; ++f) {
+        float l = outL[f], r = outR[f];
+        if (!std::isfinite(l)) { l = 0.0f; sawNonFinite = true; }
+        if (!std::isfinite(r)) { r = 0.0f; sawNonFinite = true; }
+        outL[f] = std::clamp(l, -kOutputBound, kOutputBound);
+        outR[f] = std::clamp(r, -kOutputBound, kOutputBound);
+    }
+    if (sawNonFinite) scrubState();
+}
+
+void KeysEngine::scrubState() noexcept
+{
+    // A NaN parked in a feedback path would otherwise poison every later block.
+    // Everything here is std::fill / scalar stores on already-sized buffers.
+    lpL_ = lpR_ = lidLpL_ = lidLpR_ = 0.0f;
+    smDynGain_ = smExprGain_ = 1.0f;
+    smMaster_ = 1.0f;
+    limGain_ = 1.0f;
+    std::fill(dryL_.begin(), dryL_.end(), 0.0f);
+    std::fill(dryR_.begin(), dryR_.end(), 0.0f);
+    std::fill(sendL_.begin(), sendL_.end(), 0.0f);
+    std::fill(sendR_.begin(), sendR_.end(), 0.0f);
+    std::fill(earlyL_.begin(), earlyL_.end(), 0.0f);
+    std::fill(earlyR_.begin(), earlyR_.end(), 0.0f);
+    std::fill(tailL_.begin(), tailL_.end(), 0.0f);
+    std::fill(tailR_.begin(), tailR_.end(), 0.0f);
+    resonance_.clear();
+    early_.clear();
+    room_.clear();
 }
 
 } // namespace sapp::keys

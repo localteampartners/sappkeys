@@ -31,6 +31,31 @@ namespace sapp::keys {
 inline constexpr int kMechNoiseInternalCc = 102;
 inline constexpr float kMechNoiseRangeDb = -60.0f;
 
+// Most MIDI events one process() call acts on. A block carrying more than this
+// is a MIDI flood, not a performance. The surplus is dropped AND every note is
+// ended (see process()): the dangerous truncation is a lost note-off, which
+// leaves notes stuck on at whatever velocity the flood carried.
+inline constexpr int kMaxBlockEvents = 1024;
+
+// Slots the engine's per-block event scratch needs in the worst case: the
+// incoming events, one released note-off per key at the head of the block, one
+// more per re-triggered key, the injected mech-noise CC, and the panic.
+inline constexpr int kEventScratchSlots = 2 * kMaxBlockEvents + 130;
+
+// Safety-limiter ceiling, linear (-1 dBFS), and the absolute output bound the
+// engine enforces whether or not the limiter is switched on (0 dBFS).
+inline constexpr float kSafetyCeiling = 0.891251f;
+inline constexpr float kOutputBound = 1.0f;
+
+// Note-off guard. When SappSounds has to steal a voice it fades the old voice
+// out (EngineConfig::stealFadeSeconds, 3 ms by default) and only starts the new
+// note when that fade finishes. A note-off arriving during the fade finds no
+// active voice for the note and is lost — the note then starts and sounds
+// FOREVER. A dense burst steals voices by definition, so KeysEngine holds any
+// note-off back until its note-on is at least this old. Notes shorter than this
+// don't exist on a keyboard instrument; the sample attack alone is longer.
+inline constexpr float kNoteOffGuardSeconds = 0.008f;
+
 struct KeysParams {
     // Performance
     float touch = 0.5f;        // velocity response: 0 heavy .. 0.5 neutral .. 1 light
@@ -51,6 +76,9 @@ struct KeysParams {
     float roomDecay = 0.9f;    // seconds, 0.2..2.5
     // Output
     float masterGainDb = 0.0f;
+    // Safety limiter (default ON). Peak-accurate gain reduction to
+    // kSafetyCeiling — it turns loud material DOWN rather than squaring it off.
+    // Switching it off does not remove the unconditional kOutputBound clamp.
     bool limiter = true;
     int quality = 1;           // 0 draft (linear), 1 normal (cubic)
 };
@@ -100,8 +128,21 @@ public:
     void process(const sapp::sounds::MidiEvent* events, int eventCount,
                  float* outL, float* outR, int frames) noexcept;
 
+    // Gain reduction currently applied by the safety limiter, linear (1 = none).
+    // UI/diagnostic feed, any thread.
+    float limiterGain() const noexcept
+    {
+        return limiterGainUi_.load(std::memory_order_relaxed);
+    }
+
 private:
     void applyQuality(const KeysParams& p) noexcept;
+    // Output stage: peak-accurate limiting (when enabled) followed by the
+    // unconditional finite/range guard. Operates in place on the block.
+    void limitAndGuard(float* outL, float* outR, int frames, bool enabled) noexcept;
+    // Zero every filter/delay state. Called when a non-finite sample is seen so
+    // one bad sample cannot park a NaN inside an IIR forever. No allocation.
+    void scrubState() noexcept;
 
     sapp::sounds::PlaybackEngine sampler_;
     SympatheticResonance resonance_;
@@ -120,6 +161,14 @@ private:
     bool pedalDown_ = false;
     std::atomic<bool> pedalDownUi_{false};
 
+    // Note-off guard state (see kNoteOffGuardSeconds). Sample clock is engine
+    // time; -1 in pendingOffAt_ means "no note-off held back for this note".
+    int64_t sampleClock_ = 0;
+    int64_t noteOffGuardSamples_ = 0;
+    int64_t noteOnAt_[128] = {};
+    int64_t pendingOffAt_[128] = {};
+    int pendingOffCount_ = 0;
+
     // Velocity display feed: packed (in<<8)|out, lock-free ring.
     std::atomic<uint32_t> velRing_[kVelHistory] = {};
     std::atomic<uint32_t> velWrite_{0};
@@ -132,8 +181,18 @@ private:
     float lidLpL_ = 0.0f, lidLpR_ = 0.0f;  // lid shelf crossover
     float wowPhase_ = 0.0f, flutterPhase_ = 0.0f;
 
+    // Safety limiter state. Attack is instantaneous at the block boundary
+    // (the gain is chosen from the whole block's peak, so no sample can slip
+    // through above the ceiling); release is exponential, ~150 ms.
+    float limGain_ = 1.0f;
+    float limReleaseCoef_ = 0.0f;
+    std::atomic<float> limiterGainUi_{1.0f};
+
     // Scratch buffers (allocated in prepare).
     std::vector<float> dryL_, dryR_, sendL_, sendR_, earlyL_, earlyR_, tailL_, tailR_;
+    // Per-block event scratch (allocated in prepare): kMaxBlockEvents plus room
+    // for the injected mech-noise CC and the flood-panic AllNotesOff.
+    std::vector<sapp::sounds::MidiEvent> blockEvents_;
 
     double sampleRate_ = 48000.0;
     int maxBlock_ = 0;

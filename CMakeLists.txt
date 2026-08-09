@@ -69,6 +69,7 @@ if(SAPPKEYS_BUILD_TESTS)
     tests/unit/test_resonance.cpp
     tests/unit/test_room.cpp
     tests/unit/test_render.cpp
+    tests/unit/test_safety.cpp
     tests/unit/test_sapplink.cpp
   )
   target_link_libraries(SappKeysTests PRIVATE sappkeys_core Catch2::Catch2WithMain)
