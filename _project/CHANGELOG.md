@@ -2,6 +2,15 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-09 — v0.5.1
+
+- Fixed the plugin version, which was still 0.3.0 while releases had moved
+  on to v0.5.0. The in-plugin updater compares the running build's version
+  against the latest tag, so a v0.5.0 install reported itself as 0.3.0 and
+  kept re-offering the same update after installing it. The binary now
+  reports its real version; RUNBOOK already requires bumping
+  `project(SappKeys VERSION ...)` with every release tag.
+
 ## 2026-08-08 — user presets
 
 - SappLink user presets (sapptune/sapplink/PRESETS.md): save the current
