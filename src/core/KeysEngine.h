@@ -132,6 +132,19 @@ public:
         return limiterGainUi_.load(std::memory_order_relaxed);
     }
 
+    // Frames the sampler has actually rendered since construction (any thread).
+    // Only counts blocks that reached sampler_.process() — i.e. blocks in which
+    // a pending instrument could be adopted and steal-fades could progress.
+    // Lets the control thread defer collectRetired() until the audio thread has
+    // provably rendered past an instrument swap's adoption + fade window
+    // (sapptune #21): retiring immediately after setInstrument() could free a
+    // snapshot that voices are still fading out of if the host isn't running
+    // audio.
+    uint64_t framesRendered() const noexcept
+    {
+        return framesRendered_.load(std::memory_order_acquire);
+    }
+
 private:
     void applyQuality(const KeysParams& p) noexcept;
     // Output stage: peak-accurate limiting (when enabled) followed by the
@@ -176,6 +189,9 @@ private:
     float limGain_ = 1.0f;
     float limReleaseCoef_ = 0.0f;
     std::atomic<float> limiterGainUi_{1.0f};
+
+    // Frames rendered through the sampler (see framesRendered()).
+    std::atomic<uint64_t> framesRendered_{0};
 
     // Scratch buffers (allocated in prepare).
     std::vector<float> dryL_, dryR_, sendL_, sendR_, earlyL_, earlyR_, tailL_, tailR_;

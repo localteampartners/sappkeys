@@ -2,6 +2,30 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-09 — instrument-state safety (sapptune#21)
+
+- **Pre-state note-on gate (`StartupGate`).** The constructor installs the
+  Diagnostic Orchestra as a placeholder; stray MIDI arriving before
+  `setStateInformation`'s async SFZ load finished could sound it — the
+  "altogether default sound" of #21. Note-ons are now suppressed until the
+  restore's instrument is installed (or a 1.5 s fresh-insert grace passes);
+  MIDI program changes are deferred (not dropped) over the same window.
+  Suppressions are logged: grep Live's Log.txt for `SappKeys-midi-gate`.
+- **Audio-source identity logging.** When a voice batch starts from silence
+  the timer logs which install produced it, throttled:
+  `SappKeys-audio-source: instrument="<sfz path | DIAGNOSTIC(reason)>"
+  gen=N armed=0|1 voices=V`. A recurrence now names its own cause.
+- **State restore no longer re-applies the `preset` choice.** `replaceState`
+  fired the preset parameter listener, which re-applied the preset over the
+  restored state (clobbering saved tweaks, swapping to the preset's library
+  instead of the saved `sfzPath`). Guarded.
+- **Deferred snapshot retirement.** `collectRetired()` now runs only after the
+  audio thread has rendered ≥0.5 s past the swap (`KeysEngine::framesRendered`),
+  so a steal-fading voice can never read a freed instrument snapshot when the
+  host suspends audio around a load.
+- 7 new tests (43 total): StartupGate policy, pre-state silence, swap-under-
+  load fade/rebind, rapid-swap churn. auval + uishot --cctest/--presettest pass.
+
 ## 2026-08-08 — output safety (sapptune#17)
 
 - **Safety Limiter is now a limiter.** It was `tanh()` on the output: peak

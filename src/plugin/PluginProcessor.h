@@ -14,6 +14,7 @@
 #include <sapp/sounds/InstrumentLoader.h>
 
 #include "../core/KeysEngine.h"
+#include "../core/StartupGate.h"
 #include "UserPresets.h"
 
 namespace sappkeys {
@@ -90,13 +91,21 @@ public:
     juce::AudioProcessorValueTreeState& valueTree() { return apvts_; }
     sapp::keys::KeysEngine& engine() { return engine_; }
 
-    // Async instrument management (message thread).
+    // Async instrument management (message thread). `reason` labels WHY the
+    // diagnostic instrument is being installed; it appears verbatim in the
+    // SappKeys-audio-source log line (sapptune #21) so a recurrence of the
+    // "default sound" burst names its own cause.
     void loadSfzInstrument(const juce::File& sfzFile);
-    void loadDiagnosticInstrument();
+    void loadDiagnosticInstrument(const char* reason = "user-selected");
     juce::String currentInstrumentName() const;
     juce::String currentInstrumentPath() const { return sfzPath_; }
     juce::String loadStatus() const;
     bool isLoading() const { return loading_.load(); }
+
+    // True once note-ons pass the startup gate (sapptune #21): the host's
+    // state restore has installed its instrument, or the fresh-insert grace
+    // window elapsed with no restore. UI/tools feed; any thread.
+    bool noteInputArmed() const { return startupGate_.armed(); }
 
     juce::MidiKeyboardState keyboardState;
 
@@ -106,7 +115,7 @@ private:
     static juce::AudioProcessorValueTreeState::ParameterLayout makeLayout();
     void pushParamsToEngine();
     void finishLoad(sapp::sounds::LoadResult result, const juce::String& path,
-                    uint64_t generation);
+                    const juce::String& identity, uint64_t generation);
 
     juce::AudioProcessorValueTreeState apvts_;
     sapp::keys::KeysEngine engine_;
@@ -169,6 +178,35 @@ private:
     std::atomic<bool> loading_{false};
     std::atomic<uint64_t> loadGeneration_{0};
     juce::CriticalSection loadLock_;
+
+    // ---- instrument-state fault localisation (sapptune #21) ----------------
+    // Pre-state note-on gate: stray MIDI must not sound the construction
+    // default before the host's state restore has installed the real SFZ.
+    sapp::keys::StartupGate startupGate_;
+    double constructionMs_ = 0.0;                       // message thread
+    std::atomic<uint32_t> suppressedNoteOns_{0};        // audio → timer
+    uint32_t suppressedLogged_ = 0;                     // timer only
+
+    // Which install is (about to be) live on the audio thread, by load
+    // generation. 0 = nothing installed yet.
+    std::atomic<uint64_t> installedGeneration_{0};
+    // Set by the audio thread when a voice batch starts from silence (0 → >0
+    // active voices); drained by the timer, which logs the instrument identity.
+    std::atomic<uint64_t> audioBatchGeneration_{0};
+    double lastAudioSourceLogMs_ = -1.0e12;             // timer throttles
+    double lastGateLogMs_ = -1.0e12;
+    struct InstrumentIdentity {
+        uint64_t generation = 0;
+        juce::String label;                             // SFZ path or DIAGNOSTIC(...)
+    };
+    std::vector<InstrumentIdentity> identityHistory_;   // guarded by loadLock_
+    juce::String identityForGeneration(uint64_t generation) const;
+
+    // Deferred snapshot retirement: collectRetired() runs only after the audio
+    // thread has rendered past the swap's adoption + steal-fade window, so a
+    // fading voice can never read a freed instrument snapshot. Message thread.
+    bool retirePending_ = false;
+    uint64_t retireAtFrames_ = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SappKeysProcessor)
 };

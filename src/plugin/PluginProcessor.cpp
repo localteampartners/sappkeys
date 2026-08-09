@@ -106,7 +106,11 @@ SappKeysProcessor::SappKeysProcessor()
     // arrive on the audio thread; it only stores an index.
     apvts_.addParameterListener(sapp::userpresets::kPresetParamId, this);
 
-    loadDiagnosticInstrument();
+    // The diagnostic instrument installed here is only ever HEARD on a fresh
+    // insert: note-ons are gated (StartupGate) until either a state restore
+    // installs the real SFZ or the fresh-insert grace window passes.
+    constructionMs_ = juce::Time::getMillisecondCounterHiRes();
+    loadDiagnosticInstrument("construction-default");
     startTimerHz(30);   // deferred program-change apply (message thread)
 }
 
@@ -250,13 +254,68 @@ void SappKeysProcessor::parameterChanged(const juce::String& parameterId, float 
 
 void SappKeysProcessor::timerCallback()
 {
-    const int program = pendingProgram_.exchange(-1);
+    // MIDI program changes are held (not dropped) while the startup gate is
+    // closed AND an instrument load is still deciding what this instance is:
+    // a stray program change must not swap the instrument out from under a
+    // state restore in flight (sapptune #21). After a FAILED restore load the
+    // gate stays closed, so program changes apply again then — they load a
+    // real library and are the user's escape hatch from a dead restore.
+    const bool holdPrograms = !startupGate_.armed()
+                              && !(startupGate_.restoreSeen() && !loading_.load());
+    const int program = holdPrograms ? -1 : pendingProgram_.exchange(-1);
     if (program >= 0)
         applyFactoryPreset(program);
 
     const int choice = pendingPresetChoice_.exchange(-1);
     if (choice >= 0)
         applyPresetChoice(choice);
+
+    // ---- sapptune #21: gate arming, deferred retire, identity logging ------
+    const double nowMs = juce::Time::getMillisecondCounterHiRes();
+    startupGate_.tick(nowMs - constructionMs_);
+
+    // Retire superseded instrument snapshots only once the audio thread has
+    // rendered past the swap (adoption + steal fade). If the host isn't
+    // running audio, snapshots simply wait — never freed under a fading voice.
+    if (retirePending_ && engine_.framesRendered() >= retireAtFrames_) {
+        retirePending_ = false;
+        engine_.collectRetired();
+    }
+
+    // A voice batch started from silence: name the instrument that produced
+    // it. Throttled; grep Live's Log.txt for "SappKeys-audio-source".
+    if (const uint64_t gen = audioBatchGeneration_.exchange(0); gen != 0) {
+        if (nowMs - lastAudioSourceLogMs_ >= 3000.0) {
+            lastAudioSourceLogMs_ = nowMs;
+            juce::Logger::writeToLog(
+                "SappKeys-audio-source: instrument=\"" + identityForGeneration(gen)
+                + "\" gen=" + juce::String(gen)
+                + " armed=" + juce::String(startupGate_.armed() ? 1 : 0)
+                + " voices=" + juce::String(engine_.sampler().activeVoiceCount()));
+        }
+    }
+
+    // Note-ons were suppressed by the pre-state gate: log it (throttled) so a
+    // stray-MIDI burst that WOULD have sounded the wrong instrument is visible.
+    const uint32_t suppressed = suppressedNoteOns_.load(std::memory_order_relaxed);
+    if (suppressed != suppressedLogged_ && nowMs - lastGateLogMs_ >= 2000.0) {
+        lastGateLogMs_ = nowMs;
+        suppressedLogged_ = suppressed;
+        juce::Logger::writeToLog(
+            "SappKeys-midi-gate: suppressed=" + juce::String(suppressed)
+            + " note-on(s) before state restore; holding instrument=\""
+            + identityForGeneration(installedGeneration_.load(std::memory_order_relaxed))
+            + "\"");
+    }
+}
+
+juce::String SappKeysProcessor::identityForGeneration(uint64_t generation) const
+{
+    const juce::ScopedLock sl(loadLock_);
+    for (auto it = identityHistory_.rbegin(); it != identityHistory_.rend(); ++it)
+        if (it->generation == generation)
+            return it->label;
+    return "UNKNOWN(gen " + juce::String(generation) + ")";
 }
 
 void SappKeysProcessor::handleSappLinkCc(int ccNumber, int ccValue)
@@ -365,6 +424,13 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     }
     lastExprParam_ = exprParam;
 
+    // Pre-state gate (sapptune #21): until the instrument knows what it is —
+    // host state restored (and its SFZ installed) or the fresh-insert grace
+    // passed — note-ons and MIDI program changes are dropped, so stray MIDI
+    // can never sound the construction-default diagnostic instrument.
+    // Note-offs, CCs, bend and panic messages always pass.
+    const bool armed = startupGate_.armed();
+
     int floodedEvents = 0;
     for (const auto metadata : midi) {
         // One slot short of the cap: the last is kept for the flood panic below.
@@ -376,6 +442,10 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         MidiEvent e;
         e.frame = uint32_t(juce::jmax(0, metadata.samplePosition));
         if (msg.isNoteOn()) {
+            if (!armed) {
+                suppressedNoteOns_.fetch_add(1, std::memory_order_relaxed);
+                continue;
+            }
             e.type = MidiEvent::Type::NoteOn;
             e.note = uint8_t(msg.getNoteNumber());
             e.value = uint8_t(msg.getVelocity());
@@ -399,6 +469,11 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             e.type = MidiEvent::Type::AllSoundOff;
         } else if (msg.isProgramChange()) {
             // Factory-preset select; applied on the message thread (timer).
+            // Stored even while the startup gate is closed — the timer HOLDS
+            // it until the gate arms (sapptune #21), so a set_patches program
+            // change that races plugin instantiation is deferred, not lost,
+            // and can never swap the instrument out from under a state
+            // restore in flight.
             pendingProgram_.store(msg.getProgramChangeNumber());
             continue;
         } else {
@@ -426,16 +501,26 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     buffer.clear();
     if (buffer.getNumChannels() >= 2) {
+        // Voice-batch start detection (sapptune #21): when this block takes the
+        // engine from silence to sounding, record which install (by load
+        // generation) produced the audio; the timer logs its identity. The
+        // generation is read before process() because that is the install a
+        // pending swap would adopt at this block's boundary.
+        const int voicesBefore = engine_.sampler().activeVoiceCount();
+        const uint64_t blockGeneration =
+            installedGeneration_.load(std::memory_order_relaxed);
         engine_.process(eventScratch_.data(), int(eventScratch_.size()),
                         buffer.getWritePointer(0), buffer.getWritePointer(1),
                         buffer.getNumSamples());
+        if (voicesBefore == 0 && engine_.sampler().activeVoiceCount() > 0)
+            audioBatchGeneration_.store(blockGeneration, std::memory_order_relaxed);
     }
     midi.clear();
 }
 
 // ------------------------------------------------------------- instruments --
 
-void SappKeysProcessor::loadDiagnosticInstrument()
+void SappKeysProcessor::loadDiagnosticInstrument(const char* reason)
 {
     const uint64_t generation = ++loadGeneration_;
     loading_ = true;
@@ -443,14 +528,16 @@ void SappKeysProcessor::loadDiagnosticInstrument()
         const juce::ScopedLock sl(loadLock_);
         loadStatus_ = "Generating diagnostic keys...";
     }
-    std::thread([this, generation] {
+    const juce::String identity = "DIAGNOSTIC(" + juce::String(reason) + ")";
+    std::thread([this, generation, identity] {
         auto inst = sapp::sounds::makeDiagnosticInstrument();
         sapp::sounds::LoadResult result;
         result.instrument = inst;
         result.ok = true;
-        juce::MessageManager::callAsync([this, result = std::move(result), generation]() mutable {
-            finishLoad(std::move(result), {}, generation);
-        });
+        juce::MessageManager::callAsync(
+            [this, result = std::move(result), identity, generation]() mutable {
+                finishLoad(std::move(result), {}, identity, generation);
+            });
     }).detach();
 }
 
@@ -466,13 +553,14 @@ void SappKeysProcessor::loadSfzInstrument(const juce::File& sfzFile)
     std::thread([this, path, generation] {
         auto result = sapp::keys::loadKeysSfz(path.toStdString());
         juce::MessageManager::callAsync([this, result = std::move(result), path, generation]() mutable {
-            finishLoad(std::move(result), path, generation);
+            finishLoad(std::move(result), path, path, generation);
         });
     }).detach();
 }
 
 void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
-                                   const juce::String& path, uint64_t generation)
+                                   const juce::String& path,
+                                   const juce::String& identity, uint64_t generation)
 {
     if (generation != loadGeneration_.load()) return;  // superseded
     loading_ = false;
@@ -485,14 +573,33 @@ void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
                 loadStatus_ = "Load failed: " + juce::String(d.message);
                 break;
             }
+        // Deliberately NOT arming the startup gate here: if the load a state
+        // restore initiated failed, staying silent (with the status naming the
+        // failure) beats sounding whatever was installed before it — that is
+        // exactly the wrong-instrument fault of sapptune #21.
     } else {
+        // Identity before install: a voice batch starting right after the swap
+        // must be able to resolve this generation to its name.
+        identityHistory_.push_back({generation, identity});
+        if (identityHistory_.size() > 8)
+            identityHistory_.erase(identityHistory_.begin());
+        installedGeneration_.store(generation, std::memory_order_relaxed);
+
         engine_.setInstrument(result.instrument);
-        engine_.collectRetired();
+        // Superseded snapshots are retired on the timer, only after the audio
+        // thread has rendered past adoption + steal fade (sapptune #21): a
+        // suspended audio engine must never lead to a fading voice reading a
+        // freed snapshot.
+        retirePending_ = true;
+        retireAtFrames_ = engine_.framesRendered()
+                          + uint64_t((getSampleRate() > 0.0 ? getSampleRate() : 48000.0) * 0.5);
+
         sfzPath_ = path;
         instrumentName_ = juce::String(result.instrument->definition.name);
         loadStatus_ = result.missingSamples.empty()
                           ? "Ready"
                           : juce::String(result.missingSamples.size()) + " samples missing";
+        startupGate_.loadCompleted(generation <= 1);
     }
     if (onInstrumentChanged) onInstrumentChanged();
 }
@@ -525,12 +632,28 @@ void SappKeysProcessor::setStateInformation(const void* data, int sizeInBytes)
     if (auto xml = getXmlFromBinary(data, sizeInBytes)) {
         auto state = juce::ValueTree::fromXml(*xml);
         if (!state.isValid()) return;
-        apvts_.replaceState(state);
+        // Hold fire until the restored instrument is actually installed: a
+        // stray MIDI burst between instantiation and the async load finishing
+        // must not sound the construction-default diagnostic (sapptune #21).
+        startupGate_.beginStateRestore();
+        {
+            // replaceState() fires the `preset` parameter listener; without the
+            // guard the restored choice index would queue applyPresetChoice(),
+            // which re-applies the preset OVER the restored state — clobbering
+            // saved knob tweaks and swapping to the preset's library instead
+            // of the saved sfzPath (another wrong-instrument-after-restore
+            // path, sapptune #21). The restored state is the whole truth; the
+            // parameter is just the chooser's position.
+            const juce::ScopedValueSetter<bool> guard(applyingPreset_, true);
+            apvts_.replaceState(state);
+        }
+        pendingPresetChoice_.store(-1);   // discard any echo already queued
         const juce::String path = state.getProperty("sfzPath", "").toString();
         if (path.isNotEmpty() && juce::File(path).existsAsFile())
             loadSfzInstrument(juce::File(path));
         else
-            loadDiagnosticInstrument();
+            loadDiagnosticInstrument(path.isEmpty() ? "state-default"
+                                                    : "state-path-missing");
     }
 }
 

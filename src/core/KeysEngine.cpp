@@ -214,6 +214,7 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
     std::fill(dryL_.begin(), dryL_.begin() + n, 0.0f);
     std::fill(dryR_.begin(), dryR_.begin() + n, 0.0f);
     sampler_.process(localEvents, localCount, dryL_.data(), dryR_.data(), n);
+    framesRendered_.fetch_add(uint64_t(n), std::memory_order_release);
 
     // --- target gains -------------------------------------------------------
     // CC1 dynamics trim (gentle for keys): level −10 dB..0, brightness with it.

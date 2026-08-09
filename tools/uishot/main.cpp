@@ -33,12 +33,18 @@ public:
         whenIdle([this] { finishCcTest(); });
     }
 
-    // Runs `then` once no processor is still loading an instrument.
+    // Runs `then` once no processor is still loading an instrument and every
+    // processor's startup gate has armed (sapptune #21: fresh instances hold
+    // note-ons and MIDI program changes until a state restore installs its
+    // instrument or the fresh-insert grace window passes — the proofs below
+    // send both, so they must wait for the gate like a human would).
     void whenIdle(std::function<void()> then, int attemptsLeft = 600)
     {
-        const bool busy = (processor && processor->isLoading())
-                          || (procA && procA->isLoading()) || (procB && procB->isLoading())
-                          || (procC && procC->isLoading());
+        const auto pending = [](const std::unique_ptr<sappkeys::SappKeysProcessor>& p) {
+            return p && (p->isLoading() || !p->noteInputArmed());
+        };
+        const bool busy = pending(processor) || pending(procA) || pending(procB)
+                          || pending(procC);
         if (!busy || attemptsLeft <= 0) {
             then();
             return;

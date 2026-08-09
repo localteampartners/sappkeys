@@ -65,6 +65,7 @@ if(SAPPKEYS_BUILD_TESTS)
   FetchContent_MakeAvailable(Catch2)
 
   add_executable(SappKeysTests
+    tests/unit/test_instrument_state.cpp
     tests/unit/test_keys_engine.cpp
     tests/unit/test_resonance.cpp
     tests/unit/test_room.cpp

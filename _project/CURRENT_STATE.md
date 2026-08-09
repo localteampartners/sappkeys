@@ -2,6 +2,24 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-08-09 — instrument-state safety, sapptune#21 (uncommitted)
+
+- Root cause of the "default sound" idle blast: the construction-default
+  Diagnostic Orchestra is playable between plugin instantiation and the
+  async SFZ load kicked off by `setStateInformation`. `StartupGate`
+  (`src/core/StartupGate.h`) now suppresses note-ons until the restored
+  instrument is installed (fresh inserts arm after a 1.5 s grace); MIDI
+  program changes are deferred across the same window.
+- Instrument identity is logged when a voice batch starts from silence
+  (`SappKeys-audio-source: instrument="..." gen=N armed=X voices=V`) and
+  when the gate suppresses note-ons (`SappKeys-midi-gate: suppressed=N`).
+  On the Windows machine, grep Live's Log.txt for `SappKeys-audio-source`
+  on the next recurrence.
+- `replaceState` preset-listener echo guarded (restore no longer re-applies
+  the preset over restored state); `collectRetired()` deferred until the
+  audio thread rendered past the swap. Tests 43/43, auval, uishot both
+  modes pass. Needs a Windows build ≥ v0.6.2 to reach the reporter.
+
 ## Shipped 2026-08-08 — user presets (uncommitted)
 
 - Suite-shared user-preset format (sapptune/sapplink/PRESETS.md) in
