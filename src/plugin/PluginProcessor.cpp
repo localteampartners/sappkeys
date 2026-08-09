@@ -106,10 +106,29 @@ SappKeysProcessor::SappKeysProcessor()
     // arrive on the audio thread; it only stores an index.
     apvts_.addParameterListener(sapp::userpresets::kPresetParamId, this);
 
+    // 'Library ready' readiness signal (sappkeys #2): mirrors the note-on
+    // gate, so headless hosts (sappradio) can poll readiness instead of using
+    // a blind settle window. 1 = note-ons pass and sound the intended
+    // instrument; 0 = an async load owns the window. Deliberately OUTSIDE the
+    // APVTS: it is a status readout, not part of the sound — copyState/
+    // replaceState must never save or restore it (a stale "ready" from a
+    // saved session would lie), and it is non-automatable. Appended last with
+    // a new, stable ID so no existing parameter's index or ID moves.
+    libraryReady_ = new juce::AudioParameterBool(
+        juce::ParameterID{"libraryReady", 1}, "Library Ready", false,
+        juce::AudioParameterBoolAttributes().withAutomatable(false));
+    addParameter(libraryReady_);
+
     // The diagnostic instrument installed here is only ever HEARD on a fresh
     // insert: note-ons are gated (StartupGate) until either a state restore
     // installs the real SFZ or the fresh-insert grace window passes.
     constructionMs_ = juce::Time::getMillisecondCounterHiRes();
+
+    // Build identity (sappkeys #1): one line at construction names WHICH
+    // build the host just loaded, so a DAW/host log immediately distinguishes
+    // a stale installed binary from the build the repo thinks it shipped.
+    juce::Logger::writeToLog("SappKeys-build: version=" SAPPKEYS_VERSION);
+
     loadDiagnosticInstrument("construction-default");
     startTimerHz(30);   // deferred program-change apply (message thread)
 }
@@ -151,7 +170,10 @@ void SappKeysProcessor::applyFactoryPreset(int index)
         if (auto* withId = dynamic_cast<juce::RangedAudioParameter*>(parameter))
             // `preset` is the chooser, not part of the sound: resetting it
             // here would snap the selection back to program 0 on every load.
-            if (withId->paramID != sapp::userpresets::kPresetParamId)
+            // `libraryReady` is a status readout owned by the gate — a preset
+            // must never write it.
+            if (withId->paramID != sapp::userpresets::kPresetParamId
+                && withId != libraryReady_)
                 withId->setValueNotifyingHost(withId->getDefaultValue());
 
     for (const auto& [id, value] : preset.values)
@@ -273,6 +295,7 @@ void SappKeysProcessor::timerCallback()
     // ---- sapptune #21: gate arming, deferred retire, identity logging ------
     const double nowMs = juce::Time::getMillisecondCounterHiRes();
     startupGate_.tick(nowMs - constructionMs_);
+    publishReadiness();   // grace arming has no other hook; also self-heals
 
     // Retire superseded instrument snapshots only once the audio thread has
     // rendered past the swap (adoption + steal fade). If the host isn't
@@ -290,20 +313,22 @@ void SappKeysProcessor::timerCallback()
             juce::Logger::writeToLog(
                 "SappKeys-audio-source: instrument=\"" + identityForGeneration(gen)
                 + "\" gen=" + juce::String(gen)
+                + " build=" SAPPKEYS_VERSION
                 + " armed=" + juce::String(startupGate_.armed() ? 1 : 0)
                 + " voices=" + juce::String(engine_.sampler().activeVoiceCount()));
         }
     }
 
-    // Note-ons were suppressed by the pre-state gate: log it (throttled) so a
-    // stray-MIDI burst that WOULD have sounded the wrong instrument is visible.
+    // Note-ons were suppressed by the gate (startup OR a mid-session load
+    // window): log it (throttled) so a burst that WOULD have sounded the
+    // wrong instrument is visible.
     const uint32_t suppressed = suppressedNoteOns_.load(std::memory_order_relaxed);
     if (suppressed != suppressedLogged_ && nowMs - lastGateLogMs_ >= 2000.0) {
         lastGateLogMs_ = nowMs;
         suppressedLogged_ = suppressed;
         juce::Logger::writeToLog(
             "SappKeys-midi-gate: suppressed=" + juce::String(suppressed)
-            + " note-on(s) before state restore; holding instrument=\""
+            + " note-on(s) during an instrument load window; installed=\""
             + identityForGeneration(installedGeneration_.load(std::memory_order_relaxed))
             + "\"");
     }
@@ -523,6 +548,10 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 void SappKeysProcessor::loadDiagnosticInstrument(const char* reason)
 {
     const uint64_t generation = ++loadGeneration_;
+    // Every async load owns a note-on gate window (sappkeys #2): until this
+    // install lands, notes must not sound the outgoing instrument.
+    startupGate_.beginLoad();
+    publishReadiness();
     loading_ = true;
     {
         const juce::ScopedLock sl(loadLock_);
@@ -544,6 +573,12 @@ void SappKeysProcessor::loadDiagnosticInstrument(const char* reason)
 void SappKeysProcessor::loadSfzInstrument(const juce::File& sfzFile)
 {
     const uint64_t generation = ++loadGeneration_;
+    // Every async load owns a note-on gate window (sappkeys #2): program
+    // change, preset parameter, user preset and Sounds-panel picks all route
+    // through here, so a mid-session load can no longer race stray notes onto
+    // the outgoing (or diagnostic) instrument.
+    startupGate_.beginLoad();
+    publishReadiness();
     loading_ = true;
     {
         const juce::ScopedLock sl(loadLock_);
@@ -573,10 +608,13 @@ void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
                 loadStatus_ = "Load failed: " + juce::String(d.message);
                 break;
             }
-        // Deliberately NOT arming the startup gate here: if the load a state
-        // restore initiated failed, staying silent (with the status naming the
-        // failure) beats sounding whatever was installed before it — that is
-        // exactly the wrong-instrument fault of sapptune #21.
+        // Failure policy lives in the gate (StartupGate.h): re-arm only if a
+        // real instrument from an earlier load is still installed — a corrupt
+        // mid-session pick must not brick the session, but a failed state
+        // restore over the construction diagnostic stays silent (with the
+        // status naming the failure) rather than sounding the diagnostic —
+        // that is exactly the wrong-instrument fault of sapptune #21.
+        startupGate_.loadFailed();
     } else {
         // Identity before install: a voice batch starting right after the swap
         // must be able to resolve this generation to its name.
@@ -601,7 +639,19 @@ void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
                           : juce::String(result.missingSamples.size()) + " samples missing";
         startupGate_.loadCompleted(generation <= 1);
     }
+    publishReadiness();
     if (onInstrumentChanged) onInstrumentChanged();
+}
+
+void SappKeysProcessor::publishReadiness()
+{
+    // Mirror the gate into the host-visible `libraryReady` parameter
+    // (sappkeys #2). Message thread only. Also called from the 30 Hz timer,
+    // which both covers grace-window arming (no other hook fires there) and
+    // self-heals any host write to what is a read-only status readout.
+    const bool ready = startupGate_.armed();
+    if (libraryReady_ != nullptr && libraryReady_->get() != ready)
+        *libraryReady_ = ready;
 }
 
 juce::String SappKeysProcessor::currentInstrumentName() const
@@ -636,6 +686,7 @@ void SappKeysProcessor::setStateInformation(const void* data, int sizeInBytes)
         // stray MIDI burst between instantiation and the async load finishing
         // must not sound the construction-default diagnostic (sapptune #21).
         startupGate_.beginStateRestore();
+        publishReadiness();
         {
             // replaceState() fires the `preset` parameter listener; without the
             // guard the restored choice index would queue applyPresetChoice(),

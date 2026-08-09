@@ -149,6 +149,10 @@ UserPreset capture(juce::AudioProcessor& processor, const juce::String& name,
         auto* withId = dynamic_cast<juce::AudioProcessorParameterWithID*>(parameter);
         if (withId == nullptr || withId->paramID == kPresetParamId)
             continue;
+        // Non-automatable parameters are status readouts (`libraryReady`),
+        // not part of a sound — never capture them into a preset.
+        if (!withId->isAutomatable())
+            continue;
         // getValue() is the normalised number the host's automation lane
         // stores; re-applying it lands on the identical plain value.
         preset.params.push_back({ withId->paramID, withId->getValue() });

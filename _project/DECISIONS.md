@@ -2,6 +2,20 @@
 
 <!-- UPDATE WHEN: a non-obvious design choice is made -->
 
+## 2026-08-09 — Load windows suppress note-ons; they never keep the old sound
+
+Issue #2 offered two behaviors for notes arriving during a mid-session
+async instrument load: suppress them until the new instrument installs, or
+keep the outgoing instrument sounding and swap at a note boundary. Chosen:
+**suppress** (silence), matching what `StartupGate` already does at startup.
+The engine swaps snapshots at a block boundary and steal-fades old voices —
+"old instrument keeps sounding for new notes" would need a second live
+snapshot path it doesn't have, and it re-creates the wrong-instrument fault
+the gate exists to close. Already-sounding notes are not cut. Corollary
+choices: a failed mid-session load re-arms iff a real instrument is still
+installed; `libraryReady` lives outside the APVTS so a saved "ready" can
+never be restored as a lie.
+
 ## 2026-08-06 — Mechanical noises via an internal reserved CC (102)
 
 Release-sample level had to be product-controllable without touching sample

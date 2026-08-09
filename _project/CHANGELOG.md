@@ -2,6 +2,34 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-09 — v0.8.0: load-window gating + postmortem guards (#1, #2)
+
+- **Every async instrument load now owns a note-on gate window** (issue #2).
+  v0.7.0's `StartupGate` only covered the state-restore path; a mid-session
+  program change / preset choice / user preset / Sounds-panel SFZ pick still
+  raced its own async load, and notes arriving in those seconds played the
+  OUTGOING (or diagnostic) instrument. Documented choice: note-ons are
+  SUPPRESSED (silence) until the new instrument is installed — consistent
+  with the startup behavior; already-sounding notes are not cut (the engine's
+  swap steal-fade retires them at install). Failure policy: a failed
+  mid-session load re-arms onto the still-installed real instrument (a
+  corrupt pick must not brick the session); a failed restore over the
+  construction diagnostic stays silent (unchanged #21 semantics).
+- **`libraryReady` host parameter** (issue #2): readable, non-automatable
+  bool mirroring the gate, appended last with a new stable ID, deliberately
+  OUTSIDE the APVTS so state save/load never captures or restores it.
+  Headless hosts (sappradio) can poll readiness instead of a blind settle
+  window. User-preset capture skips non-automatable parameters.
+- **verify.sh postmortem guards** (issue #1): fails (loud banner, exit 1)
+  when no build dir is configured with `SAPPKEYS_BUILD_PLUGIN=ON`; prints an
+  unmissable staleness banner when the installed VST3 binary is older than
+  the newest commit touching `src/`. Still <1 min warm.
+- **Build identity in host logs** (issue #1): `SappKeys-build: version=X.Y.Z`
+  at plugin construction, and `build=X.Y.Z` on every `SappKeys-audio-source`
+  line (`SAPPKEYS_VERSION` compile definition from the CMake project
+  version — the same single source the CI version-vs-tag guard checks).
+- 6 new tests (49 total). auval passes with 18 parameters.
+
 ## 2026-08-09 — instrument-state safety (sapptune#21)
 
 - **Pre-state note-on gate (`StartupGate`).** The constructor installs the

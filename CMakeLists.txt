@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(SappKeys VERSION 0.7.0 LANGUAGES C CXX)
+project(SappKeys VERSION 0.8.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -45,6 +45,12 @@ add_library(sappkeys_core STATIC
 )
 target_include_directories(sappkeys_core PUBLIC src)
 target_link_libraries(sappkeys_core PUBLIC Sapp::Sounds)
+# Build identity (sappkeys #1): every target that links the core knows which
+# build it is, so host logs (SappKeys-build / SappKeys-audio-source) can name
+# the version. Single source: project(... VERSION ...) above, which the CI
+# release guard also checks against the tag.
+target_compile_definitions(sappkeys_core PUBLIC
+  SAPPKEYS_VERSION="${PROJECT_VERSION}")
 sappkeys_set_warnings(sappkeys_core)
 
 # -------------------------------------------------------------------- cli ---

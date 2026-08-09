@@ -180,6 +180,76 @@ TEST_CASE("startup gate: a late state restore disarms a grace-armed instance")
     REQUIRE(gate.armed());
 }
 
+// ---------------------------------------- mid-session loads (sappkeys #2)
+
+TEST_CASE("gate: a mid-session load disarms until its instrument is installed")
+{
+    StartupGate gate;
+    gate.loadCompleted(false);   // real instrument playing
+    REQUIRE(gate.armed());
+
+    // Program change / preset / SFZ pick begins its own async load: notes
+    // arriving in this window must NOT sound the outgoing instrument.
+    gate.beginLoad();
+    REQUIRE_FALSE(gate.armed());
+
+    // No amount of time re-arms while the load is in flight — the grace path
+    // must not hand the window back to the old instrument.
+    gate.tick(StartupGate::kGraceMs * 10.0);
+    REQUIRE_FALSE(gate.armed());
+
+    gate.loadCompleted(false);
+    REQUIRE(gate.armed());
+}
+
+TEST_CASE("gate: superseding loads keep the window closed until the last lands")
+{
+    StartupGate gate;
+    gate.loadCompleted(false);
+    gate.beginLoad();            // pick A
+    gate.beginLoad();            // pick B supersedes A before it finishes
+    REQUIRE_FALSE(gate.armed());
+    // Only the newest load reports back (the processor's generation guard).
+    gate.loadCompleted(false);
+    REQUIRE(gate.armed());
+}
+
+TEST_CASE("gate: a failed mid-session load re-arms onto the installed real instrument")
+{
+    StartupGate gate;
+    gate.loadCompleted(false);   // a real instrument is installed
+    gate.beginLoad();            // corrupt SFZ pick
+    gate.loadFailed();
+    // The previous, user-chosen instrument is still installed — a bad pick
+    // must not brick the session.
+    REQUIRE(gate.armed());
+}
+
+TEST_CASE("gate: a failed restore load over the construction diagnostic stays silent")
+{
+    StartupGate gate;
+    gate.loadCompleted(true);    // only the construction default exists
+    gate.beginStateRestore();
+    gate.beginLoad();
+    gate.loadFailed();
+    REQUIRE_FALSE(gate.armed());
+    // And the grace path stays disabled after a restore was seen.
+    gate.tick(StartupGate::kGraceMs * 10.0);
+    REQUIRE_FALSE(gate.armed());
+}
+
+TEST_CASE("gate: an SFZ pick inside the grace window blocks grace arming")
+{
+    StartupGate gate;
+    gate.loadCompleted(true);    // construction default installed
+    gate.beginLoad();            // user picks an SFZ at t < kGraceMs
+    gate.tick(StartupGate::kGraceMs * 2.0);
+    // The diagnostic must not become playable under the pick's load window.
+    REQUIRE_FALSE(gate.armed());
+    gate.loadCompleted(false);
+    REQUIRE(gate.armed());
+}
+
 // ------------------------------------------- pre-state note-ons stay silent
 
 TEST_CASE("note-ons before state restore produce silence, not the default sound")
@@ -218,6 +288,60 @@ TEST_CASE("note-ons before state restore produce silence, not the default sound"
     const auto sounding = render(engine, gateEvents({noteOn(0, 60, 100)}), 48000 / 2);
     REQUIRE(sounding.allFinite);
     REQUIRE(sounding.peak > 0.01f);
+}
+
+// ------------------------------- mid-session load window stays silent (#2)
+
+TEST_CASE("notes during a mid-session program-change load never sound the outgoing instrument")
+{
+    KeysEngine engine;
+    engine.prepare(48000.0, 512);
+    engine.setParams(dryParams());
+
+    // A real session in flight: instrument installed, gate armed, playable.
+    engine.setInstrument(sapp::sounds::makeDiagnosticInstrument());
+    StartupGate gate;
+    gate.loadCompleted(false);
+    REQUIRE(gate.armed());
+
+    const auto gateEvents = [&gate](std::vector<MidiEvent> events) {
+        std::vector<MidiEvent> passed;
+        for (const auto& e : events)
+            if (gate.armed() || e.type != MidiEvent::Type::NoteOn)
+                passed.push_back(e);
+        return passed;
+    };
+
+    // A program change / preset pick begins its async load. Notes arriving in
+    // the seconds the load takes used to play the OUTGOING instrument; the
+    // documented behavior is now suppression — silence — until the new
+    // instrument is installed.
+    gate.beginLoad();
+    std::vector<MidiEvent> burst;
+    for (int i = 0; i < 12; ++i)
+        burst.push_back(noteOn(uint32_t(i * 500), uint8_t(50 + i), 110));
+
+    const auto duringLoad = render(engine, gateEvents(burst), 48000 / 2);
+    REQUIRE(duringLoad.allFinite);
+    REQUIRE(duringLoad.peak == 0.0f);                       // NOT the old sound
+    REQUIRE(engine.sampler().activeVoiceCount() == 0);
+
+    // The new instrument lands (here: the silent one, so any audio would be
+    // the old instrument leaking through). The gate re-arms; the same notes
+    // now trigger — and bind to — the NEW instrument only.
+    engine.setInstrument(makeSilentInstrument());
+    gate.loadCompleted(false);
+    REQUIRE(gate.armed());
+
+    std::vector<float> l(512, 0.0f), r(512, 0.0f);
+    auto passed = gateEvents({noteOn(0, 60, 120)});
+    REQUIRE(passed.size() == 1);
+    engine.process(passed.data(), int(passed.size()), l.data(), r.data(), 512);
+    REQUIRE(engine.sampler().activeVoiceCount() > 0);       // note did trigger
+
+    const auto afterInstall = render(engine, {}, 48000 / 4);
+    REQUIRE(afterInstall.allFinite);
+    REQUIRE(afterInstall.peak < 1.0e-4f);                   // ...silently
 }
 
 // -------------------------------------------------- instrument swap safety

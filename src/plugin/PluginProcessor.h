@@ -102,9 +102,11 @@ public:
     juce::String loadStatus() const;
     bool isLoading() const { return loading_.load(); }
 
-    // True once note-ons pass the startup gate (sapptune #21): the host's
-    // state restore has installed its instrument, or the fresh-insert grace
-    // window elapsed with no restore. UI/tools feed; any thread.
+    // True once note-ons pass the gate (sapptune #21, sappkeys #2): the
+    // pending async instrument load (state restore, program change, preset,
+    // SFZ pick) has installed its instrument, or the fresh-insert grace
+    // window elapsed with no restore. UI/tools feed; any thread. Hosts
+    // without code access poll the `libraryReady` parameter instead.
     bool noteInputArmed() const { return startupGate_.armed(); }
 
     juce::MidiKeyboardState keyboardState;
@@ -171,6 +173,13 @@ private:
     // program change never re-enters the load.
     bool applyingPreset_ = false;
     void syncPresetParameter(int choiceIndex);
+
+    // 'Library ready' readiness signal (sappkeys #2): host-pollable mirror of
+    // startupGate_.armed(). NOT in the APVTS (never saved/restored, not
+    // automatable); owned by publishReadiness(), message thread. Raw pointer:
+    // addParameter() transfers ownership to the AudioProcessor.
+    juce::AudioParameterBool* libraryReady_ = nullptr;
+    void publishReadiness();
 
     juce::String sfzPath_;                 // "" = diagnostic instrument
     juce::String instrumentName_{"(loading)"};

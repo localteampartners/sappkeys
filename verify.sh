@@ -2,6 +2,17 @@
 # verify.sh — fast feedback loop for sappkeys.
 # Builds core+CLI+tests (plugin skipped for speed unless build/ already has it)
 # and runs both this repo's tests and a CLI smoke check.
+#
+# Postmortem guards (issue #1): green tests here say NOTHING about the
+# artifact users load. Three waves of v0.6–v0.7 safety fixes once verified
+# green while ~/Library/Audio/Plug-Ins/VST3/SappKeys.vst3 stayed at its
+# pre-safety build, because every session configured SAPPKEYS_BUILD_PLUGIN=OFF
+# and the install step never ran. So this script now also:
+#   * FAILS unless some build dir (build/ or build-plugin/) is configured
+#     with SAPPKEYS_BUILD_PLUGIN=ON — there must be a way for fixes to reach
+#     the installed plugin;
+#   * loudly warns when the installed VST3 binary is OLDER than the newest
+#     commit touching src/ (the plugin has not been rebuilt since the change).
 
 set -e
 cd "$(dirname "$0")"
@@ -21,5 +32,53 @@ echo "▶ cli smoke"
 ./build/sappkeys params > /dev/null
 ./build/sappkeys presets > /dev/null
 ./build/sappkeys inspect --diagnostic | head -c 120; echo " ..."
+
+echo "▶ install guard (postmortem, issue #1)"
+plugin_on=""
+for cache in build/CMakeCache.txt build-plugin/CMakeCache.txt; do
+  if [ -f "$cache" ] && grep -q '^SAPPKEYS_BUILD_PLUGIN:BOOL=ON$' "$cache"; then
+    plugin_on="$cache"
+  fi
+done
+if [ -z "$plugin_on" ]; then
+  echo ""
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!  SAPPKEYS_BUILD_PLUGIN=OFF in every build dir.                   !!"
+  echo "!!  Nothing verified here can reach the installed plugin — this is  !!"
+  echo "!!  exactly how the v0.6–v0.7 fixes never shipped (issue #1). Fix:  !!"
+  echo "!!    cmake -S . -B build-plugin -DSAPPKEYS_BUILD_PLUGIN=ON         !!"
+  echo "!!    cmake --build build-plugin --target SappKeysPlugin_VST3 -j8   !!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo ""
+  exit 1
+fi
+echo "  plugin build configured ON in: $plugin_on"
+
+if [ "$(uname)" = "Darwin" ]; then
+  vst3_bin="$HOME/Library/Audio/Plug-Ins/VST3/SappKeys.vst3/Contents/MacOS/SappKeys"
+  newest_src_commit=$(git log -1 --format=%ct -- src CMakeLists.txt 2>/dev/null || echo 0)
+  stale=""
+  if [ ! -f "$vst3_bin" ]; then
+    stale="no VST3 installed at ~/Library/Audio/Plug-Ins/VST3/SappKeys.vst3"
+  else
+    bin_mtime=$(stat -f %m "$vst3_bin")
+    if [ "$bin_mtime" -lt "$newest_src_commit" ]; then
+      stale="installed VST3 built $(date -r "$bin_mtime" '+%Y-%m-%d %H:%M'), newest src/ commit $(date -r "$newest_src_commit" '+%Y-%m-%d %H:%M')"
+    fi
+  fi
+  if [ -n "$stale" ]; then
+    echo ""
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "!!  STALE INSTALLED PLUGIN — the DAW is NOT playing this code.      !!"
+    echo "!!  $stale"
+    echo "!!  Rebuild + install:                                              !!"
+    echo "!!    cmake --build build-plugin --target SappKeysPlugin_VST3 -j8   !!"
+    echo "!!  (COPY_PLUGIN_AFTER_BUILD installs it; then rescan in the DAW.)  !!"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo ""
+  else
+    echo "  installed VST3 is newer than the last src/ commit"
+  fi
+fi
 
 echo "✓ verify passed"

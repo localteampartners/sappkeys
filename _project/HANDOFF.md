@@ -2,23 +2,12 @@
 
 <!-- UPDATE WHEN: starting/finishing multi-step work, or before ending a session mid-task -->
 
-Work in flight: sapptune#17 output-safety fix — **code complete, uncommitted**.
+Work in flight: none.
 
-Done (see CHANGELOG 2026-08-08 and ARCHITECTURE "Output safety"):
-real gain-reduction Safety Limiter replacing the tanh soft-clipper, an
-unconditional non-finite/±1 output guard, a MIDI-flood cap that panics instead
-of dropping note-offs. (An 8 ms note-off guard around the SappSounds
-steal-fade race shipped here briefly, then was RETIRED once the root fix
-landed in SappSounds' PlaybackEngine — note-offs now reach steal-fading
-voices in the engine itself, and this repo's same-block burst test passes
-with no guard, which is the end-to-end proof.) `tests/unit/test_safety.cpp` is new; verify.sh, the full
-Catch2 suite and `auval -v aumu Skys Ltpr` all pass; VST3 + AU built Release.
-
-Not done, deliberately: the root cause of the stuck notes is in SappSounds
-(`PlaybackEngine::triggerRegion` gives a stolen voice a pending start, and
-`noteOff` only sees `State::Active` voices, so a note-off inside the 3 ms steal
-fade is lost). SappKeys works around it; SappSynth / SappOrchestra / SappKit /
-SappChoir still have it. Fix it in sappsounds and the workaround can go.
-
-v0.3.0 shipped 2026-08-07: in-plugin updater (+ GET SOUNDS from
-CURRENT_STATE.md + TODO.md.
+Last shipped: v0.8.0 (2026-08-09) — issues #1 + #2. Every async instrument
+load now gates note-ons (suppress-until-installed; see DECISIONS 2026-08-09),
+`libraryReady` host parameter added (non-APVTS, non-automatable, appended
+last), build identity in the `SappKeys-build` / `SappKeys-audio-source` log
+lines, verify.sh postmortem guards (plugin-cache OFF fails, stale installed
+VST3 warns loudly). Tests 49/49, auval 18-param pass, both guard paths
+exercised. Release built by the Windows runner off the v0.8.0 tag.

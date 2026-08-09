@@ -146,7 +146,11 @@ public:
         std::vector<std::pair<juce::String, float>> out;
         for (auto* parameter : p.getParameters())
             if (auto* withId = dynamic_cast<juce::AudioProcessorParameterWithID*>(parameter))
-                if (withId->paramID != sapp::userpresets::kPresetParamId)
+                // `preset` is the chooser; non-automatable parameters are
+                // status readouts (`libraryReady`) — neither is part of the
+                // sound a preset round-trips.
+                if (withId->paramID != sapp::userpresets::kPresetParamId
+                    && withId->isAutomatable())
                     out.push_back({withId->paramID, withId->getValue()});
         return out;
     }

@@ -2,7 +2,26 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
-## Shipped 2026-08-09 — instrument-state safety, sapptune#21 (uncommitted)
+## Shipped 2026-08-09 — v0.8.0: load-window gating + postmortem guards
+
+- GitHub issues #1 and #2 closed. `StartupGate` now gates note-ons across
+  EVERY async instrument load (program change, preset parameter, user
+  preset, SFZ pick), not just state restore: notes in a load window are
+  suppressed until the new instrument installs; sounding notes fade via the
+  engine's swap steal-fade. A failed mid-session load re-arms onto the
+  still-installed real instrument; a failed restore over the diagnostic
+  stays silent.
+- New host parameter `libraryReady` (readable, non-automatable, appended
+  last, NOT in APVTS/state) — sappradio can poll readiness instead of a
+  blind settle window.
+- Host logs carry build identity: `SappKeys-build: version=…` at
+  construction; `build=…` on `SappKeys-audio-source` lines.
+- verify.sh now fails when no build dir has `SAPPKEYS_BUILD_PLUGIN=ON` and
+  loudly warns when the installed VST3 is older than the newest src/
+  commit (the postmortem's local-install hole).
+- Tests 49/49; auval (18 parameters) passes; installed VST3 refreshed.
+
+## Shipped 2026-08-09 — instrument-state safety, sapptune#21
 
 - Root cause of the "default sound" idle blast: the construction-default
   Diagnostic Orchestra is playable between plugin instantiation and the
