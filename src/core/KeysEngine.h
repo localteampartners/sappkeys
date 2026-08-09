@@ -47,14 +47,11 @@ inline constexpr int kEventScratchSlots = 2 * kMaxBlockEvents + 130;
 inline constexpr float kSafetyCeiling = 0.891251f;
 inline constexpr float kOutputBound = 1.0f;
 
-// Note-off guard. When SappSounds has to steal a voice it fades the old voice
-// out (EngineConfig::stealFadeSeconds, 3 ms by default) and only starts the new
-// note when that fade finishes. A note-off arriving during the fade finds no
-// active voice for the note and is lost — the note then starts and sounds
-// FOREVER. A dense burst steals voices by definition, so KeysEngine holds any
-// note-off back until its note-on is at least this old. Notes shorter than this
-// don't exist on a keyboard instrument; the sample attack alone is longer.
-inline constexpr float kNoteOffGuardSeconds = 0.008f;
+// (The note-off guard that used to live here is gone: SappSounds now delivers
+// note-offs to steal-fading voices itself — PendingStart::releasedBeforeStart
+// in PlaybackEngine.cpp — so holding offs back is no longer needed. Verified
+// by this repo's same-block burst safety test running against the fixed
+// engine with no guard.)
 
 struct KeysParams {
     // Performance
@@ -160,14 +157,6 @@ private:
     bool heldNotes_[128] = {};
     bool pedalDown_ = false;
     std::atomic<bool> pedalDownUi_{false};
-
-    // Note-off guard state (see kNoteOffGuardSeconds). Sample clock is engine
-    // time; -1 in pendingOffAt_ means "no note-off held back for this note".
-    int64_t sampleClock_ = 0;
-    int64_t noteOffGuardSamples_ = 0;
-    int64_t noteOnAt_[128] = {};
-    int64_t pendingOffAt_[128] = {};
-    int pendingOffCount_ = 0;
 
     // Velocity display feed: packed (in<<8)|out, lock-free ring.
     std::atomic<uint32_t> velRing_[kVelHistory] = {};

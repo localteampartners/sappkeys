@@ -7,8 +7,11 @@ Work in flight: sapptune#17 output-safety fix — **code complete, uncommitted**
 Done (see CHANGELOG 2026-08-08 and ARCHITECTURE "Output safety"):
 real gain-reduction Safety Limiter replacing the tanh soft-clipper, an
 unconditional non-finite/±1 output guard, a MIDI-flood cap that panics instead
-of dropping note-offs, and an 8 ms note-off guard around the SappSounds
-steal-fade race. `tests/unit/test_safety.cpp` is new; verify.sh, the full
+of dropping note-offs. (An 8 ms note-off guard around the SappSounds
+steal-fade race shipped here briefly, then was RETIRED once the root fix
+landed in SappSounds' PlaybackEngine — note-offs now reach steal-fading
+voices in the engine itself, and this repo's same-block burst test passes
+with no guard, which is the end-to-end proof.) `tests/unit/test_safety.cpp` is new; verify.sh, the full
 Catch2 suite and `auval -v aumu Skys Ltpr` all pass; VST3 + AU built Release.
 
 Not done, deliberately: the root cause of the stuck notes is in SappSounds
