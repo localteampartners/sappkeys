@@ -11,8 +11,8 @@
 #   * FAILS unless some build dir (build/ or build-plugin/) is configured
 #     with SAPPKEYS_BUILD_PLUGIN=ON — there must be a way for fixes to reach
 #     the installed plugin;
-#   * loudly warns when the installed VST3 binary is OLDER than the newest
-#     commit touching src/ (the plugin has not been rebuilt since the change).
+#   * loudly warns when the installed VST3 binary is OLDER than any file in
+#     src/ (the plugin has not been rebuilt since the change on disk).
 
 set -e
 cd "$(dirname "$0")"
@@ -61,15 +61,17 @@ echo "  plugin build configured ON in: $plugin_on"
 
 if [ "$(uname)" = "Darwin" ]; then
   vst3_bin="$HOME/Library/Audio/Plug-Ins/VST3/SappKeys.vst3/Contents/MacOS/SappKeys"
-  newest_src_commit=$(git log -1 --format=%ct -- src CMakeLists.txt 2>/dev/null || echo 0)
+  # Compare against source FILE mtimes, not the newest commit: building and
+  # then committing is the normal order, so a commit-time comparison fires
+  # after every single commit and trains everyone to ignore the banner. What
+  # matters is whether the installed binary is older than the code on disk.
+  newest_src=$(find src CMakeLists.txt -type f -newer "$vst3_bin" -print -quit 2>/dev/null)
   stale=""
   if [ ! -f "$vst3_bin" ]; then
     stale="no VST3 installed at ~/Library/Audio/Plug-Ins/VST3/SappKeys.vst3"
-  else
+  elif [ -n "$newest_src" ]; then
     bin_mtime=$(stat -f %m "$vst3_bin")
-    if [ "$bin_mtime" -lt "$newest_src_commit" ]; then
-      stale="installed VST3 built $(date -r "$bin_mtime" '+%Y-%m-%d %H:%M'), newest src/ commit $(date -r "$newest_src_commit" '+%Y-%m-%d %H:%M')"
-    fi
+    stale="installed VST3 built $(date -r "$bin_mtime" '+%Y-%m-%d %H:%M'), but $newest_src is newer"
   fi
   if [ -n "$stale" ]; then
     echo ""
@@ -82,7 +84,7 @@ if [ "$(uname)" = "Darwin" ]; then
     echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     echo ""
   else
-    echo "  installed VST3 is newer than the last src/ commit"
+    echo "  installed VST3 is newer than every file in src/"
   fi
 fi
 
