@@ -76,8 +76,10 @@ const ParamSpec kParams[] = {
      "Piano lid: 0 closed (dark, narrow) to 1 full stick (open, wide)."},
     {"resonance", "resonance", &KeysParams::resonance, 0.0f, 1.0f, 0.5f, -1,
      "Sympathetic string resonance while the sustain pedal is down."},
-    {"mech_noise", "mechNoise", &KeysParams::mechNoise, 0.0f, 1.0f, 1.0f, -1,
-     "Mechanical noises mix (key-release samples): 1 as recorded, 0 off."},
+    {"mech_noise", "mechNoise", &KeysParams::mechNoise, 0.0f, 1.0f,
+     kMechNoiseDefault, -1,
+     "Mechanical noises mix (key-release samples): 1 as recorded, 0 off. "
+     "Defaults low — stacked modeled noise is what makes an unattended mix grainy."},
     {"width", "width", &KeysParams::width, 0.0f, 2.0f, 1.0f, -1,
      "Stereo width: 0 mono, 1 natural, 2 wide."},
     {"vintage", "vintage", &KeysParams::vintage, 0.0f, 1.0f, 0.0f, -1,
@@ -92,6 +94,10 @@ const ParamSpec kParams[] = {
      "Room decay time in seconds (T60). This is a room, not a hall."},
     {"master_gain_db", "masterGain", &KeysParams::masterGainDb, -24.0f, 12.0f, 0.0f, -1,
      "Master output gain in dB."},
+    {"clean", "clean", &KeysParams::clean, 0.0f, 1.0f, 0.0f, -1,
+     "Imperfection master (SappLink CC 3, suite-wide): scales every modeled "
+     "imperfection — mechanical noise and vintage tune/wow/wear — by (1 - clean). "
+     "0 as authored, 1 no modeled noise, wear or jitter at all."},
 };
 
 // Sound presets: named starting points an agent (or player) picks by intent.
@@ -112,15 +118,15 @@ const Preset kPresets[] = {
     {"intimate", "Close, half-lid, small dry room. Late-night piano.",
      {{"lid", 0.4f}, {"room_level", 0.18f}, {"room_size", 0.7f}, {"room_decay", 0.5f},
       {"width", 0.85f}, {"vintage", 0.12f}}, 6},
-    {"felt", "Una corda + heavy mechanical noises. Felt-piano aesthetic.",
-     {{"una_corda", 0.85f}, {"mech_noise", 1.0f}, {"touch", 0.4f}, {"room_level", 0.28f},
+    {"felt", "Una corda + pronounced mechanical noises. Felt-piano aesthetic.",
+     {{"una_corda", 0.85f}, {"mech_noise", 0.55f}, {"touch", 0.4f}, {"room_level", 0.28f},
       {"room_decay", 1.1f}, {"vintage", 0.3f}, {"width", 0.8f}}, 7},
     {"pop-bright", "Light touch, open lid, tight bright room for a mix.",
      {{"touch", 0.62f}, {"lid", 1.0f}, {"room_level", 0.22f}, {"room_decay", 0.55f},
       {"width", 1.2f}}, 5},
     {"ep-tine", "Vintage tine EP: tape character and a little drive.",
      {{"vintage", 0.5f}, {"drive", 0.35f}, {"room_level", 0.18f}, {"room_decay", 0.45f},
-      {"width", 1.1f}, {"resonance", 0.0f}, {"mech_noise", 0.7f}}, 7},
+      {"width", 1.1f}, {"resonance", 0.0f}, {"mech_noise", 0.25f}}, 7},
     {"ep-crunch", "Driven EP through a small room. Break-up territory.",
      {{"vintage", 0.6f}, {"drive", 0.7f}, {"room_level", 0.15f}, {"room_decay", 0.4f},
       {"width", 1.0f}, {"resonance", 0.0f}}, 6},
@@ -246,6 +252,14 @@ int cmdInspect(const std::string& sfzPath, bool useDiagnostic, bool dumpRegions)
         w.field("cc", 67);
         w.field("role", "unaCorda");
         w.field("doc", "Soft pedal via SappLink: softer strike, darker tilt.");
+        w.endObject();
+        w.beginObject();
+        w.field("cc", 3);
+        w.field("role", "clean");
+        w.field("doc", "Suite-wide imperfection master: scales every modeled "
+                       "imperfection (mechanical noise, vintage tune/wow/wear) by "
+                       "(1 - clean). 0 as authored, 127 dead clean. Every sapp* "
+                       "plugin in a chain answers CC 3 the same way.");
         w.endObject();
     }
     w.endArray();

@@ -123,6 +123,69 @@ TEST_CASE("CC curves interpolate correctly and monotonically", "[sapplink]")
     }
 }
 
+TEST_CASE("vintage answers CC 12, never CC 21", "[sapplink]")
+{
+    // sappkeys #3: CC 21 is eqAirGain in Sapprack / Sappmaster / Sappedal.
+    // CCs are broadcast to every plugin in a chain, so an air-EQ setpoint used
+    // to age the piano as a side effect — and no host --set on Vintage could
+    // win, because the CC kept re-firing from the clip.
+    const auto* vintage = findMapping(12);
+    REQUIRE(vintage != nullptr);
+    REQUIRE(std::string(vintage->paramId) == "vintage");
+    REQUIRE(findMapping(21) == nullptr);
+
+    KeysParams params;
+    REQUIRE(applyCcToParams(params, 12, 127));
+    REQUIRE(std::abs(params.vintage - 1.0f) < 1e-5f);
+    params.vintage = 0.0f;
+    REQUIRE_FALSE(applyCcToParams(params, 21, 127));
+    REQUIRE(params.vintage == 0.0f);
+}
+
+TEST_CASE("clean is on the suite-reserved CC 3", "[sapplink][clean]")
+{
+    const auto* clean = findMapping(3);
+    REQUIRE(clean != nullptr);
+    REQUIRE(std::string(clean->paramId) == "clean");
+    REQUIRE(clean->lo == 0.0f);
+    REQUIRE(clean->hi == 1.0f);
+    REQUIRE(clean->curve == Curve::Linear);
+
+    KeysParams params;
+    REQUIRE(params.clean == 0.0f);            // default: nothing scaled
+    REQUIRE(applyCcToParams(params, 3, 127));
+    REQUIRE(std::abs(params.clean - 1.0f) < 1e-5f);
+    REQUIRE(applyCcToParams(params, 3, 64));
+    REQUIRE(std::abs(params.clean - 64.0f / 127.0f) < 1e-5f);
+    REQUIRE(applyCcToParams(params, 3, 0));
+    REQUIRE(params.clean == 0.0f);
+}
+
+TEST_CASE("CC 3 in a rendered clip removes the mechanical noise", "[sapplink][clean]")
+{
+    // End-to-end through the offline render path an agent actually uses: a
+    // CC 3 in the clip must reach the engine's imperfection scaling.
+    auto inst = sapp::sounds::makeDiagnosticInstrument({48000, 1.0f, 0.4f, 5});
+
+    auto renderWithClean = [&](int ccValue) {
+        std::vector<sapp::sounds::TimedMidiEvent> song;
+        song.push_back({0.0, 0xB0, 0, 3, uint8_t(ccValue), 0});
+        song.push_back({0.2, 0x90, 0, 60, 100, 0});
+        song.push_back({1.2, 0x80, 0, 60, 0, 0});
+        KeysRenderOptions options;
+        options.tailSeconds = 0.3;
+        options.params.vintage = 1.0f;   // maximum modeled wear...
+        options.params.roomLevel = 0.0f;
+        return renderKeys(inst, song, options);
+    };
+
+    const auto aged = renderWithClean(0);
+    const auto cleaned = renderWithClean(127);
+    // ...which CC 3 takes back out: the wear colour changes the render.
+    REQUIRE(aged.rms > 0.0f);
+    REQUIRE(std::abs(cleaned.rms - aged.rms) > aged.rms * 1e-4f);
+}
+
 TEST_CASE("applyCcToParams writes the mapped field and ignores others", "[sapplink]")
 {
     KeysParams params;

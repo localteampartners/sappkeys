@@ -26,7 +26,12 @@ echo "▶ build"
 cmake --build build -j8 --target SappKeysTests sappkeys-cli 2>&1 | grep -E "error|FAILED" && exit 1 || true
 
 echo "▶ tests"
-./build/SappKeysTests --reporter compact | tail -2
+# Not `SappKeysTests | tail`: a pipeline's status is the LAST command's, so a
+# failing suite exited 0 through `tail` and verify.sh still said "passed" —
+# and the compact reporter's trailing blank lines hid the summary anyway.
+# Capture first (set -e sees the real status), then print the verdict line.
+test_output=$(./build/SappKeysTests --reporter compact)
+echo "$test_output" | grep -E "All tests passed|test cases:" || echo "$test_output" | tail -3
 
 echo "▶ cli smoke"
 ./build/sappkeys params > /dev/null

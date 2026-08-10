@@ -32,8 +32,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SappKeysProcessor::makeLayou
                                    Range{0.0f, 1.0f, 0.001f}, 0.85f));
     layout.add(std::make_unique<P>(juce::ParameterID{"resonance", 1}, "Resonance",
                                    Range{0.0f, 1.0f, 0.001f}, 0.5f));
+    // Mechanics: 0.18, not the 1.0 this shipped with through v0.8.0 — full
+    // scale meant every instance broadcast maximum hammer/key/pedal noise
+    // (sappkeys #3). Presets that want more character set it explicitly.
     layout.add(std::make_unique<P>(juce::ParameterID{"mechNoise", 1}, "Mechanics",
-                                   Range{0.0f, 1.0f, 0.001f}, 1.0f));
+                                   Range{0.0f, 1.0f, 0.001f},
+                                   sapp::keys::kMechNoiseDefault));
     layout.add(std::make_unique<P>(juce::ParameterID{"width", 1}, "Width",
                                    Range{0.0f, 2.0f, 0.001f}, 1.0f));
     layout.add(std::make_unique<P>(juce::ParameterID{"vintage", 1}, "Vintage",
@@ -66,6 +70,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout SappKeysProcessor::makeLayou
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{sapp::userpresets::kPresetParamId, 1}, "Preset",
         presetChoices, 0));
+
+    // `clean` — the suite-wide imperfection master (SappLink CC 3, sapptune
+    // #30). ADDED LAST, after `preset`, so every existing sound parameter
+    // keeps its index and old sessions restore unchanged: a saved state with
+    // no `clean` node lands on the default 0, which is exactly the behavior
+    // that state was saved with. Only `libraryReady` moves (it is created
+    // after the APVTS, is non-automatable, and hosts resolve it by ID).
+    layout.add(std::make_unique<P>(juce::ParameterID{"clean", 1}, "Clean",
+                                   Range{0.0f, 1.0f, 0.001f}, 0.0f));
     return layout;
 }
 
@@ -91,6 +104,7 @@ SappKeysProcessor::SappKeysProcessor()
     pMaster_ = raw("masterGain");
     pLimiter_ = raw("limiter");
     pQuality_ = raw("quality");
+    pClean_ = raw("clean");
 
     // Sized so a MIDI flood can never make processBlock() allocate. Events past
     // the cap are dropped here and the engine panics its voices (KeysEngine).
@@ -413,6 +427,9 @@ void SappKeysProcessor::pushParamsToEngine()
     p.masterGainDb = pMaster_->load();
     p.limiter = pLimiter_->load() > 0.5f;
     p.quality = int(pQuality_->load());
+    // The engine scales every modeled imperfection by (1 − clean) itself
+    // (KeysEngine::applyClean) — hand it the raw value.
+    p.clean = pClean_->load();
     engine_.setParams(p);
 }
 

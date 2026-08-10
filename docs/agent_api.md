@@ -66,14 +66,15 @@ or `ccNative` for engine-handled controllers).
 | una_corda | unaCorda | 0–1 | 0 | 67 | soft pedal: softer strike + felt tilt |
 | lid | lid | 0–1 | 0.85 | 15 | 0 closed … 1 full stick |
 | resonance | resonance | 0–1 | 0.5 | 16 | pedal-down sympathetic resonance |
-| mech_noise | mechNoise | 0–1 | 1.0 | 17 | release-sample mix (1 = as recorded) |
+| mech_noise | mechNoise | 0–1 | 0.18 | 17 | release-sample mix (1 = as recorded) |
 | width | width | 0–2 | 1.0 | 18 | stereo width |
-| vintage | vintage | 0–1 | 0 | 21 | tape: random tune, wow/flutter, soft HF |
+| vintage | vintage | 0–1 | 0 | 12 | tape: random tune, wow/flutter, soft HF |
 | drive | drive | 0–1 | 0 | 22 | gentle saturation (EPs) |
 | room_level | roomLevel | 0–1 | 0.30 | 91 | small-room ambience level |
 | room_size | roomSize | 0.6–1.4 | 1.0 | 19 | room size |
 | room_decay | roomDecay | 0.2–2.5 | 0.9 | 20 (log) | room T60 seconds |
 | master_gain_db | masterGain | −24–12 | 0 | 7 | output gain |
+| clean | clean | 0–1 | 0 | 3 | imperfection master: scales mech_noise + vintage by (1 − clean) |
 | quality | quality | enum | 1 | — | 0 draft (linear) · 1 normal (cubic) |
 
 **SappLink CC-in:** the MIDI CC column is a live contract — CCs embedded in a
@@ -81,6 +82,19 @@ rendered `.mid` (or played into the plugin) move these parameters, with slew
 smoothing, on any channel. See [sapplink.md](sapplink.md) and the manifest at
 `~/apps/sapptune/sapplink/manifests/sappkeys.json`. CC 102 is reserved
 (internal mechanical-noise lane) and ignored from outside.
+
+**Clean (CC 3) is suite-wide** (sapptune #30): every sapp* instrument and
+effect answers it the same way, so one broadcast down a chain takes the modeled
+imperfection out of all of them at once. In SappKeys it scales `mech_noise` and
+`vintage` — the only modeled imperfection sources — by (1 − clean): 0 leaves
+the sound exactly as authored, 1 emits no modeled noise, wear or jitter. Reach
+for it when several modeled instruments stack in an unattended mix; the
+per-instrument knobs still work underneath it.
+
+**Vintage moved from CC 21 to CC 12** in v0.9.0 (sappkeys #3). CC 21 is
+`eqAirGain` in Sapprack / Sappmaster / Sappedal, and CCs reach every plugin in
+a chain, so an air-EQ setpoint also aged the piano. Clips written against the
+old map must be re-rendered.
 
 ## presets
 

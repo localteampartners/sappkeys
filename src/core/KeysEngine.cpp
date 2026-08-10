@@ -117,7 +117,10 @@ void KeysEngine::applyQuality(const KeysParams& p) noexcept
 void KeysEngine::process(const MidiEvent* events, int eventCount,
                          float* outL, float* outR, int frames) noexcept
 {
-    const KeysParams p = paramSlots_[paramIndex_.load(std::memory_order_acquire)];
+    // Every modeled imperfection is scaled by (1 − clean) HERE, once, before
+    // anything reads a parameter — mech noise, vintage detune, wow/flutter and
+    // the HF wear colour all come off the scaled block (sappkeys #3).
+    const KeysParams p = applyClean(paramSlots_[paramIndex_.load(std::memory_order_acquire)]);
     applyQuality(p);
 
     // --- event policy -------------------------------------------------------

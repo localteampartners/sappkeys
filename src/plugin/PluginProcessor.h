@@ -14,6 +14,7 @@
 #include <sapp/sounds/InstrumentLoader.h>
 
 #include "../core/KeysEngine.h"
+#include "../core/SappLinkCCMap.h"
 #include "../core/StartupGate.h"
 #include "UserPresets.h"
 
@@ -139,6 +140,7 @@ private:
     std::atomic<float>* pMaster_ = nullptr;
     std::atomic<float>* pLimiter_ = nullptr;
     std::atomic<float>* pQuality_ = nullptr;
+    std::atomic<float>* pClean_ = nullptr;   // sappkeys #3, appended last
 
     // Knob→CC bridging: moving Dynamics/Expression injects the matching CC.
     float lastDynParam_ = -1.0f, lastExprParam_ = -1.0f;
@@ -152,7 +154,7 @@ private:
         float target = 0.0f, current = 0.0f;
         bool active = false;
     };
-    std::array<CcSlew, 12> ccSlews_;
+    std::array<CcSlew, sapp::keys::sapplink::kNumMappings> ccSlews_;
     void handleSappLinkCc(int ccNumber, int ccValue);
     void advanceCcSlews(int numSamples);
 

@@ -159,7 +159,7 @@ private:
     std::unique_ptr<PedalLamps> pedalLamps_;
     std::unique_ptr<Knob> touch_, dynamics_, expression_;
     std::unique_ptr<Knob> unaCorda_, lid_, resonance_, mechNoise_, width_;
-    std::unique_ptr<Knob> vintage_, drive_;
+    std::unique_ptr<Knob> vintage_, drive_, clean_;
     std::unique_ptr<Knob> roomLevel_, roomSize_, roomDecay_, master_;
     juce::ComboBox quality_;
     juce::ToggleButton limiter_{"limiter"};

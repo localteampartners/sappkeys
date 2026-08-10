@@ -44,7 +44,7 @@ public:
             return p && (p->isLoading() || !p->noteInputArmed());
         };
         const bool busy = pending(processor) || pending(procA) || pending(procB)
-                          || pending(procC);
+                          || pending(procC) || pending(procD);
         if (!busy || attemptsLeft <= 0) {
             then();
             return;
@@ -87,12 +87,54 @@ public:
 
         const double quiet = measure(0);     // masterGain = -24 dB
         const double loud = measure(127);    // masterGain = +12 dB
-        const bool pass = loud > quiet * 100.0;
+        bool ok = loud > quiet * 100.0;
         std::printf("SappLink CC7 sweep: cc=0 %.3g  cc=127 %.3g  [%s]\n",
-                    quiet, loud, pass ? "PASS" : "FAIL");
+                    quiet, loud, ok ? "PASS" : "FAIL");
+
+        // ---- CC map regressions through the PLUGIN path (sappkeys #3) ------
+        // Send a CC, let the slew settle, read the plain parameter back.
+        auto sendCc = [&](int cc, int value) {
+            juce::MidiBuffer midi;
+            midi.addEvent(juce::MidiMessage::controllerEvent(1, cc, value), 0);
+            for (int b = 0; b < 80; ++b) {
+                buffer.clear();
+                processor->processBlock(buffer, midi);
+                midi.clear();
+            }
+        };
+        auto plain = [&](const char* id) {
+            return processor->valueTree().getRawParameterValue(id)->load();
+        };
+        auto expect = [&](const char* what, bool condition) {
+            std::printf("  %-44s [%s]\n", what, condition ? "PASS" : "FAIL");
+            ok = ok && condition;
+        };
+
+        // `clean` on the suite-reserved CC 3, default 0 (nothing scaled).
+        expect("clean defaults to 0", plain("clean") == 0.0f);
+        sendCc(3, 127);
+        expect("CC 3 -> clean = 1", std::abs(plain("clean") - 1.0f) < 1.0e-3f);
+        sendCc(3, 0);
+        expect("CC 3 = 0 -> clean back to 0", plain("clean") < 1.0e-3f);
+
+        // vintage moved off CC 21 — Sapprack/Sappmaster/Sappedal eqAirGain.
+        processor->valueTree().getParameter("vintage")->setValueNotifyingHost(0.0f);
+        sendCc(12, 127);
+        expect("CC 12 -> vintage = 1", std::abs(plain("vintage") - 1.0f) < 1.0e-3f);
+        processor->valueTree().getParameter("vintage")->setValueNotifyingHost(0.0f);
+        sendCc(21, 127);
+        expect("CC 21 (air EQ) leaves vintage alone", plain("vintage") < 1.0e-3f);
+
+        // Mechanics default: never full scale again.
+        auto* mechParam = processor->valueTree().getParameter("mechNoise");
+        const float mechDefault = mechParam->convertFrom0to1(mechParam->getDefaultValue());
+        std::printf("  Mechanics default = %.4f\n", double(mechDefault));
+        expect("Mechanics default is 0.18", std::abs(mechDefault - 0.18f) < 1.0e-4f);
+
+        std::printf("cctest: %s\n", ok ? "PASS" : "FAIL");
         editor.reset();
         processor.reset();
-        setApplicationReturnValue(pass ? 0 : 1);
+        setApplicationReturnValue(ok ? 0 : 1);
         quit();
     }
 
@@ -119,6 +161,8 @@ public:
         steps.push_back({500,  [this] { stepCheckFactoryViaParameter(); }});
         steps.push_back({500,  [this] { stepCheckProgramChange(); }});
         steps.push_back({500,  [this] { stepStateRoundTrip(); }});
+        steps.push_back({500,  [this] { stepSaveLegacyState(); }});
+        steps.push_back({500,  [this] { stepLegacyStateRestore(); }});
         steps.push_back({500,  [this] { stepEditorList(); }});
         steps.push_back({800,  [this] { stepFinish(); }});
         runNextStep();
@@ -340,6 +384,66 @@ public:
         }
     }
 
+    // ---- sappkeys #3: a session saved before `clean` existed ---------------
+    // v0.8.0 wrote no <PARAM id="clean"> node. Restoring such a state must
+    // land on clean = 0 — exactly the behavior the session was saved with —
+    // and must not disturb any other parameter.
+    void stepSaveLegacyState()
+    {
+        procB->valueTree().getParameter("clean")->setValueNotifyingHost(1.0f);
+        juce::MemoryBlock current;
+        procB->getStateInformation(current);
+        auto xml = juce::AudioProcessor::getXmlFromBinary(current.getData(),
+                                                          int(current.getSize()));
+        if (xml == nullptr) {
+            std::printf("FAIL: could not read the state XML back\n");
+            pass = false;
+            return;
+        }
+        bool stripped = false;
+        for (auto* child : xml->getChildIterator())
+            if (child->getStringAttribute("id") == "clean") {
+                xml->removeChildElement(child, true);
+                stripped = true;
+                break;
+            }
+        if (!stripped) {
+            std::printf("FAIL: no `clean` node in the saved state\n");
+            pass = false;
+            return;
+        }
+        juce::AudioProcessor::copyXmlToBinary(*xml, legacyBlob);
+        std::printf("legacy state: %d bytes with the `clean` node stripped "
+                    "(B has clean=%.3f)\n",
+                    int(legacyBlob.getSize()),
+                    double(plainValue(procB->valueTree(), "clean")));
+
+        procD = std::make_unique<sappkeys::SappKeysProcessor>();
+        procD->prepareToPlay(48000.0, 512);
+        procD->setStateInformation(legacyBlob.getData(), int(legacyBlob.getSize()));
+    }
+
+    void stepLegacyStateRestore()
+    {
+        const float clean = plainValue(procD->valueTree(), "clean");
+        const auto b = soundParams(*procB), d = soundParams(*procD);
+        float worst = 0.0f;
+        juce::String worstId;
+        for (size_t i = 0; i < b.size(); ++i) {
+            if (b[i].first == "clean") continue;   // deliberately absent
+            const float diff = std::abs(b[i].second - d[i].second);
+            if (diff > worst) { worst = diff; worstId = b[i].first; }
+        }
+        std::printf("legacy restore: clean=%.6f (expected 0), %d other params "
+                    "compared, max |B-D| = %.9g%s\n",
+                    double(clean), int(b.size()) - 1, double(worst),
+                    worstId.isEmpty() ? "" : (" (" + worstId + ")").toRawUTF8());
+        if (clean != 0.0f || worst > 1.0e-6f) {
+            std::printf("FAIL: a pre-`clean` session did not restore unchanged\n");
+            pass = false;
+        }
+    }
+
     // The editor's chooser must offer the preset saved this session, by name
     // and marked as a user preset — it rescans on open, unlike the automation
     // parameter's fixed list.
@@ -373,6 +477,7 @@ public:
         procA.reset();
         procB.reset();
         procC.reset();
+        procD.reset();
         setApplicationReturnValue(pass ? 0 : 1);
         quit();
     }
@@ -445,12 +550,12 @@ private:
     std::unique_ptr<juce::AudioProcessorEditor> editor;
 
     // --presettest state.
-    std::unique_ptr<sappkeys::SappKeysProcessor> procA, procB, procC;
+    std::unique_ptr<sappkeys::SappKeysProcessor> procA, procB, procC, procD;
     std::vector<std::pair<int, std::function<void()>>> steps;
     size_t stepIndex = 0;
     bool pass = true;
     float beforeVintage = 0.0f, beforeDrive = 0.0f;
-    juce::MemoryBlock stateBlob;
+    juce::MemoryBlock stateBlob, legacyBlob;
 };
 
 START_JUCE_APPLICATION(UiShotApp)

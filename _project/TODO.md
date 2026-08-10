@@ -4,6 +4,9 @@
 
 ## Next
 
+- [ ] Tag `v0.9.0` and let the release workflow build it once the self-hosted
+      runner is back up. The code is committed and pushed; CMake already says
+      0.9.0, which is what the CI tag-vs-version guard compares against.
 - [ ] One manual UPDATE-button click on a Windows machine (rename-trick
       .vst3 swap is untested on real Windows; macOS path verified).
 - [ ] Smoke-test VST3/AU in a third-party host (Logic / Reaper).

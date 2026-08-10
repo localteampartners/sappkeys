@@ -2,6 +2,40 @@
 
 <!-- UPDATE WHEN: a non-obvious design choice is made -->
 
+## 2026-08-09 — `clean` scales the imperfection params, it does not bypass DSP
+
+Issue #3 / sapptune #30 wanted one control that takes modeled imperfection out
+of a whole chain. Two ways to build it: gate the DSP blocks (skip the wow/
+flutter loop, mute the release regions) or scale the parameters that drive
+them. Chosen: **scale the parameters**, in one helper (`applyClean()`) that the
+engine runs the whole `KeysParams` block through at the top of `process()`.
+
+Why: intermediate values then mean something (clean 0.5 is genuinely half the
+character, not a switch); clean 0 is provably a no-op because a multiply by
+1.0f is exact; and a future imperfection source can only escape it if someone
+adds a field to `KeysParams` without touching a helper whose entire job is that
+list. Bypassing DSP blocks would also change filter/smoothing state and break
+the sample-identity guarantee at clean 0.
+
+What it does NOT scale: sympathetic resonance, room, drive. Those are the
+instrument, not its imperfections — a clean piano still resonates.
+
+Corollary: `clean` is appended LAST in the APVTS layout (after `preset`), so no
+existing sound parameter's index moves and a session saved before it existed
+restores at 0 — exactly the behavior it was saved with. `libraryReady`, created
+after the APVTS and non-automatable, shifts one index; hosts resolve it by ID.
+
+## 2026-08-09 — Vintage lives on CC 12; a CC collision is a product bug
+
+CC 21 was a "free CC 14–31" pick for `vintage`, made without checking the rest
+of the suite: Sapprack, Sappmaster and Sappedal all use CC 21 for `eqAirGain`.
+MIDI CCs reach every plugin in a chain, so an air-EQ decision aged the piano,
+and a host `--set` on Vintage could not win against the re-firing clip. Fixed
+by moving to CC 12 (free in every manifest) rather than by documenting "safe
+CCs per chain position" — a map that only works if the producer knows the chain
+is not a contract. Picking a CC now means checking every manifest in
+`~/apps/sapptune/sapplink/manifests/`, not just this one.
+
 ## 2026-08-09 — Load windows suppress note-ons; they never keep the old sound
 
 Issue #2 offered two behaviors for notes arriving during a mid-session

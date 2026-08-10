@@ -8,11 +8,14 @@
 // CC11 expression, una-corda softening, lid tilt EQ + width, sympathetic
 // resonance on pedal-down, mechanical-noise mix (release-sample level via an
 // internal reserved CC), tape/EP vintage character (random tune + wow/flutter
-// + HF soften), gentle drive, small-room ambience, master output policy.
+// + HF soften), the `clean` imperfection master (SappLink CC 3), gentle drive,
+// small-room ambience, master output policy.
 //
 // Framework-independent: no JUCE. The JUCE plugin and the CLI both drive this.
 
+#include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -53,6 +56,13 @@ inline constexpr float kOutputBound = 1.0f;
 // by this repo's same-block burst safety test running against the fixed
 // engine with no guard.)
 
+// Mechanics default (sappkeys #3 / sapptune #30). It used to be 1.0 — every
+// instance shipped maximum hammer/key/pedal noise, and on a 24/7 station where
+// several instruments each contribute their own modeled noise that stacks into
+// audible grain. 0.18 keeps the character of a real action without making
+// silence noisy; presets that want more say so explicitly.
+inline constexpr float kMechNoiseDefault = 0.18f;
+
 struct KeysParams {
     // Performance
     float touch = 0.5f;        // velocity response: 0 heavy .. 0.5 neutral .. 1 light
@@ -62,11 +72,16 @@ struct KeysParams {
     // Instrument body
     float lid = 0.85f;         // 0 closed .. 1 full stick (tilt EQ + width)
     float resonance = 0.5f;    // sympathetic resonance level on pedal-down
-    float mechNoise = 1.0f;    // release/mechanical sample mix: 1 as recorded, 0 off
+    float mechNoise = kMechNoiseDefault;  // release/mechanical mix: 1 as recorded, 0 off
     float width = 1.0f;        // 0 mono .. 2 wide
     // Character
     float vintage = 0.0f;      // tape/EP age: random tune, wow/flutter, HF soften
     float drive = 0.0f;        // gentle saturation (EPs love it)
+    // Cleanliness — the suite-wide SappLink `clean` control (CC 3, sapptune
+    // #30). One switch that takes every modeled imperfection out of the way:
+    // 0 = as authored (backwards compatible), 1 = no modeled noise, wear or
+    // jitter at all. See applyClean() for exactly what it scales.
+    float clean = 0.0f;
     // Room
     float roomLevel = 0.30f;
     float roomSize = 1.0f;     // 0.6..1.4
@@ -79,6 +94,33 @@ struct KeysParams {
     bool limiter = true;
     int quality = 1;           // 0 draft (linear), 1 normal (cubic)
 };
+
+// `clean` applied: every modeled-imperfection source scaled by (1 − clean).
+//
+// SappKeys models exactly two of them, and this is the whole list (audited
+// 2026-08-09 for sappkeys #3):
+//   * mechNoise — hammer/key/damper/pedal noise. The release-triggered regions
+//     carry the reserved internal CC 102 gain lane (KeysInstrument.h), which
+//     KeysEngine::process() drives from this value.
+//   * vintage   — tape/EP age: per-note random detune (sampler
+//     setRandomTuneCents), wow & flutter gain modulation, and the softened-HF
+//     wear colour.
+// Deliberately NOT scaled: sympathetic resonance (a real acoustic layer driven
+// by the signal, not a noise floor), room ambience, drive. Those are the
+// instrument, not its imperfections.
+//
+// The engine funnels the whole parameter block through this once, so a new
+// imperfection source can only ever be added in one place. Exact identity at
+// clean = 0: a multiply by 1.0f is exact, so behavior is unchanged bit for bit.
+inline KeysParams applyClean(const KeysParams& params) noexcept
+{
+    KeysParams out = params;
+    const float keep = 1.0f - std::clamp(params.clean, 0.0f, 1.0f);
+    out.mechNoise = std::clamp(params.mechNoise, 0.0f, 1.0f) * keep;
+    out.vintage = std::clamp(params.vintage, 0.0f, 1.0f) * keep;
+    out.clean = 0.0f;   // consumed — applying it twice must not compound
+    return out;
+}
 
 // The touch/una-corda velocity mapping, shared with the UI curve display.
 // Returns the remapped velocity (1..127) for an incoming velocity 1..127.

@@ -2,6 +2,45 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-09 — v0.9.0: `clean` (CC 3), quieter Mechanics, vintage off CC 21 (#3)
+
+- **New host parameter `clean`** ("Clean", 0..1, default 0, SappLink CC 3) —
+  the suite-wide imperfection master (sapptune #30). It scales EVERY modeled
+  imperfection by (1 − clean): `mechNoise` (hammer/key/damper/pedal noise via
+  the reserved internal CC 102 lane) and `vintage` (per-note random detune,
+  wow & flutter, softened-HF wear). At 0 the sound is exactly what it was —
+  a multiply by 1.0f is exact, so renders stay sample-identical; at 1 the
+  plugin emits no modeled noise, wear or jitter. Applied in ONE place
+  (`applyClean()`, `src/core/KeysEngine.h`) so a future imperfection source
+  cannot silently escape it. Appended LAST in the APVTS layout: every existing
+  sound parameter keeps its index, and a session saved before `clean` existed
+  restores at 0 with all 16 other parameters bit-identical (proved by a new
+  `--presettest` step that strips the `clean` node from the state XML).
+  Sympathetic resonance, room and drive are deliberately NOT scaled — they are
+  the instrument, not its imperfections. New CLEAN knob in the CHARACTER panel.
+- **Mechanics default 1.0 → 0.18.** Shipping at full scale meant every
+  instance broadcast maximum mechanism noise; on a 24/7 station several
+  modeled instruments stacked into the "grain" listeners reported (~20 dB
+  above a clean sampler chain above 6 kHz). Factory presets pulled in line
+  too — nothing ships at 1.0 (plugin bank: Grand Concert 0.7→0.25, EP Mark I
+  0.4→0.2, EP Dyno 0.3→0.18, EP Crunchy 0.35→0.2, Una Corda Soft 0.85→0.5;
+  CLI: `felt` 1.0→0.55, `ep-tine` 0.7→0.25).
+- **`vintage` moved from CC 21 to CC 12.** CC 21 is `eqAirGain` in Sapprack,
+  Sappmaster and Sappedal; CCs reach every plugin in a chain, so sapptune's
+  air-EQ setpoints also aged the piano — and a host `--set` on Vintage could
+  never win against the re-firing clip. CC 12 is free across every manifest.
+  Clips written against the old map must be re-rendered.
+- 9 new tests (58 total, was 49). Measured: with Mechanics at 1.0, `clean` 1
+  drops the release-window level 36 dB and lands bit-identical to Mechanics 0.
+  auval passes with 19 parameters; `--cctest` now also proves CC 3 → clean,
+  CC 12 → vintage and CC 21 → *no* vintage change through the plugin path.
+- **verify.sh: a failing test suite could not fail the script.** `SappKeysTests
+  | tail -2` gave the pipeline `tail`'s exit status (0), and the compact
+  reporter's trailing blank lines hid the summary line anyway. Now captured
+  first, so `set -e` sees the real status and the verdict prints.
+- Not tagged: the GitHub build host is down (self-hosted runner being
+  re-set-up), so v0.9.0 is committed and pushed and the release fires later.
+
 ## 2026-08-09 — v0.8.0: load-window gating + postmortem guards (#1, #2)
 
 - **Every async instrument load now owns a note-on gate window** (issue #2).

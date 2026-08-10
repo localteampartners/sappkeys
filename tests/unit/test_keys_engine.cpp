@@ -308,6 +308,171 @@ TEST_CASE("mech-noise policy tags release regions and the knob scales them", "[e
     REQUIRE(off < full * 0.05f);
 }
 
+// --------------------------------------------------------------- clean (#3) --
+// `clean` (SappLink CC 3) is the suite-wide imperfection master: every modeled
+// imperfection scaled by (1 − clean). The contract is (a) clean 0 changes
+// nothing, ever, and (b) clean 1 leaves no modeled noise, wear or jitter.
+
+TEST_CASE("Mechanics defaults low enough for unattended playback", "[engine][clean]")
+{
+    // sappkeys #3: the default used to be 1.0 — full-scale hammer/key/pedal
+    // noise out of the box, which stacked into audible grain on the station.
+    REQUIRE(KeysParams{}.mechNoise == kMechNoiseDefault);
+    REQUIRE(kMechNoiseDefault == 0.18f);
+    REQUIRE(kMechNoiseDefault < 0.25f);   // "nearer 0.1–0.2 than 1.0"
+    REQUIRE(kMechNoiseDefault > 0.0f);    // character stays on
+    REQUIRE(KeysParams{}.clean == 0.0f);  // and nothing is scaled by default
+}
+
+TEST_CASE("clean 0 leaves every parameter untouched", "[engine][clean]")
+{
+    KeysParams p;
+    p.mechNoise = 0.73f;
+    p.vintage = 0.41f;
+    p.drive = 0.6f;
+    p.resonance = 0.9f;
+    const KeysParams scaled = applyClean(p);
+    // Exact equality, not approximate: a multiply by 1.0f is exact, so the DSP
+    // sees bit-for-bit what it saw before `clean` existed.
+    REQUIRE(scaled.mechNoise == p.mechNoise);
+    REQUIRE(scaled.vintage == p.vintage);
+    REQUIRE(scaled.drive == p.drive);
+    REQUIRE(scaled.resonance == p.resonance);
+}
+
+TEST_CASE("clean scales the imperfection sources proportionally", "[engine][clean]")
+{
+    KeysParams p;
+    p.mechNoise = 0.8f;
+    p.vintage = 0.5f;
+    p.clean = 0.25f;
+    const KeysParams scaled = applyClean(p);
+    REQUIRE(std::abs(scaled.mechNoise - 0.6f) < 1e-6f);
+    REQUIRE(std::abs(scaled.vintage - 0.375f) < 1e-6f);
+    // Not an imperfection: the room, the resonance layer and drive are the
+    // instrument, and clean must not touch them.
+    REQUIRE(scaled.roomLevel == p.roomLevel);
+    REQUIRE(scaled.resonance == p.resonance);
+    REQUIRE(scaled.drive == p.drive);
+
+    p.clean = 1.0f;
+    const KeysParams none = applyClean(p);
+    REQUIRE(none.mechNoise == 0.0f);
+    REQUIRE(none.vintage == 0.0f);
+    // Idempotent: the flag is consumed, so a second pass cannot compound it.
+    REQUIRE(applyClean(none).mechNoise == 0.0f);
+    REQUIRE(applyClean(scaled).mechNoise == scaled.mechNoise);
+}
+
+TEST_CASE("clean 1 silences the modeled mechanical noise", "[engine][clean]")
+{
+    auto inst = makeReleaseTestInstrument();
+
+    auto render = [&](float mech, float clean) {
+        KeysEngine engine;
+        engine.prepare(48000, 512);
+        KeysParams p;
+        p.mechNoise = mech;
+        p.clean = clean;
+        p.roomLevel = 0.0f;
+        p.resonance = 0.0f;
+        engine.setParams(p);
+        engine.setInstrument(inst);
+        std::vector<MidiEvent> events{noteOn(0, 60, 100), noteOff(24000, 60)};
+        return run(engine, events, 48000);
+    };
+
+    // The release thump — the mechanical noise — sounds after the note-off.
+    const float noisy = rmsRange(render(1.0f, 0.0f).left, 24500, 34000);
+    const float cleaned = rmsRange(render(1.0f, 1.0f).left, 24500, 34000);
+    const float mechOff = rmsRange(render(0.0f, 0.0f).left, 24500, 34000);
+
+    INFO("release-window RMS: clean 0 " << noisy << ", clean 1 " << cleaned
+         << ", mechNoise 0 " << mechOff);
+    REQUIRE(noisy > 0.0005f);
+    // clean 1 lands exactly where Mechanics 0 lands: the mechanical layer is
+    // gone and only the note's own decay tail is left in the window.
+    REQUIRE(cleaned <= mechOff * 1.0001f);
+    REQUIRE(cleaned < noisy * 0.05f);   // ≥ 26 dB down (measured: ~36 dB)
+    // Said as a level drop, which is how the station hears it.
+    const float dropDb = 20.0f * std::log10(noisy / cleaned);
+    REQUIRE(dropDb > 20.0f);
+}
+
+TEST_CASE("clean is exactly a (1 - clean) scale of the imperfection params",
+          "[engine][clean]")
+{
+    // The strongest statement of backwards compatibility: rendering with
+    // `clean` is sample-identical to rendering the pre-scaled parameters with
+    // no clean at all — so clean 0 IS the pre-change behavior, exactly.
+    auto inst = makeReleaseTestInstrument();
+
+    auto render = [&](float mech, float vintage, float clean) {
+        KeysEngine engine;
+        engine.prepare(48000, 512);
+        engine.reseed(7);
+        KeysParams p;
+        p.mechNoise = mech;
+        p.vintage = vintage;
+        p.clean = clean;
+        engine.setParams(p);
+        engine.setInstrument(inst);
+        std::vector<MidiEvent> events{noteOn(0, 60, 100), noteOn(500, 67, 90),
+                                      noteOff(24000, 60), noteOff(26000, 67)};
+        return run(engine, events, 48000);
+    };
+
+    auto identical = [](const Rendered& a, const Rendered& b) {
+        REQUIRE(a.left.size() == b.left.size());
+        for (size_t i = 0; i < a.left.size(); ++i) {
+            if (a.left[i] != b.left[i] || a.right[i] != b.right[i]) {
+                INFO("first difference at frame " << i);
+                REQUIRE(a.left[i] == b.left[i]);
+                REQUIRE(a.right[i] == b.right[i]);
+            }
+        }
+    };
+
+    identical(render(0.8f, 0.5f, 0.25f), render(0.6f, 0.375f, 0.0f));
+    identical(render(0.8f, 0.5f, 1.0f), render(0.0f, 0.0f, 0.0f));
+    // And clean 0 is a no-op on top of any parameter set.
+    identical(render(0.8f, 0.5f, 0.0f), render(0.8f, 0.5f, 0.0f));
+}
+
+TEST_CASE("clean 1 removes the vintage wear and jitter too", "[engine][clean]")
+{
+    auto inst = sapp::sounds::makeDiagnosticInstrument({48000, 1.0f, 0.4f, 5});
+
+    auto highFreqEnergy = [&](float vintage, float clean) {
+        KeysEngine engine;
+        engine.prepare(48000, 512);
+        engine.reseed(11);
+        KeysParams p;
+        p.vintage = vintage;
+        p.clean = clean;
+        p.roomLevel = 0.0f;
+        p.resonance = 0.0f;
+        engine.setParams(p);
+        engine.setInstrument(inst);
+        std::vector<MidiEvent> events{noteOn(100, 84, 120), noteOff(40000, 84)};
+        auto out = run(engine, events, 48000);
+        double sum = 0.0;
+        for (size_t i = 1; i < out.left.size(); ++i) {
+            const double d = double(out.left[i]) - double(out.left[i - 1]);
+            sum += d * d;
+        }
+        return sum;
+    };
+
+    const double aged = highFreqEnergy(1.0f, 0.0f);
+    const double cleaned = highFreqEnergy(1.0f, 1.0f);
+    const double never = highFreqEnergy(0.0f, 0.0f);
+    // Vintage colours the signal (detune jitter, wow/flutter, HF wear)…
+    REQUIRE(std::abs(aged - never) > never * 1.0e-3);
+    // …and clean 1 puts it back exactly where a vintage-0 render leaves it.
+    REQUIRE(cleaned == never);
+}
+
 TEST_CASE("drive saturates loud material and is transparent at zero", "[engine]")
 {
     auto inst = sapp::sounds::makeDiagnosticInstrument({48000, 1.0f, 0.4f, 5});

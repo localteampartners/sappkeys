@@ -12,6 +12,9 @@
 //   CC 102 → reserved internal mech-noise gain (KeysEngine injects it;
 //            external CC 102 is dropped)
 //   pitch bend
+//
+// Suite-reserved: CC 3 is `clean` in every sapp* manifest (sapptune #30) —
+// one broadcast takes the modeled imperfection out of a whole chain.
 
 #include <array>
 
@@ -29,7 +32,7 @@ struct CCMapping {
     Curve curve;
 };
 
-inline constexpr int kNumMappings = 12;
+inline constexpr int kNumMappings = 13;
 const std::array<CCMapping, kNumMappings>& mappings();
 
 // nullptr if this CC is not part of the SappLink contract.

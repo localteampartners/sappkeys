@@ -2,6 +2,29 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-08-09 — v0.9.0: `clean` (CC 3) + quieter defaults (#3)
+
+- GitHub issue #3 closed. New host parameter `clean` (0..1, default 0,
+  SappLink CC 3, appended last after `preset`) scales every modeled
+  imperfection by (1 − clean): `mechNoise` and `vintage` — the complete
+  audited list for this repo. `applyClean()` in `src/core/KeysEngine.h` is the
+  single choke point; `process()` runs the whole parameter block through it
+  before any DSP reads a value, so a new imperfection source can only ever be
+  added in one place. clean 0 is bit-identical to pre-change behavior.
+- Mechanics default 1.0 → 0.18; no factory preset (plugin or CLI) sits near
+  full scale any more. CLEAN knob added to the CHARACTER panel.
+- `vintage` moved off CC 21 (Sapprack/Sappmaster/Sappedal `eqAirGain`) onto
+  the free CC 12, matching sapptune's manifest. Clips written against the old
+  CC must be re-rendered.
+- Tests 58/58 (was 49); auval passes with 19 parameters; `--cctest` and
+  `--presettest` both PASS, including a new legacy-state step proving a
+  session saved before `clean` existed restores at 0 with every other
+  parameter bit-identical.
+- **Not released yet**: the GitHub build host is down (self-hosted runner
+  being re-set-up), so v0.9.0 is committed and pushed with NO tag. Tag
+  `v0.9.0` on this commit when the runner is back — the CI guard checks the
+  tag against `project(... VERSION ...)` in CMakeLists.txt.
+
 ## Shipped 2026-08-09 — v0.8.0: load-window gating + postmortem guards
 
 - GitHub issues #1 and #2 closed. `StartupGate` now gates note-ons across

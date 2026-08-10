@@ -42,6 +42,9 @@ Full plugin build (Standalone/VST3/AU): see
   samples), stereo width.
 - **Character** — tape/vintage (per-note random tune, wow & flutter, softened
   highs) and gentle drive for EPs.
+- **Clean** — one control (SappLink CC 3, the same in every sapp* plugin) that
+  scales every modeled imperfection by (1 − clean): 0 as authored, 1 no modeled
+  noise, wear or jitter. Mechanics defaults to 0.18, not full scale.
 - **Room** — short early reflections + a small 6-line FDN. A room, not a hall.
 
 ## Agent API

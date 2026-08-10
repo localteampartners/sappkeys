@@ -407,6 +407,9 @@ SappKeysEditor::SappKeysEditor(SappKeysProcessor& processor)
     width_ = knob("width", "WIDTH");
     vintage_ = knob("vintage", "VINTAGE", true);
     drive_ = knob("drive", "DRIVE", true);
+    // CLEAN sits with the character knobs it undoes: it scales every modeled
+    // imperfection (mechanics + vintage) by (1 − clean). SappLink CC 3.
+    clean_ = knob("clean", "CLEAN", true);
     roomLevel_ = knob("roomLevel", "ROOM");
     roomSize_ = knob("roomSize", "SIZE");
     roomDecay_ = knob("roomDecay", "DECAY");
@@ -749,10 +752,12 @@ void SappKeysEditor::resized()
     mechNoise_->setBounds(s(544), s(258), s(100), s(120));
     width_->setBounds(s(544), s(370), s(100), s(74));
 
-    // Character panel.
+    // Character panel: VINTAGE and DRIVE add character, CLEAN takes the
+    // modeled imperfection back out (sappkeys #3).
     characterHeader_.setBounds(s(692), s(82), s(200), s(16));
-    vintage_->setBounds(s(694), s(102), s(118), s(146));
-    drive_->setBounds(s(818), s(102), s(118), s(146));
+    vintage_->setBounds(s(690), s(102), s(84), s(146));
+    drive_->setBounds(s(772), s(102), s(84), s(146));
+    clean_->setBounds(s(854), s(102), s(84), s(146));
 
     // Room & output panel.
     roomHeader_.setBounds(s(692), s(276), s(200), s(16));

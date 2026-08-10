@@ -17,12 +17,17 @@ deterministic agent CLI, and a SappLink manifest so sapptune can drive it.
 - **Piano-specific policy in the core** (no JUCE): touch velocity curve,
   una-corda softening, lid tilt + width, sympathetic resonance on pedal-down,
   mechanical-noise mix (release samples), small-room ambience (not a hall),
-  tape/vintage EP character + gentle drive.
+  tape/vintage EP character + gentle drive, and a `clean` master that scales
+  every modeled imperfection by (1 − clean).
 - **Agent-first API.** `sappkeys` CLI: inspect / validate / params / presets /
   scan / render — one JSON document per command, seeded deterministic renders.
 - **SappLink contract.** Manifest at
   `~/apps/sapptune/sapplink/manifests/sappkeys.json`; CC1/CC11/CC64 stay
-  engine-native; drift guarded by a unit test against a vendored copy.
+  engine-native; CC 3 is the suite-wide `clean` lane; drift guarded by a unit
+  test against a vendored copy.
+- **Quiet by default.** Modeled imperfection is character, not a level: it
+  ships low enough that several sapp* instruments in one unattended mix don't
+  stack into audible grain, and `clean` removes it entirely on request.
 
 ## Non-goals
 

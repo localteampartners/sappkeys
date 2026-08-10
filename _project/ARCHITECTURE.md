@@ -53,13 +53,19 @@ scripts/make_demo.py Gymnopédie No. 1 demo MIDI generator
 - **Pedals** — CC64 is engine-native (SappSounds holds notes + defers release
   samples; KeysEngine wakes the resonance bank). Una corda is the `unaCorda`
   parameter, reachable via SappLink CC 67 (MMA soft pedal).
+- **Imperfection master (`clean`)** — `applyClean()` in KeysEngine.h scales
+  every modeled imperfection by (1 − clean): `mechNoise` and `vintage`, the
+  complete list. `process()` runs the whole KeysParams block through it before
+  any DSP reads a value, so nothing downstream can miss it. SappLink CC 3,
+  suite-wide (sapptune #30).
 - **Reserved CCs** — 1 (dynamics), 11 (expression), 64 (sustain) engine-native;
-  102 internal. Everything else automatable per the SappLink manifest.
+  102 internal; 3 is the suite-wide `clean` lane. Everything else automatable
+  per the SappLink manifest.
 
 ## Data flow
 
 MIDI → (plugin: APVTS + CC slews | CLI: SappLink applyCcToParams) →
-KeysEngine.process: velocity shaping → PlaybackEngine (samples) → tone filter
+KeysEngine.process: applyClean (imperfection scaling) → velocity shaping → PlaybackEngine (samples) → tone filter
 (dynamics/una-corda/vintage) → lid shelf → width → wow/flutter gain →
 drive → sympathetic resonance (added) → early + small-room FDN → master →
 safety limiter → output guard.
