@@ -171,6 +171,12 @@ void SappKeysProcessor::setCurrentProgram(int index)
         return;
     currentProgram_.store(index);
     pendingProgram_.store(index);
+    // Not ready from the instant the host asks for a different program
+    // (sappkeys #4). The load itself starts on the timer, but a host that
+    // calls this and immediately polls must not read the OUTGOING library's
+    // "ready" — so the flag drops here, synchronously, before anything is
+    // queued.
+    markNotReady();
 }
 
 void SappKeysProcessor::applyFactoryPreset(int index)
@@ -286,6 +292,7 @@ void SappKeysProcessor::parameterChanged(const juce::String& parameterId, float 
     if (applyingPreset_ || parameterId != sapp::userpresets::kPresetParamId)
         return;
     pendingPresetChoice_.store(int(newValue));
+    markNotReady();   // sappkeys #4 — same contract as setCurrentProgram()
 }
 
 void SappKeysProcessor::timerCallback()
@@ -471,7 +478,13 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // passed — note-ons and MIDI program changes are dropped, so stray MIDI
     // can never sound the construction-default diagnostic instrument.
     // Note-offs, CCs, bend and panic messages always pass.
-    const bool armed = startupGate_.armed();
+    //
+    // changePending() extends the same window backwards to the REQUEST
+    // (sappkeys #4): a program change or preset move that is queued for the
+    // timer has not begun its load yet, so the gate itself is still armed —
+    // but this instance is already about to become something else, and the
+    // outgoing instrument must not answer for it.
+    const bool armed = startupGate_.armed() && !changePending();
 
     int floodedEvents = 0;
     for (const auto metadata : midi) {
@@ -517,6 +530,7 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             // and can never swap the instrument out from under a state
             // restore in flight.
             pendingProgram_.store(msg.getProgramChangeNumber());
+            markNotReady();   // sappkeys #4 — the window opens here, not at the load
             continue;
         } else {
             continue;
@@ -660,15 +674,35 @@ void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
     if (onInstrumentChanged) onInstrumentChanged();
 }
 
+void SappKeysProcessor::markNotReady()
+{
+    // Synchronous, on the calling thread. See the header: a queued change is
+    // already a load window, and the flag has to say so before the caller can
+    // poll it.
+    if (libraryReady_ != nullptr && libraryReady_->get())
+        *libraryReady_ = false;
+}
+
 void SappKeysProcessor::publishReadiness()
 {
     // Mirror the gate into the host-visible `libraryReady` parameter
     // (sappkeys #2). Message thread only. Also called from the 30 Hz timer,
     // which both covers grace-window arming (no other hook fires there) and
     // self-heals any host write to what is a read-only status readout.
-    const bool ready = startupGate_.armed();
+    //
+    // `ready` means the library the host asked for is INSTALLED — so a
+    // program change or preset move still queued for the timer holds it at 0
+    // (sappkeys #4), not just the interval between beginLoad and the install.
+    // Without that term the fresh-insert grace window armed the gate under a
+    // queued program change and the flag went 1 over the diagnostic.
+    const bool ready = startupGate_.armed() && !changePending();
     if (libraryReady_ != nullptr && libraryReady_->get() != ready)
         *libraryReady_ = ready;
+}
+
+bool SappKeysProcessor::libraryReady() const
+{
+    return libraryReady_ != nullptr && libraryReady_->get();
 }
 
 juce::String SappKeysProcessor::currentInstrumentName() const

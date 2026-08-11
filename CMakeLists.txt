@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(SappKeys VERSION 0.9.0 LANGUAGES C CXX)
+project(SappKeys VERSION 0.10.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -137,6 +137,40 @@ if(SAPPKEYS_BUILD_PLUGIN)
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
   )
+
+  # ------------------------------------------------------ headless harness ---
+  # The station host: no editor, no user. Cross-platform on purpose — sappkeys
+  # #4 (libraryReady reporting a library that is not in) only reproduces
+  # against the real processor, so this is the target that guards it, and
+  # CTest runs its selftest.
+  juce_add_console_app(SappKeysHeadless PRODUCT_NAME "sappkeys-headless")
+  target_sources(SappKeysHeadless PRIVATE
+    tools/headless/main.cpp
+    src/plugin/PluginProcessor.cpp
+    src/plugin/PluginEditor.cpp
+    src/plugin/FactoryPresets.cpp
+    src/plugin/UserPresets.cpp
+    src/plugin/SoundsPanel.cpp
+  )
+  target_include_directories(SappKeysHeadless PRIVATE src/plugin)
+  target_link_libraries(SappKeysHeadless PRIVATE
+    sappkeys_core
+    juce::juce_audio_utils
+    juce::juce_dsp
+    juce::juce_recommended_config_flags
+  )
+  target_compile_definitions(SappKeysHeadless PRIVATE
+    JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_MODAL_LOOPS_PERMITTED=1
+    SAPPKEYS_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
+  set_target_properties(SappKeysHeadless PROPERTIES OUTPUT_NAME sappkeys-headless)
+
+  if(SAPPKEYS_BUILD_TESTS)
+    # The regression that guards issue #4. It runs the PLUGIN processor, so it
+    # only exists when the plugin target is built — which is the point
+    # (issue #1: tests green while the installed binary stayed stale).
+    enable_testing()
+    add_test(NAME headless COMMAND SappKeysHeadless selftest)
+  endif()
 
   if(APPLE)
     # Offscreen editor snapshot tool (UI verification without screen capture).

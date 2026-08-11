@@ -110,6 +110,10 @@ public:
     // without code access poll the `libraryReady` parameter instead.
     bool noteInputArmed() const { return startupGate_.armed(); }
 
+    // The `libraryReady` host parameter, read back in-process (the station
+    // harness reads this; a real host polls the parameter itself). Any thread.
+    bool libraryReady() const;
+
     juce::MidiKeyboardState keyboardState;
 
     std::function<void()> onInstrumentChanged;  // editor hook (message thread)
@@ -182,6 +186,27 @@ private:
     // addParameter() transfers ownership to the AudioProcessor.
     juce::AudioParameterBool* libraryReady_ = nullptr;
     void publishReadiness();
+
+    // A program change / preset move the host has ASKED for but whose load has
+    // not started yet — both are queued here and applied on the timer
+    // (sappstep-style). The instance is already about to become something
+    // else, so for as long as one is queued the instrument is NOT ready and
+    // note-ons must not sound the outgoing (or diagnostic) instrument.
+    //
+    // sappkeys #4: without this term the fresh-insert grace window armed the
+    // gate 1.5 s after construction while a program change sat in the queue,
+    // so `libraryReady` went 1 with only the construction diagnostic
+    // installed. A station that polls the flag then stopped waiting and
+    // rendered its opening bars into the load that followed.
+    bool changePending() const
+    {
+        return pendingProgram_.load() >= 0 || pendingPresetChoice_.load() >= 0;
+    }
+    // Clears `libraryReady` synchronously, on whatever thread asked for the
+    // change — deferring it to the timer only moves the race. Writing a
+    // parameter off the message thread is already this processor's normal
+    // path (advanceCcSlews does it every block).
+    void markNotReady();
 
     juce::String sfzPath_;                 // "" = diagnostic instrument
     juce::String instrumentName_{"(loading)"};

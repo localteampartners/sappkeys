@@ -26,6 +26,13 @@ struct LibraryDef {
 
 const std::vector<LibraryDef>& soundsRegistry();
 
+// Overrides the persisted samples root when it names an existing directory.
+// The headless regression (sappkeys #4) points it at a fixture so factory
+// programs resolve to a real .sfz with no sample library installed — and
+// without writing to the user's shared Sapp settings file. Same name and
+// semantics as sappkit.
+inline constexpr const char* kSamplesRootEnvVar = "SAPP_SAMPLES_ROOT";
+
 class SoundsPanel : public juce::Component, private juce::Timer
 {
 public:

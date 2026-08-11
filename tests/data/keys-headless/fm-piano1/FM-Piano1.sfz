@@ -1,0 +1,7 @@
+// Headless-regression fixture (sappkeys #4): the QUIET reference library,
+// deliberately ~20 dB below the salamander fixture and tuned an octave down,
+// so "which library actually sounded?" is answerable from the audio alone.
+// Resolves the hint { "fm-piano1", "FM-Piano1" } — programs 3 "EP Mark I",
+// 4 "EP Dyno", 5 "EP Crunchy".
+<region> sample=../piano-tone.wav lokey=21 hikey=108 pitch_keycenter=60
+         transpose=-12 volume=-20

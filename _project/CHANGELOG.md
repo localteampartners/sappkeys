@@ -2,6 +2,57 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-08-11 — v0.10.0: `libraryReady` stops lying about a queued program (#4)
+
+- **The fault.** `setCurrentProgram()` only QUEUES the program; the load runs
+  on the 30 Hz timer. `libraryReady` mirrored `StartupGate::armed()`, and the
+  fresh-insert grace window arms the gate 1.5 s after construction — so on a
+  station that set a program at instantiation the flag went 1 at ~1.55 s with
+  nothing installed but the construction-default diagnostic, while the program
+  change still sat in the queue. sappradio polled it, stopped waiting, and
+  rendered its opening bars into the load that followed: `wanderer-piano`
+  carried 934 note events from 0.00 s and came out digitally silent
+  (mean = peak = −91 dB) for the first 40–60 s, the window moving between
+  takes because it tracks a wall-clock load, not the music.
+- **The fix.** A queued change is a load window. `changePending()` (a program
+  change or preset move waiting for the timer) now ANDs into BOTH the
+  `libraryReady` readout and the note-on gate, and every entry point that can
+  begin a load clears the flag SYNCHRONOUSLY, on the calling thread, before
+  anything is queued: `setCurrentProgram()`, the MIDI program-change branch of
+  `processBlock()`, the `preset` parameter listener, and (already) the SFZ /
+  user-preset / diagnostic / state-restore paths. Deferring the clear to the
+  timer only moves the race. The term deliberately lives in the processor, not
+  in `StartupGate`: the timer's program-hold logic asks `armed()` to decide
+  when a held program may finally be applied, so a pending request that
+  disarmed the gate would hold itself forever.
+- Measured, `sappkeys-headless selftest`, program 1 "Intimate Grand":
+  before — `ready@1.51s`, installed `(diagnostic)`, first 120 ms of the render
+  at −30.6 dBFS (the diagnostic instrument, which is also the likeliest
+  explanation for the "terrible sappkeys sound" heard partway through
+  wanderer-piano); after — `ready@1.57s`, installed
+  `SalamanderGrandPiano-V3.sfz`, head at −8.3 dBFS from the first block.
+- **New: `tools/headless/` station harness** (`sappkeys-headless`), the target
+  this repo was missing. `selftest` is the issue-#4 regression — 26 checks
+  across the host program API, the `preset` parameter, MIDI program change and
+  state restore, asserting that the library the host asked for is installed at
+  the instant the flag first reads 1, that the flag drops synchronously on a
+  mid-session swap, and that a render started when the flag reads 1 is not
+  silent at the head. `render` produces one station-style take. Wired into
+  CTest and `verify.sh`; it runs the real plugin processor, so it only exists
+  when the plugin target is built (issue #1's postmortem).
+- `$SAPP_SAMPLES_ROOT` now overrides the persisted samples root (same name and
+  semantics as sappkit), so the regression resolves factory programs against
+  `tests/data/keys-headless/` without a sample library installed and without
+  writing to the user's shared Sapp settings file.
+- verify.sh builds the plugin and the harness and runs the selftest. Tests
+  58/58 plus 26 headless checks; auval passes.
+- Same fault audited in the three siblings: the parameter and host-program-API
+  paths were already correct there, but the MIDI program-change branch had the
+  same hole (the audio thread queues the select; readiness was only
+  republished on the loader thread ~5 ms later). Fixed in sapporchestra
+  v0.10.0, sappchoir v0.8.0 and sappkit v0.8.0.
+- Not tagged here — the release is driven separately.
+
 ## 2026-08-09 — v0.9.0: `clean` (CC 3), quieter Mechanics, vintage off CC 21 (#3)
 
 - **New host parameter `clean`** ("Clean", 0..1, default 0, SappLink CC 3) —

@@ -42,6 +42,15 @@
 // semantics). On a fresh insert (no restore seen) the grace path may still
 // arm afterwards — there the diagnostic IS the intended sound.
 //
+// ONE TERM LIVES OUTSIDE THIS CLASS (sappkeys #4). A program change or preset
+// move is QUEUED on the audio/host thread and applied on the message thread,
+// so between the request and beginLoad() the gate is still armed while the
+// instance is already about to become something else. The processor ANDs
+// armed() with its own changePending() for both note-ons and `libraryReady`.
+// It is deliberately not modelled here: the timer's program-hold logic asks
+// armed() to decide when a held program may finally be applied, so a pending
+// request that disarmed the gate would hold itself forever.
+//
 // A state restore beginning DISARMS the gate again — even one arriving after
 // the grace window (slow session load) — because the instrument is about to
 // become something else. Note-offs, CCs, pitch bend and panic messages always

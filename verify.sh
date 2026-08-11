@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # verify.sh — fast feedback loop for sappkeys.
-# Builds core+CLI+tests (plugin skipped for speed unless build/ already has it)
-# and runs both this repo's tests and a CLI smoke check.
+# Builds core+CLI+tests in build/, and the plugin + the headless station
+# harness in build-plugin/. Runs this repo's unit tests, the headless station
+# regression (issue #4), and a CLI smoke check.
 #
 # Postmortem guards (issue #1): green tests here say NOTHING about the
 # artifact users load. Three waves of v0.6–v0.7 safety fixes once verified
@@ -15,15 +16,23 @@
 #     src/ (the plugin has not been rebuilt since the change on disk).
 
 set -e
+set -o pipefail   # a failing test must fail the script, not just print
 cd "$(dirname "$0")"
 
 echo "▶ configure"
 if [ ! -d build ]; then
   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSAPPKEYS_BUILD_PLUGIN=OFF > /dev/null
 fi
+if [ ! -d build-plugin ]; then
+  cmake -S . -B build-plugin -DCMAKE_BUILD_TYPE=Release > /dev/null
+fi
 
-echo "▶ build"
+echo "▶ build (core + cli + tests)"
 cmake --build build -j8 --target SappKeysTests sappkeys-cli 2>&1 | grep -E "error|FAILED" && exit 1 || true
+
+echo "▶ build (plugin + headless harness)"
+cmake --build build-plugin -j8 --target SappKeysPlugin_All SappKeysHeadless 2>&1 \
+  | grep -E "error:|FAILED" && exit 1 || true
 
 echo "▶ tests"
 # Not `SappKeysTests | tail`: a pipeline's status is the LAST command's, so a
@@ -32,6 +41,10 @@ echo "▶ tests"
 # Capture first (set -e sees the real status), then print the verdict line.
 test_output=$(./build/SappKeysTests --reporter compact)
 echo "$test_output" | grep -E "All tests passed|test cases:" || echo "$test_output" | tail -3
+
+echo "▶ headless station regression (issue #4 — libraryReady must not lie)"
+./build-plugin/SappKeysHeadless_artefacts/Release/sappkeys-headless selftest \
+  2>/dev/null | grep -E "FAIL|selftest:"
 
 echo "▶ cli smoke"
 ./build/sappkeys params > /dev/null

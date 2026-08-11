@@ -1,0 +1,12 @@
+// Headless-regression fixture (sappkeys #4): the LOUD reference library.
+// Named and foldered so the factory presets whose instrument hint is
+// { "salamander", "SalamanderGrandPiano-V3" } — programs 0 "Grand Concert",
+// 1 "Intimate Grand", 2 "Bright Grand", 6 "Una Corda Soft" — resolve against
+// it with no real sample library installed.
+//
+// Two velocity layers over the whole keyboard is enough to answer "did the
+// named library sound, and when did it start?" from the audio alone.
+<region> sample=../piano-tone.wav lokey=21 hikey=108 pitch_keycenter=60
+         lovel=0 hivel=79 volume=-6
+<region> sample=../piano-tone.wav lokey=21 hikey=108 pitch_keycenter=60
+         lovel=80 hivel=127 volume=0

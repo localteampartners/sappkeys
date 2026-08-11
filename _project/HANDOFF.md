@@ -4,19 +4,21 @@
 
 Work in flight: none.
 
-Last shipped: v0.9.0 (2026-08-09, commit d3fcfae) — issue #3. New host
-parameter `clean` (0..1, default 0, SappLink CC 3, appended last) scales every
-modeled imperfection by (1 − clean) via `applyClean()` in
-`src/core/KeysEngine.h`: `mechNoise` and `vintage`, the complete audited list.
-clean 0 is sample-identical to before. Mechanics default 1.0 → 0.18 and no
-factory preset ships near full scale. `vintage` moved off CC 21 (Sapprack /
-Sappmaster / Sappedal `eqAirGain`) onto CC 12; sapptune's manifest re-vendored
-verbatim. Tests 58/58, auval 19 params, `--cctest` and `--presettest` PASS
-(the latter now proves a pre-`clean` session restores at 0 with the other 16
-parameters bit-identical). verify.sh no longer swallows a failing suite.
+Last shipped: v0.10.0 (2026-08-11) — issue #4. `libraryReady` no longer reports
+a library that is not in. A program change or preset move queued for the timer
+now counts as a load window (`changePending()` in `SappKeysProcessor`) for both
+the flag and the note-on gate, and every entry point that can begin a load
+clears the flag synchronously on the calling thread. Before this, the 1.5 s
+fresh-insert grace window armed `StartupGate` under a queued program change and
+the flag went 1 over the construction diagnostic — the cause of the 40–60 s of
+digital silence at the head of every `wanderer-piano` take. New
+`tools/headless/` station harness (`sappkeys-headless`), 26 checks, run by
+CTest and verify.sh, with a fixture at `tests/data/keys-headless/` reached via
+the new `$SAPP_SAMPLES_ROOT` override. Tests 58/58 + 26 headless; auval PASS.
+The same MIDI-program-change hole was fixed in sapporchestra v0.10.0, sappchoir
+v0.8.0 and sappkit v0.8.0.
 
-**Open loop:** v0.9.0 is committed and pushed but deliberately NOT tagged —
-the GitHub build host is down and the self-hosted runner is being re-set-up.
-Tag `v0.9.0` on d3fcfae when the runner is back; the CI guard compares the tag
-against `project(SappKeys VERSION 0.9.0)` in CMakeLists.txt, which is already
-correct.
+**Open loop:** nothing here is tagged. v0.9.0 (d3fcfae) and now v0.10.0 are
+committed and pushed with no tag; tagging and releasing is driven separately.
+The CI guard compares the tag against `project(SappKeys VERSION 0.10.0)` in
+CMakeLists.txt, which is already correct.

@@ -2,6 +2,32 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-08-11 — v0.10.0: honest `libraryReady` (#4)
+
+- GitHub issue #4 closed. `libraryReady` is now false from the moment ANY
+  entry point asks for a different sound until the new instrument is actually
+  installed. A program change or preset move queued for the timer counts as a
+  load window (`changePending()`), for both the flag and the note-on gate, and
+  every entry point clears the flag synchronously on the calling thread.
+  Before, the 1.5 s fresh-insert grace window armed the gate under a queued
+  program change and the flag went 1 over the construction diagnostic — which
+  is why every `wanderer-piano` take opened with 40–60 s of digital silence.
+- New `tools/headless/` station harness (`sappkeys-headless selftest` /
+  `render`) — the sibling target this repo never had. 26 checks, run by CTest
+  and by verify.sh, over the host program API, the `preset` parameter, MIDI
+  program change and state restore. Fixture at `tests/data/keys-headless/`,
+  reached through the new `$SAPP_SAMPLES_ROOT` override.
+- Measured: before `ready@1.51s` with `(diagnostic)` installed and a −30.6
+  dBFS head; after `ready@1.57s` with `SalamanderGrandPiano-V3.sfz` installed
+  and a −8.3 dBFS head from the first block.
+- verify.sh now builds the plugin + harness and runs the selftest. Tests
+  58/58 plus 26 headless checks; `auval -v aumu Skys Ltpr` PASS.
+- The same MIDI-program-change hole was found and fixed in sapporchestra,
+  sappchoir and sappkit (their parameter paths were already correct).
+- **Not released yet**: committed and pushed with NO tag; the release is
+  driven separately. The CI guard checks the tag against
+  `project(... VERSION ...)` in CMakeLists.txt, now 0.10.0.
+
 ## Shipped 2026-08-09 — v0.9.0: `clean` (CC 3) + quieter defaults (#3)
 
 - GitHub issue #3 closed. New host parameter `clean` (0..1, default 0,
