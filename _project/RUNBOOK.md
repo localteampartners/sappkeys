@@ -13,7 +13,7 @@
 ```bash
 cmake -S . -B build-plugin -DCMAKE_BUILD_TYPE=Release \
   -DSAPPKEYS_BUILD_TESTS=OFF -DSAPPKEYS_BUILD_CLI=OFF \
-  -DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappsynth/build/_deps/juce-src
+  -DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappaudio/sappsynth/build/_deps/juce-src
 cmake --build build-plugin -j8 --target SappKeysPlugin_Standalone SappKeysUiShot
 open build-plugin/SappKeysPlugin_artefacts/Release/Standalone/SappKeys.app
 ```

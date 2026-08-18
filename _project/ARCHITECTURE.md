@@ -10,7 +10,7 @@
   offline render plumbing, WAV/MIDI IO.
 - **JUCE 8.0.15** (FetchContent, pinned — same tag as sappsynth/sapporchestra;
   local builds reuse the sappsynth checkout via
-  `-DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappsynth/build/_deps/juce-src`).
+  `-DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappaudio/sappsynth/build/_deps/juce-src`).
 - **Catch2 v3.7.1** for tests.
 
 ## Components

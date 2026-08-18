@@ -92,7 +92,7 @@ endif()
 if(SAPPKEYS_BUILD_PLUGIN)
   # Same pinned JUCE tag as SappSynth / SappOrchestra. Local builds reuse the
   # SappSynth checkout: configure with
-  #   -DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappsynth/build/_deps/juce-src
+  #   -DFETCHCONTENT_SOURCE_DIR_JUCE=$HOME/apps/sappaudio/sappsynth/build/_deps/juce-src
   FetchContent_Declare(JUCE
     GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
     GIT_TAG        8.0.15
