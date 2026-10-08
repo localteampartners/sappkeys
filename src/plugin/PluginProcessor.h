@@ -97,7 +97,12 @@ public:
     // SappKeys-audio-source log line (sapptune #21) so a recurrence of the
     // "default sound" burst names its own cause.
     void loadSfzInstrument(const juce::File& sfzFile);
-    void loadDiagnosticInstrument(const char* reason = "user-selected");
+    // `arms`: whether installing the diagnostic makes the instance playable.
+    // True for a deliberate pick (UI button, a brand-new session with nothing
+    // saved); FALSE when it is standing in for a library that is missing on
+    // this machine — then it installs silently with the status naming the
+    // missing path (sappkeys #5).
+    void loadDiagnosticInstrument(const char* reason = "user-selected", bool arms = true);
     juce::String currentInstrumentName() const;
     juce::String currentInstrumentPath() const { return sfzPath_; }
     juce::String loadStatus() const;
@@ -122,7 +127,8 @@ private:
     static juce::AudioProcessorValueTreeState::ParameterLayout makeLayout();
     void pushParamsToEngine();
     void finishLoad(sapp::sounds::LoadResult result, const juce::String& path,
-                    const juce::String& identity, uint64_t generation);
+                    const juce::String& identity, uint64_t generation,
+                    bool arms = true);
 
     juce::AudioProcessorValueTreeState apvts_;
     sapp::keys::KeysEngine engine_;
@@ -169,6 +175,11 @@ private:
     void timerCallback() override;
     std::atomic<int> pendingProgram_{-1};
     std::atomic<int> currentProgram_{0};
+    // currentProgram_ starts at 0 because hosts read it back, but nothing has
+    // been APPLIED yet — so "select program 0" on a fresh instance must not be
+    // a no-op (sappkeys #5: that is how a station chain asking for Grand
+    // Concert ended up sounding the Diagnostic Orchestra).
+    std::atomic<bool> programApplied_{false};
 
     // The `preset` parameter can be moved from the audio thread (host
     // automation), so its listener only stores an index — the same timer that

@@ -2,6 +2,20 @@
 
 <!-- UPDATE WHEN: a non-obvious design choice is made -->
 
+## 2026-10-08 — A missing library is silence, never the diagnostic
+
+When the host asks for a sound whose sample library is not on this machine
+(a factory program whose key resolves to nothing, a restored `sfzPath` that no
+longer exists), the instance stays **silent** with the reason in the status.
+It does not play the Diagnostic Orchestra "so at least something sounds" — that
+"something" is a looping near-sawtooth 5 dB hotter than the piano, and it is
+exactly the fault users report as a digital blast. The diagnostic remains
+playable only where it is the chosen sound: the UI button, and a brand-new
+session that never saved a library. Rejected alternative: auto-fall back to any
+installed piano. A chain that silently sounds the wrong instrument is the
+sapptune#21 fault in a politer coat; a silent chain with
+`SappKeys-library-missing:` in the log is diagnosable in seconds.
+
 ## 2026-08-09 — `clean` scales the imperfection params, it does not bypass DSP
 
 Issue #3 / sapptune #30 wanted one control that takes modeled imperfection out

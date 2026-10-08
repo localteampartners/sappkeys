@@ -2,6 +2,24 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-10-08 — v0.11.0: the diagnostic can no longer stand in for a missing library (#5)
+
+- The "loud static digital mess" is the SappSounds **Diagnostic Orchestra**
+  (sapptune#21's default sound) reached by three paths the v0.7–v0.10 gating
+  did not cover: program 0 selected on a fresh instance (a no-op — the
+  station's "Grand Concert" chains), a factory preset whose library is not
+  installed, and a restored session whose saved `sfzPath` is gone. All three
+  now resolve to the real library or to **silence with the reason in the
+  status** (`Library not installed: …` / `Library missing - …`), never to the
+  diagnostic. `StartupGate::libraryMissing()` is the new term; it blocks the
+  fresh-insert grace path until a real install.
+- `sappkeys-headless selftest`: 34 checks (was 26), all green. The
+  reproduction and the measurements are in CHANGELOG.
+- Still to prove on air: the station box runs the Windows build; v0.11.0 is
+  tagged for the runner. Listen to a `wanderer-piano` and a
+  `storybook-orchestra` take — both selected "Grand Concert" and both carried
+  the complaint.
+
 ## Shipped 2026-08-11 — v0.10.0: honest `libraryReady` (#4)
 
 - GitHub issue #4 closed. `libraryReady` is now false from the moment ANY

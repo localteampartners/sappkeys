@@ -167,7 +167,12 @@ void SappKeysProcessor::setCurrentProgram(int index)
     // Hosts may call this from any thread; defer to the timer like a MIDI
     // program change. currentProgram_ updates immediately so hosts that read
     // it straight back see the new value.
-    if (index < 0 || index >= getNumPrograms() || index == currentProgram_.load())
+    if (index < 0 || index >= getNumPrograms())
+        return;
+    // Same program as the one already APPLIED is a no-op. A fresh instance
+    // reports program 0 without ever having applied it, and skipping the
+    // request there left the construction diagnostic in place (sappkeys #5).
+    if (index == currentProgram_.load() && programApplied_.load())
         return;
     currentProgram_.store(index);
     pendingProgram_.store(index);
@@ -202,11 +207,29 @@ void SappKeysProcessor::applyFactoryPreset(int index)
 
     // Instrument hint: swap libraries when the preferred one is installed
     // and not already loaded. Otherwise keep the current instrument — the
-    // parameter starting points still apply.
+    // parameter starting points still apply — UNLESS the current instrument
+    // is the construction diagnostic: a preset whose library is not installed
+    // must not fall through to the Diagnostic Orchestra (sappkeys #5). Then
+    // the instance stays silent and the status names what is missing.
     const auto sfz = presets::resolveInstrument(preset, SoundsPanel::samplesRoot());
-    if (sfz.existsAsFile() && sfz.getFullPathName() != sfzPath_)
+    if (sfz.existsAsFile() && sfz.getFullPathName() != sfzPath_) {
         loadSfzInstrument(sfz);
+    } else if (!sfz.existsAsFile() && sfzPath_.isEmpty()) {
+        juce::String wanted;
+        for (const auto& hint : preset.instruments)
+            wanted << (wanted.isEmpty() ? "" : ", ") << hint.libraryKey;
+        {
+            const juce::ScopedLock sl(loadLock_);
+            loadStatus_ = "Library not installed: " + wanted;
+        }
+        startupGate_.libraryMissing();
+        juce::Logger::writeToLog("SappKeys-library-missing: preset=\"" + juce::String(preset.name)
+                                 + "\" wanted=[" + wanted + "] root=\""
+                                 + SoundsPanel::samplesRoot().getFullPathName() + "\"");
+        if (onInstrumentChanged) onInstrumentChanged();
+    }
 
+    programApplied_.store(true);
     currentProgram_.store(index);
     syncPresetParameter(index);
     updateHostDisplay(ChangeDetails{}.withProgramChanged(true));
@@ -576,7 +599,7 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
 // ------------------------------------------------------------- instruments --
 
-void SappKeysProcessor::loadDiagnosticInstrument(const char* reason)
+void SappKeysProcessor::loadDiagnosticInstrument(const char* reason, bool arms)
 {
     const uint64_t generation = ++loadGeneration_;
     // Every async load owns a note-on gate window (sappkeys #2): until this
@@ -589,14 +612,14 @@ void SappKeysProcessor::loadDiagnosticInstrument(const char* reason)
         loadStatus_ = "Generating diagnostic keys...";
     }
     const juce::String identity = "DIAGNOSTIC(" + juce::String(reason) + ")";
-    std::thread([this, generation, identity] {
+    std::thread([this, generation, identity, arms] {
         auto inst = sapp::sounds::makeDiagnosticInstrument();
         sapp::sounds::LoadResult result;
         result.instrument = inst;
         result.ok = true;
         juce::MessageManager::callAsync(
-            [this, result = std::move(result), identity, generation]() mutable {
-                finishLoad(std::move(result), {}, identity, generation);
+            [this, result = std::move(result), identity, generation, arms]() mutable {
+                finishLoad(std::move(result), {}, identity, generation, arms);
             });
     }).detach();
 }
@@ -626,7 +649,8 @@ void SappKeysProcessor::loadSfzInstrument(const juce::File& sfzFile)
 
 void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
                                    const juce::String& path,
-                                   const juce::String& identity, uint64_t generation)
+                                   const juce::String& identity, uint64_t generation,
+                                   bool arms)
 {
     if (generation != loadGeneration_.load()) return;  // superseded
     loading_ = false;
@@ -665,10 +689,20 @@ void SappKeysProcessor::finishLoad(sapp::sounds::LoadResult result,
 
         sfzPath_ = path;
         instrumentName_ = juce::String(result.instrument->definition.name);
-        loadStatus_ = result.missingSamples.empty()
-                          ? "Ready"
-                          : juce::String(result.missingSamples.size()) + " samples missing";
-        startupGate_.loadCompleted(generation <= 1);
+        if (!arms) {
+            // A stand-in for a library that is missing on this machine: it is
+            // installed (so the UI has something to show) but must never
+            // sound in the library's place (sappkeys #5). The status keeps
+            // the reason; the gate stays closed until a real install.
+            loadStatus_ = "Library missing - " + identity;
+            startupGate_.loadCompleted(true);
+            startupGate_.libraryMissing();
+        } else {
+            loadStatus_ = result.missingSamples.empty()
+                              ? "Ready"
+                              : juce::String(result.missingSamples.size()) + " samples missing";
+            startupGate_.loadCompleted(generation <= 1);
+        }
     }
     publishReadiness();
     if (onInstrumentChanged) onInstrumentChanged();
@@ -751,11 +785,19 @@ void SappKeysProcessor::setStateInformation(const void* data, int sizeInBytes)
         }
         pendingPresetChoice_.store(-1);   // discard any echo already queued
         const juce::String path = state.getProperty("sfzPath", "").toString();
-        if (path.isNotEmpty() && juce::File(path).existsAsFile())
+        if (path.isNotEmpty() && juce::File(path).existsAsFile()) {
             loadSfzInstrument(juce::File(path));
-        else
-            loadDiagnosticInstrument(path.isEmpty() ? "state-default"
-                                                    : "state-path-missing");
+        } else if (path.isEmpty()) {
+            // Nothing was ever saved: the diagnostic IS this session's sound.
+            loadDiagnosticInstrument("state-default");
+        } else {
+            // The saved library is not on this machine (a session moved
+            // between the Mac and the PC). The diagnostic stands in SILENTLY;
+            // arming it here is exactly the "altogether default sound" of
+            // sapptune #21 coming back through the restore path (sappkeys #5).
+            juce::Logger::writeToLog("SappKeys-library-missing: restore sfzPath=\"" + path + "\"");
+            loadDiagnosticInstrument(("state-path-missing: " + path).toRawUTF8(), false);
+        }
     }
 }
 

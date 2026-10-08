@@ -2,6 +2,43 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-10-08 — v0.11.0: three roads to the Diagnostic Orchestra closed (#5)
+
+- **The report.** "SappKeys still makes a super loud static digital mess at
+  times." Reproduced on this machine with the station harness, with the real
+  Samples root installed: `sappkeys-headless render --program 0` settled on
+  `libraryReady = 1` with the **Diagnostic Orchestra** installed, not the
+  piano. That is the "altogether default sound" of sapptune#21 — up to 24
+  harmonics with a ~1/k rolloff (near-sawtooth), sustained tones that loop
+  without decaying — and on real `wanderer-piano` MIDI it sits **5 dB louder
+  than the piano with 6 dB less crest**, so pedalled chords stack into buzz.
+  "At times" = whenever a style picks the program that hits the hole.
+- **Road 1 — program 0 was a no-op on a fresh instance.** `setCurrentProgram`
+  returned early when `index == currentProgram_`, and a new instance reports
+  program 0 before anything was ever applied. Program 0 is "Grand Concert" —
+  the one `wanderer-piano` ("Piano Deep") and `storybook-orchestra` ask for by
+  name on every fresh station chain. Nothing loaded, the 1.5 s grace window
+  armed the construction diagnostic, the flag said ready. Now the early-out
+  requires `programApplied_`.
+- **Road 2 — a preset whose library is not installed fell through.**
+  `applyFactoryPreset` kept "the current instrument" when its library key
+  resolved to nothing — on a fresh insert that is the diagnostic. Now, with no
+  real instrument installed, the status reads `Library not installed: <keys>`,
+  the gate's new `libraryMissing()` blocks the grace path, and the instance
+  stays silent until a real install.
+- **Road 3 — a restored session whose `sfzPath` is gone (a set moved between
+  the Mac and the PC) installed the diagnostic and ARMED it.** The stand-in
+  now installs with `arms = false`: status `Library missing - …`, gate closed.
+  An empty `sfzPath` (nothing ever saved) still arms, as before.
+- `sappkeys-headless selftest` grows from 26 to 34 checks: program 0 on a
+  fresh instance must land on Salamander; a missing-library program and a
+  missing-path restore must never read ready and must render a note-on as
+  silence (−200 dBFS measured). All 34 pass.
+- Not changed: the station-side "Una Corda Soft probes at −58.5 dBFS" note in
+  sappradio's LISTENING-NOTES. The CLI renders that preset at −32.5 dBFS on
+  the same MIDI, so the deficit is not the preset alone — tracked as a
+  separate issue rather than guessed at here.
+
 ## 2026-08-11 — v0.10.0: `libraryReady` stops lying about a queued program (#4)
 
 - **The fault.** `setCurrentProgram()` only QUEUES the program; the load runs

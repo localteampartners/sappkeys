@@ -384,6 +384,100 @@ int runSelftest(const juce::String& fixtureRoot)
               + juce::String(toDb(a.rms), 1) + " dBFS)");
     }
 
+    // ---- 6. sappkeys #5: program 0 on a FRESH instance must load -----------
+    // A new instance reports program 0 before anything was applied; the
+    // station asks for "Grand Concert" (program 0) by name on a fresh chain.
+    // That used to be a no-op, the grace window armed the construction
+    // diagnostic, and libraryReady said 1 over the Diagnostic Orchestra.
+    {
+        std::printf("sappkeys #5 — a missing or unapplied library must never sound the diagnostic\n");
+        RenderOptions options;
+        options.select = Select::HostProgram;
+        options.program = 0;
+        const auto r = stationRender(options);
+        report("program 0", r);
+        check(r.settle.ready, "fresh instance, program 0: libraryReady eventually reads 1");
+        check(r.settle.pathAtReady == grandSfz.getFullPathName(),
+              "fresh instance, program 0: Grand Concert's library is what got installed (got \""
+              + (r.settle.pathAtReady.isEmpty() ? juce::String("(diagnostic)")
+                                                : juce::File(r.settle.pathAtReady).getFileName())
+              + "\")");
+    }
+
+    // ---- 7. a program whose library is NOT installed stays silent ----------
+    // The last factory program ("Honky Tonk") wants old-piano-fb or
+    // upright-piano; the fixture root has neither.
+    {
+        auto processor = std::make_unique<sappkeys::SappKeysProcessor>();
+        processor->prepareToPlay(kSampleRate, kBlock);
+        const int last = processor->getNumPrograms() - 1;
+        check(processor->getProgramName(last) == "Honky Tonk",
+              "fixture assumption: the last factory program is Honky Tonk");
+        processor->setCurrentProgram(last);
+        const auto settled = settleOnFlag(*processor, 3000);   // > 1.5 s grace
+        check(!settled.ready,
+              "missing library: libraryReady never reads 1 (grace window must not arm the diagnostic)");
+        check(processor->loadStatus().startsWith("Library not installed"),
+              "missing library: the status names it (\"" + processor->loadStatus() + "\")");
+        juce::AudioBuffer<float> buffer(2, kBlock);
+        double peak = 0.0;
+        for (int b = 0; b < 40; ++b) {
+            juce::MidiBuffer midi;
+            if (b == 0) midi.addEvent(juce::MidiMessage::noteOn(1, 60, 1.0f), 0);
+            buffer.clear();
+            processor->processBlock(buffer, midi);
+            for (int c = 0; c < 2; ++c)
+                for (int i = 0; i < kBlock; ++i)
+                    peak = std::max(peak, double(std::abs(buffer.getReadPointer(c)[i])));
+        }
+        check(peak < 1.0e-6, "missing library: a note-on produces silence, not the diagnostic ("
+                             + juce::String(toDb(peak), 1) + " dBFS)");
+        processor.reset();
+    }
+
+    // ---- 8. a restored session whose library path is gone stays silent -----
+    {
+        auto saved = std::make_unique<sappkeys::SappKeysProcessor>();
+        saved->prepareToPlay(kSampleRate, kBlock);
+        saved->loadSfzInstrument(grandSfz);
+        settleOnFlag(*saved, 20000);
+        juce::MemoryBlock state;
+        saved->getStateInformation(state);
+        saved.reset();
+
+        // Point the saved sfzPath somewhere that does not exist on this machine.
+        auto xml = juce::AudioProcessor::getXmlFromBinary(state.getData(), int(state.getSize()));
+        check(xml != nullptr, "restore-missing: saved state parses");
+        juce::MemoryBlock broken;
+        if (xml != nullptr) {
+            xml->setAttribute("sfzPath", "/nowhere/moved-between-machines/SalamanderGrandPiano-V3.sfz");
+            juce::AudioProcessor::copyXmlToBinary(*xml, broken);
+        }
+
+        auto restored = std::make_unique<sappkeys::SappKeysProcessor>();
+        restored->prepareToPlay(kSampleRate, kBlock);
+        restored->setStateInformation(broken.getData(), int(broken.getSize()));
+        const auto settled = settleOnFlag(*restored, 3000);
+        check(!settled.ready,
+              "restore-missing: libraryReady never reads 1 over the stand-in diagnostic");
+        check(restored->loadStatus().startsWith("Library missing"),
+              "restore-missing: the status names it (\"" + restored->loadStatus() + "\")");
+        juce::AudioBuffer<float> buffer(2, kBlock);
+        double peak = 0.0;
+        for (int b = 0; b < 40; ++b) {
+            juce::MidiBuffer midi;
+            if (b == 0) midi.addEvent(juce::MidiMessage::noteOn(1, 60, 1.0f), 0);
+            buffer.clear();
+            restored->processBlock(buffer, midi);
+            for (int c = 0; c < 2; ++c)
+                for (int i = 0; i < kBlock; ++i)
+                    peak = std::max(peak, double(std::abs(buffer.getReadPointer(c)[i])));
+        }
+        check(peak < 1.0e-6, "restore-missing: a note-on produces silence ("
+                             + juce::String(toDb(peak), 1) + " dBFS)");
+        restored.reset();
+    }
+
     std::printf("selftest: %s\n", fails == 0 ? "ALL PASS" : "FAILURES");
     return fails == 0 ? 0 : 1;
 }

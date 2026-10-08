@@ -102,6 +102,7 @@ public:
         loadPending_.store(false, std::memory_order_release);
         if (!constructionDefault) {
             realInstalled_.store(true, std::memory_order_release);
+            missing_.store(false, std::memory_order_release);
             armed_.store(true, std::memory_order_release);
         }
     }
@@ -116,14 +117,32 @@ public:
             armed_.store(true, std::memory_order_release);
     }
 
+    // Message thread: the host asked for a sound whose sample library is not
+    // installed on this machine (a factory program whose library key resolves
+    // to nothing, a restored sfzPath that no longer exists). Nothing was
+    // loaded, so there is nothing to wait for — but the instance now KNOWS it
+    // is not what the host asked for, and the fresh-insert grace path must not
+    // arm the diagnostic in its place (sappkeys #5: the station selects
+    // programs on fresh instances, and a missing library used to come out as
+    // the Diagnostic Orchestra at full tilt). Silence, with the status naming
+    // the missing library, until a real instrument actually installs.
+    void libraryMissing() noexcept
+    {
+        missing_.store(true, std::memory_order_release);
+        if (!realInstalled_.load(std::memory_order_acquire))
+            armed_.store(false, std::memory_order_release);
+    }
+
     // Message thread, periodic. Arms a fresh insert once the grace window has
     // passed with no state restore seen — but never while a load is in
     // flight: a user picking an SFZ inside the grace window must not have the
-    // diagnostic armed under the pick's load (sappkeys #2).
+    // diagnostic armed under the pick's load (sappkeys #2). And never once a
+    // requested library turned out to be missing (sappkeys #5).
     void tick(double msSinceConstruction) noexcept
     {
         if (!restoreSeen_.load(std::memory_order_acquire)
             && !loadPending_.load(std::memory_order_acquire)
+            && !missing_.load(std::memory_order_acquire)
             && msSinceConstruction >= kGraceMs)
             armed_.store(true, std::memory_order_release);
     }
@@ -141,6 +160,7 @@ private:
     std::atomic<bool> restoreSeen_{false};
     std::atomic<bool> loadPending_{false};
     std::atomic<bool> realInstalled_{false};
+    std::atomic<bool> missing_{false};
 };
 
 } // namespace sapp::keys
