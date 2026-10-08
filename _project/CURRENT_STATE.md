@@ -13,8 +13,10 @@
   status** (`Library not installed: …` / `Library missing - …`), never to the
   diagnostic. `StartupGate::libraryMissing()` is the new term; it blocks the
   fresh-insert grace path until a real install.
-- `sappkeys-headless selftest`: 34 checks (was 26), all green. The
-  reproduction and the measurements are in CHANGELOG.
+- `sappkeys-headless selftest`: 35 checks (was 26), all green; verified end to
+  end through the sappradio host (which needed its own fix — program 0 does
+  not arrive through a hosted VST3 `setCurrentProgram`; sappradio v0.8.0 echoes
+  programs as MIDI). The reproduction and the measurements are in CHANGELOG.
 - Still to prove on air: the station box runs the Windows build; v0.11.0 is
   tagged for the runner. Listen to a `wanderer-piano` and a
   `storybook-orchestra` take — both selected "Grand Concert" and both carried

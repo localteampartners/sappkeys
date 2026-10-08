@@ -328,13 +328,30 @@ void SappKeysProcessor::timerCallback()
     // real library and are the user's escape hatch from a dead restore.
     const bool holdPrograms = !startupGate_.armed()
                               && !(startupGate_.restoreSeen() && !loading_.load());
-    const int program = holdPrograms ? -1 : pendingProgram_.exchange(-1);
-    if (program >= 0)
+    // Apply FIRST, clear the request AFTER (sappkeys #5, the station race).
+    // `changePending()` is the only thing holding note-ons back between the
+    // grace window arming the construction diagnostic and the program's load
+    // actually beginning — and applyFactoryPreset() resets 19 parameters
+    // (host notifications, milliseconds) before it reaches loadSfzInstrument().
+    // With the request cleared up front, a host rendering at 30x realtime
+    // slipped a whole chord through that gap and sounded the Diagnostic
+    // Orchestra. Measured: suppressed=4, then 6 diagnostic voices, then
+    // suppressed=179. Clearing after the apply keeps the window shut until
+    // beginLoad() has taken over (or until the apply decided no load is
+    // needed, in which case the armed instrument IS the right one).
+    const int program = holdPrograms ? -1 : pendingProgram_.load();
+    if (program >= 0) {
         applyFactoryPreset(program);
+        int expected = program;
+        pendingProgram_.compare_exchange_strong(expected, -1);
+    }
 
-    const int choice = pendingPresetChoice_.exchange(-1);
-    if (choice >= 0)
+    const int choice = pendingPresetChoice_.load();
+    if (choice >= 0) {
         applyPresetChoice(choice);
+        int expected = choice;
+        pendingPresetChoice_.compare_exchange_strong(expected, -1);
+    }
 
     // ---- sapptune #21: gate arming, deferred retire, identity logging ------
     const double nowMs = juce::Time::getMillisecondCounterHiRes();
@@ -546,6 +563,15 @@ void SappKeysProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         } else if (msg.isAllSoundOff()) {
             e.type = MidiEvent::Type::AllSoundOff;
         } else if (msg.isProgramChange()) {
+            // A program change to the program ALREADY applied is not a change:
+            // no load window, no held note-ons. The station echoes its program
+            // as MIDI (sappkeys #5), and sapptune clips carry set_patches
+            // program changes at t=0 - both land here against a program that
+            // may already be in, and used to drop the first notes of the song
+            // while the timer re-applied it.
+            if (msg.getProgramChangeNumber() == currentProgram_.load()
+                && programApplied_.load())
+                continue;
             // Factory-preset select; applied on the message thread (timer).
             // Stored even while the startup gate is closed — the timer HOLDS
             // it until the gate arms (sapptune #21), so a set_patches program

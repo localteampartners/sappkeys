@@ -402,6 +402,27 @@ int runSelftest(const juce::String& fixtureRoot)
               + (r.settle.pathAtReady.isEmpty() ? juce::String("(diagnostic)")
                                                 : juce::File(r.settle.pathAtReady).getFileName())
               + "\")");
+
+        // The station race: between the timer consuming the program request
+        // and the load beginning, "ready" must never read true over the
+        // construction diagnostic. Poll as fast as the loop allows, from the
+        // request until the real library is in.
+        auto processor = std::make_unique<sappkeys::SappKeysProcessor>();
+        processor->prepareToPlay(kSampleRate, kBlock);
+        processor->setCurrentProgram(0);
+        bool readyOverDiagnostic = false;
+        const auto start = juce::Time::getMillisecondCounterHiRes();
+        while (juce::Time::getMillisecondCounterHiRes() - start < 20000.0) {
+            if (processor->libraryReady() && processor->currentInstrumentPath().isEmpty())
+                readyOverDiagnostic = true;
+            if (processor->libraryReady() && !processor->currentInstrumentPath().isEmpty())
+                break;
+            pump(1);
+        }
+        check(!readyOverDiagnostic,
+              "fresh instance, program 0: ready never reads 1 while the diagnostic is still the "
+              "installed instrument (the apply-then-clear window)");
+        processor.reset();
     }
 
     // ---- 7. a program whose library is NOT installed stays silent ----------

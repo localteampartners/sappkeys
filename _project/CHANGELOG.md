@@ -30,10 +30,29 @@
   the Mac and the PC) installed the diagnostic and ARMED it.** The stand-in
   now installs with `arms = false`: status `Library missing - …`, gate closed.
   An empty `sfzPath` (nothing ever saved) still arms, as before.
-- `sappkeys-headless selftest` grows from 26 to 34 checks: program 0 on a
-  fresh instance must land on Salamander; a missing-library program and a
+- **Road 4 — the timer's apply-then-clear race (found in the station host).**
+  `timerCallback` consumed the queued program (`exchange(-1)`) BEFORE
+  `applyFactoryPreset` reached `loadSfzInstrument`, and `changePending()` was
+  the only thing holding note-ons back while the grace window had the
+  diagnostic armed. `applyFactoryPreset` resets 19 parameters first — host
+  notifications, milliseconds — and a host rendering at 30× realtime slipped
+  a whole chord through: measured `suppressed=4`, then 6 diagnostic voices,
+  then `suppressed=179`. The request is now cleared AFTER the apply.
+- **Not a plugin bug, but found here: through VST3, program 0 never arrives.**
+  JUCE routes a hosted `setCurrentProgram()` through the "Program" parameter,
+  which already reads 0 on a fresh instance — a no-value-change the wrapper
+  never forwards. Only a MIDI program change reaches the plugin for program 0.
+  sappradio now echoes every program as MIDI during its settle (its v0.8.0).
+- A MIDI program change naming the program already applied no longer opens a
+  load window (sapptune clips carry set_patches changes at t = 0; those were
+  dropping the first notes of a song for nothing).
+- `sappkeys-headless selftest` grows from 26 to 35 checks: program 0 on a
+  fresh instance must land on Salamander and `libraryReady` must never read 1
+  over the diagnostic on the way there; a missing-library program and a
   missing-path restore must never read ready and must render a note-on as
-  silence (−200 dBFS measured). All 34 pass.
+  silence (−200 dBFS measured). All 35 pass. End to end through the rebuilt
+  sappradio host on real `wanderer-piano` MIDI: polled, ready at 3.25 s with
+  Salamander installed, piano from 0.01 s, no diagnostic in any window.
 - Not changed: the station-side "Una Corda Soft probes at −58.5 dBFS" note in
   sappradio's LISTENING-NOTES. The CLI renders that preset at −32.5 dBFS on
   the same MIDI, so the deficit is not the preset alone — tracked as a
