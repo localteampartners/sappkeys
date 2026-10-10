@@ -12,74 +12,95 @@ namespace sappkeys::presets {
 // preset ships near full scale. A preset may go above the 0.18 default when
 // mechanism noise IS the sound (Una Corda Soft is a felt-piano voice), but
 // nothing sits at 1.0 — and `clean` (CC 3) can take all of it out anyway.
+// LEVEL (v0.15): every preset carries a presetTrim so the bank plays at one
+// loudness. Measured with `sappkeys render` on one phrase (velvet-hour's right
+// hand, 2 minutes): the bank spanned 26.7 LU, EP Crunchy -17.9 LUFS to Una
+// Corda Soft -44.6, and the station's lead/balance pass could not make up the
+// quiet grands (sappradio LISTENING-NOTES: Lounge Grand 8.7 dB short, Una
+// Corda Soft at -58.5 dBFS RMS). Now about -26 LUFS each (Una Corda -32.6:
+// the trim tops out at +12), peaks -7 to -16 dBFS. Re-measure after any
+// tone change (method: CHANGELOG 0.15.0).
 const std::vector<Preset>& all()
 {
     static const std::vector<Preset> bank {
         { "Grand Concert",
           { { "lid", 1.0f }, { "resonance", 0.6f }, { "mechNoise", 0.25f },
             { "width", 1.25f }, { "roomLevel", 0.35f }, { "roomSize", 1.15f },
-            { "roomDecay", 1.3f } },
+            { "roomDecay", 1.3f },
+            { "presetTrim", 4.0f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
 
         { "Intimate Grand",
           { { "touch", 0.4f }, { "lid", 0.55f }, { "resonance", 0.45f },
             { "vintage", 0.15f }, { "width", 0.9f }, { "roomLevel", 0.22f },
-            { "roomSize", 0.8f }, { "roomDecay", 0.6f } },
+            { "roomSize", 0.8f }, { "roomDecay", 0.6f },
+            { "presetTrim", 9.0f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
 
         { "Bright Grand",
           { { "touch", 0.65f }, { "lid", 1.0f }, { "resonance", 0.4f },
-            { "drive", 0.08f }, { "width", 1.3f }, { "roomLevel", 0.25f } },
+            { "drive", 0.08f }, { "width", 1.3f }, { "roomLevel", 0.25f },
+            { "presetTrim", 1.5f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
 
         { "EP Mark I",
           { { "touch", 0.55f }, { "lid", 0.7f }, { "resonance", 0.15f },
             { "mechNoise", 0.2f }, { "vintage", 0.5f }, { "drive", 0.15f },
             { "width", 0.85f }, { "roomLevel", 0.18f }, { "roomSize", 0.8f },
-            { "roomDecay", 0.5f } },
+            { "roomDecay", 0.5f },
+            { "presetTrim", -5.5f } },
           { { "fm-piano1", "FM-Piano1" } } },
 
         { "EP Dyno",
           { { "touch", 0.75f }, { "lid", 0.9f }, { "resonance", 0.1f },
             { "mechNoise", 0.18f }, { "vintage", 0.35f }, { "drive", 0.08f },
-            { "width", 1.05f }, { "roomLevel", 0.15f }, { "roomDecay", 0.45f } },
+            { "width", 1.05f }, { "roomLevel", 0.15f }, { "roomDecay", 0.45f },
+            { "presetTrim", -8.0f } },
           { { "fm-piano1", "FM-Piano1" } } },
 
         { "EP Crunchy",
           { { "touch", 0.6f }, { "lid", 0.65f }, { "resonance", 0.1f },
             { "mechNoise", 0.2f }, { "vintage", 0.7f }, { "drive", 0.5f },
             { "width", 0.85f }, { "roomLevel", 0.12f }, { "roomSize", 0.75f },
-            { "roomDecay", 0.4f } },
+            { "roomDecay", 0.4f },
+            { "presetTrim", -8.0f } },
           { { "fm-piano1", "FM-Piano1" } } },
 
         { "Una Corda Soft",
           { { "unaCorda", 1.0f }, { "touch", 0.3f }, { "lid", 0.45f },
             { "resonance", 0.55f }, { "mechNoise", 0.5f }, { "vintage", 0.1f },
             { "width", 1.1f }, { "roomLevel", 0.4f }, { "roomSize", 1.2f },
-            { "roomDecay", 1.6f } },
+            { "roomDecay", 1.6f },
+            { "presetTrim", 12.0f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
 
         { "Honky Tonk",
           { { "touch", 0.6f }, { "lid", 0.9f }, { "resonance", 0.35f },
             { "vintage", 0.85f }, { "drive", 0.25f }, { "width", 0.7f },
-            { "roomLevel", 0.2f }, { "roomSize", 0.7f }, { "roomDecay", 0.5f } },
+            { "roomLevel", 0.2f }, { "roomSize", 0.7f }, { "roomDecay", 0.5f },
+            { "presetTrim", -1.0f } },
           { { "old-piano-fb", "" }, { "upright-piano", "UprightPiano" } } },
 
         // v0.14 (sapptune PIANO-LEAD-LOUNGE-PLAN G1e): two grands for players,
         // not demos. Appended at the END: program numbers are a contract.
-        // Lounge Grand — after midnight: lid low, light touch, a hair of una
-        // corda, a warm room with a little hang. Velvet Hour's piano.
+        // Lounge Grand — after midnight: half lid, natural touch, a hair of
+        // una corda, a warm room with a little hang. Velvet Hour's piano.
+        // (v0.15: was touch 0.35 / lid 0.35 / una corda 0.2 — measured on
+        // velvet-hour, a dull, quiet left hand, 2-4 kHz 44 dB under its peak
+        // band, and 8.7 dB short of the station's lead target.)
         { "Lounge Grand",
-          { { "touch", 0.35f }, { "lid", 0.35f }, { "unaCorda", 0.2f }, { "resonance", 0.55f },
+          { { "touch", 0.48f }, { "lid", 0.55f }, { "unaCorda", 0.05f }, { "resonance", 0.55f },
             { "mechNoise", 0.12f }, { "vintage", 0.1f }, { "width", 0.95f },
-            { "roomLevel", 0.3f }, { "roomSize", 0.9f }, { "roomDecay", 1.1f } },
+            { "roomLevel", 0.24f }, { "roomSize", 0.9f }, { "roomDecay", 1.1f },
+            { "presetTrim", 7.0f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
         // Jazz Grand — a trio piano: medium lid, a touch more bite than
         // Intimate, a shorter room so rootless comping stays clear.
         { "Jazz Grand",
           { { "touch", 0.45f }, { "lid", 0.65f }, { "resonance", 0.4f },
             { "mechNoise", 0.14f }, { "vintage", 0.05f }, { "width", 1.0f },
-            { "roomLevel", 0.2f }, { "roomSize", 0.75f }, { "roomDecay", 0.55f } },
+            { "roomLevel", 0.2f }, { "roomSize", 0.75f }, { "roomDecay", 0.55f },
+            { "presetTrim", 7.5f } },
           { { "salamander", "SalamanderGrandPiano-V3" } } },
     };
     return bank;

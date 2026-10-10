@@ -94,6 +94,8 @@ const ParamSpec kParams[] = {
      "Room decay time in seconds (T60). This is a room, not a hall."},
     {"master_gain_db", "masterGain", &KeysParams::masterGainDb, -24.0f, 12.0f, 0.0f, -1,
      "Master output gain in dB."},
+    {"preset_trim_db", "presetTrim", &KeysParams::trimDb, -24.0f, 12.0f, 0.0f, -1,
+     "Preset level trim in dB, summed with master gain. Not on any CC (master gain follows CC 7)."},
     {"clean", "clean", &KeysParams::clean, 0.0f, 1.0f, 0.0f, -1,
      "Imperfection master (SappLink CC 3, suite-wide): scales every modeled "
      "imperfection — mechanical noise and vintage tune/wow/wear — by (1 - clean). "

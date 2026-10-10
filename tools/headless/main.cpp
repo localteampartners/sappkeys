@@ -426,14 +426,16 @@ int runSelftest(const juce::String& fixtureRoot)
     }
 
     // ---- 7. a program whose library is NOT installed stays silent ----------
-    // The last factory program ("Honky Tonk") wants old-piano-fb or
-    // upright-piano; the fixture root has neither.
+    // "Honky Tonk" wants old-piano-fb or upright-piano; the fixture root has
+    // neither. Found by NAME: v0.14 appended programs after it.
     {
         auto processor = std::make_unique<sappkeys::SappKeysProcessor>();
         processor->prepareToPlay(kSampleRate, kBlock);
-        const int last = processor->getNumPrograms() - 1;
-        check(processor->getProgramName(last) == "Honky Tonk",
-              "fixture assumption: the last factory program is Honky Tonk");
+        int last = -1;
+        for (int i = 0; i < processor->getNumPrograms(); ++i)
+            if (processor->getProgramName(i) == "Honky Tonk") last = i;
+        check(last >= 0, "fixture assumption: a factory program is named Honky Tonk");
+        if (last < 0) last = 0;
         processor->setCurrentProgram(last);
         const auto settled = settleOnFlag(*processor, 3000);   // > 1.5 s grace
         check(!settled.ready,

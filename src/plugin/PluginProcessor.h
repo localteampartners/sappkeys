@@ -150,6 +150,7 @@ private:
     std::atomic<float>* pRoomSize_ = nullptr;
     std::atomic<float>* pRoomDecay_ = nullptr;
     std::atomic<float>* pMaster_ = nullptr;
+    std::atomic<float>* pTrim_ = nullptr;
     std::atomic<float>* pLimiter_ = nullptr;
     std::atomic<float>* pQuality_ = nullptr;
     std::atomic<float>* pClean_ = nullptr;   // sappkeys #3, appended last

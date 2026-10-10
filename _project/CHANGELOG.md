@@ -2,6 +2,27 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-10-10 — 0.15.0: one loudness for the bank, a clearer Lounge Grand
+
+From the station: Lounge Grand as a lead 8.7 dB short of target, Una Corda
+Soft at −58.5 dBFS RMS, and "the left hand piano always sounds boxy".
+
+- **`presetTrim`** (host parameter, appended last; CLI `preset_trim_db`):
+  the preset's level, summed with Master Gain and on NO CC. Master Gain
+  follows CC 7, which sapptune restates every section, so a level stored
+  there never survived the first bar.
+- **The bank is levelled.** Measured with `sappkeys render` on one phrase
+  (velvet-hour's right hand, 2 min): it spanned **26.7 LU** (EP Crunchy −17.9
+  LUFS, Una Corda Soft −44.6). Trims now put each preset near −26 LUFS (Una
+  Corda −32.6: the trim tops out at +12), peaks −7 to −16 dBFS. Method:
+  render the phrase per preset with the preset's values as `--param`s,
+  `ffmpeg -af ebur128`, trim = −26 − measured, rounded to 0.5 dB.
+- **Lounge Grand** re-voiced: touch 0.35 → 0.48, lid 0.35 → 0.55, una corda
+  0.2 → 0.05, room 0.3 → 0.24. Same phrase: −37.5 → −26.1 LUFS with its trim,
+  and audibly less felt.
+- Headless selftest: the "missing library" fixture found Honky Tonk by
+  position, which 0.14's appended presets broke; it looks it up by name.
+
 ## 2026-10-09 — 0.13.0: EP tremolo and phaser
 
 MUSIC-QUALITY-PLAN E5, second step. Two in-plugin effects the electric piano

@@ -2,6 +2,14 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-10-10 — v0.15.0: the bank at one loudness
+
+- `presetTrim` (no CC; Master Gain follows CC 7 and every song restates it)
+  carries each factory preset's measured level; the bank sat across 26.7 LU
+  and now sits near −26 LUFS on the reference phrase (Una Corda −32.6).
+  Lounge Grand re-voiced (touch 0.48, lid 0.55, una corda 0.05). Re-measure
+  with `sappkeys render` + `ffmpeg -af ebur128` after any tone change.
+
 ## Shipped 2026-10-08 — v0.11.0: the diagnostic can no longer stand in for a missing library (#5)
 
 - The "loud static digital mess" is the SappSounds **Diagnostic Orchestra**

@@ -92,6 +92,9 @@ struct KeysParams {
     float roomDecay = 0.9f;    // seconds, 0.2..2.5
     // Output
     float masterGainDb = 0.0f;
+    // Preset level trim (v0.15), summed with masterGainDb. Not CC-reachable:
+    // master gain follows CC 7, so a preset's level has to live elsewhere.
+    float trimDb = 0.0f;
     // Safety limiter (default ON). Peak-accurate gain reduction to
     // kSafetyCeiling — it turns loud material DOWN rather than squaring it off.
     // Switching it off does not remove the unconditional kOutputBound clamp.

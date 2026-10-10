@@ -240,7 +240,7 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
     const float widthTarget = std::clamp(p.width, 0.0f, 2.0f) * (0.55f + 0.45f * lid);
 
     const float roomTarget = std::clamp(p.roomLevel, 0.0f, 1.0f);
-    const float masterTarget = dbToGain(p.masterGainDb);
+    const float masterTarget = dbToGain(std::clamp(p.masterGainDb + p.trimDb, -48.0f, 18.0f));
 
     // Drive: transparent at 0 (full bypass through the mix), gentle tanh above.
     const float drive = std::clamp(p.drive, 0.0f, 1.0f);

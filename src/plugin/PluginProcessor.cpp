@@ -83,6 +83,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SappKeysProcessor::makeLayou
     // after the APVTS, is non-automatable, and hosts resolve it by ID).
     layout.add(std::make_unique<P>(juce::ParameterID{"clean", 1}, "Clean",
                                    Range{0.0f, 1.0f, 0.001f}, 0.0f));
+    // v0.15: the preset's own level trim. NOT on any CC: Master Gain follows
+    // CC 7, which sapptune restates at every section, so a level a preset put
+    // there never survived the first bar. Appended last so no host parameter
+    // index moves.
+    layout.add(std::make_unique<P>(juce::ParameterID{"presetTrim", 1}, "Preset Trim",
+                                   Range{-24.0f, 12.0f, 0.1f}, 0.0f));
     return layout;
 }
 
@@ -108,6 +114,7 @@ SappKeysProcessor::SappKeysProcessor()
     pRoomSize_ = raw("roomSize");
     pRoomDecay_ = raw("roomDecay");
     pMaster_ = raw("masterGain");
+    pTrim_ = raw("presetTrim");
     pLimiter_ = raw("limiter");
     pQuality_ = raw("quality");
     pClean_ = raw("clean");
@@ -480,6 +487,7 @@ void SappKeysProcessor::pushParamsToEngine()
     p.roomSize = pRoomSize_->load();
     p.roomDecay = pRoomDecay_->load();
     p.masterGainDb = pMaster_->load();
+    p.trimDb = pTrim_->load();
     p.limiter = pLimiter_->load() > 0.5f;
     p.quality = int(pQuality_->load());
     // The engine scales every modeled imperfection by (1 − clean) itself
