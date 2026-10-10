@@ -32,6 +32,8 @@ const std::array<CCMapping, kNumMappings>& mappings()
         { 19, "roomSize",   &KeysParams::roomSize,     0.6f,   1.4f,  Curve::Linear },
         { 20, "roomDecay",  &KeysParams::roomDecay,    0.2f,   2.5f,  Curve::Log },
         { 22, "drive",      &KeysParams::drive,        0.0f,   1.0f,  Curve::Linear },
+        { 13, "tremolo",    &KeysParams::tremolo,      0.0f,   1.0f,  Curve::Linear },   // v0.13
+        { 30, "phaser",     &KeysParams::phaser,       0.0f,   1.0f,  Curve::Linear },   // v0.13
         { 67, "unaCorda",   &KeysParams::unaCorda,     0.0f,   1.0f,  Curve::Linear },
         { 91, "roomLevel",  &KeysParams::roomLevel,    0.0f,   1.0f,  Curve::Linear },
     } };

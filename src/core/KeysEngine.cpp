@@ -41,6 +41,7 @@ void KeysEngine::prepare(double sampleRate, int maxBlockFrames)
     limReleaseCoef_ = 1.0f - std::exp(-1.0f / (float(sampleRate) * 0.15f));
 
     lpL_ = lpR_ = lidLpL_ = lidLpR_ = 0.0f;
+    for (int st = 0; st < 4; ++st) apXL_[st] = apYL_[st] = apXR_[st] = apYR_[st] = 0.0f;
     wowPhase_ = flutterPhase_ = 0.0f;
     liveDynamics_ = liveExpression_ = -1.0f;
     std::fill(std::begin(heldNotes_), std::end(heldNotes_), false);
@@ -259,6 +260,12 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
     const float smFast = smoothCoef(sampleRate_, 12.0f);
     const float smSlow = smoothCoef(sampleRate_, 40.0f);
 
+    // EP effects (v0.13)
+    const float tremTarget = std::clamp(p.tremolo, 0.0f, 1.0f);
+    const float phaserTarget = std::clamp(p.phaser, 0.0f, 1.0f);
+    const float tremInc = float(2.0 * 3.14159265 * 5.4 / sampleRate_);
+    const float phaserInc = float(2.0 * 3.14159265 * 0.45 / sampleRate_);
+
     // --- per-sample dry chain ----------------------------------------------
     for (int f = 0; f < n; ++f) {
         smDynGain_ += smFast * (dynGainTarget - smDynGain_);
@@ -309,6 +316,36 @@ void KeysEngine::process(const MidiEvent* events, int eventCount,
             const float satR = std::tanh(drivePre * r) / drivePre * driveMakeup;
             l += smDriveMix_ * (satL - l);
             r += smDriveMix_ * (satR - r);
+        }
+
+        // Suitcase tremolo: counter-phase autopan, so the image swings and
+        // the sum barely moves (v0.13).
+        smTremolo_ += smSlow * (tremTarget - smTremolo_);
+        if (smTremolo_ > 0.0005f) {
+            tremPhase_ += tremInc;
+            if (tremPhase_ > 6.2831853f) tremPhase_ -= 6.2831853f;
+            const float sw = std::sin(tremPhase_);
+            l *= 1.0f - smTremolo_ * 0.5f * (1.0f - sw);
+            r *= 1.0f - smTremolo_ * 0.5f * (1.0f + sw);
+        }
+        // Phaser: four first-order allpasses swept 300 Hz .. 2.4 kHz at 0.45 Hz,
+        // wet mixed against dry (the notches are what you hear).
+        smPhaser_ += smSlow * (phaserTarget - smPhaser_);
+        if (smPhaser_ > 0.0005f) {
+            phaserPhase_ += phaserInc;
+            if (phaserPhase_ > 6.2831853f) phaserPhase_ -= 6.2831853f;
+            const float fc = 300.0f * std::pow(8.0f, 0.5f * (1.0f + std::sin(phaserPhase_)));
+            const float t = std::tan(3.14159265f * fc / float(sampleRate_));
+            const float a = (t - 1.0f) / (t + 1.0f);
+            float wl = l, wr = r;
+            for (int st = 0; st < 4; ++st) {
+                const float yl = a * wl + apXL_[st] - a * apYL_[st];
+                apXL_[st] = wl; apYL_[st] = yl; wl = yl;
+                const float yr = a * wr + apXR_[st] - a * apYR_[st];
+                apXR_[st] = wr; apYR_[st] = yr; wr = yr;
+            }
+            l += smPhaser_ * 0.5f * (wl - l);
+            r += smPhaser_ * 0.5f * (wr - r);
         }
 
         dryL_[size_t(f)] = l;

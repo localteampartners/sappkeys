@@ -546,3 +546,33 @@ TEST_CASE("EP tone policy: an electric-piano library gets a velocity-tracking lo
     REQUIRE(looksLikeElectricPiano("Rhodes Mk I"));
     REQUIRE_FALSE(looksLikeElectricPiano("Salamander Grand"));
 }
+
+TEST_CASE("EP effects (v0.13): tremolo swings the image, the phaser moves the tone", "[fx][e5]")
+{
+    auto render = [](float tremolo, float phaser) {
+        KeysEngine engine;
+        engine.prepare(48000, 512);
+        KeysParams p;
+        p.roomLevel = 0.0f; p.resonance = 0.0f; p.mechNoise = 0.0f;
+        p.tremolo = tremolo; p.phaser = phaser;
+        engine.setParams(p);
+        engine.setInstrument(makeReleaseTestInstrument());
+        return run(engine, {noteOn(0, 60, 100)}, 48000);
+    };
+    const auto dry = render(0.0f, 0.0f);
+    const auto trem = render(1.0f, 0.0f);
+    const auto phased = render(0.0f, 1.0f);
+    // tremolo: the L/R balance swings over a cycle (~5.4 Hz = ~8900 samples)
+    double maxL = 0, maxR = 0;
+    for (size_t w = 12000; w + 1000 <= 24000; w += 500) {
+        double el = 0, er = 0;
+        for (size_t i = w; i < w + 1000; ++i) { el += std::abs(trem.left[i]); er += std::abs(trem.right[i]); }
+        maxL = std::max(maxL, el / er); maxR = std::max(maxR, er / el);
+    }
+    REQUIRE(maxL > 1.3);
+    REQUIRE(maxR > 1.3);
+    double dTrem = 0, dPh = 0;
+    for (size_t i = 12000; i < 24000; ++i) { dTrem += std::abs(double(trem.left[i]) - dry.left[i]); dPh += std::abs(double(phased.left[i]) - dry.left[i]); }
+    REQUIRE(dTrem > 1.0);
+    REQUIRE(dPh > 1.0);
+}

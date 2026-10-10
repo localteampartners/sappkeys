@@ -20,7 +20,9 @@
     { "id": "drive",      "label": "Drive",        "cc": 22,  "range": [0, 1],      "curve": "linear", "tags": ["drive", "saturation", "grit"] },
     { "id": "unaCorda",   "label": "Una Corda",    "cc": 67,  "range": [0, 1],      "curve": "linear", "tags": ["soft", "pedal", "tone"] },
     { "id": "roomLevel",  "label": "Room Level",   "cc": 91,  "range": [0, 1],      "curve": "linear", "tags": ["space", "reverb"] },
-    { "id": "clean",      "label": "Clean",        "cc": 3,   "range": [0, 1],      "curve": "linear", "tags": ["clean", "imperfection"] }
+    { "id": "clean",      "label": "Clean",        "cc": 3,   "range": [0, 1],      "curve": "linear", "tags": ["clean", "imperfection"] },
+    { "id": "tremolo", "label": "Tremolo", "cc": 13, "range": [0, 1], "curve": "linear", "tags": ["movement", "vintage", "ep"] },
+    { "id": "phaser", "label": "Phaser", "cc": 30, "range": [0, 1], "curve": "linear", "tags": ["movement", "vintage", "ep"] }
   ],
   "hostParameters": [
     {

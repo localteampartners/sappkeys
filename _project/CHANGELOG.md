@@ -2,6 +2,17 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-10-09 — 0.13.0: EP tremolo and phaser
+
+MUSIC-QUALITY-PLAN E5, second step. Two in-plugin effects the electric piano
+was missing: `tremolo` (0-1, SappLink CC 13) — a Suitcase-style counter-phase
+stereo autopan at 5.4 Hz, the image swings while the sum barely moves — and
+`phaser` (0-1, CC 30) — four first-order allpasses swept 300 Hz-2.4 kHz at
+0.45 Hz, wet mixed against dry. Both sit after the drive in the per-sample
+chain, smoothed, bypassed at 0 (bit-exact for every existing session). Test:
+`test_keys_engine.cpp` "EP effects". Still open in E5: a real Rhodes / Wurli
+multisample or tine model, "Jazz Grand" / "Ballad Grand" presets.
+
 ## 2026-10-09 — 0.12.0: the electric piano gets a tone
 
 MUSIC-QUALITY-PLAN E5, first step. The EP library is a small FM multisample

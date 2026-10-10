@@ -44,6 +44,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout SappKeysProcessor::makeLayou
                                    Range{0.0f, 1.0f, 0.001f}, 0.0f));
     layout.add(std::make_unique<P>(juce::ParameterID{"drive", 1}, "Drive",
                                    Range{0.0f, 1.0f, 0.001f}, 0.0f));
+    layout.add(std::make_unique<P>(juce::ParameterID{"tremolo", 1}, "Tremolo",
+                                   Range{0.0f, 1.0f, 0.001f}, 0.0f));
+    layout.add(std::make_unique<P>(juce::ParameterID{"phaser", 1}, "Phaser",
+                                   Range{0.0f, 1.0f, 0.001f}, 0.0f));
     layout.add(std::make_unique<P>(juce::ParameterID{"roomLevel", 1}, "Room Level",
                                    Range{0.0f, 1.0f, 0.001f}, 0.30f));
     layout.add(std::make_unique<P>(juce::ParameterID{"roomSize", 1}, "Room Size",
@@ -98,6 +102,8 @@ SappKeysProcessor::SappKeysProcessor()
     pWidth_ = raw("width");
     pVintage_ = raw("vintage");
     pDrive_ = raw("drive");
+    pTremolo_ = raw("tremolo");
+    pPhaser_ = raw("phaser");
     pRoomLevel_ = raw("roomLevel");
     pRoomSize_ = raw("roomSize");
     pRoomDecay_ = raw("roomDecay");
@@ -468,6 +474,8 @@ void SappKeysProcessor::pushParamsToEngine()
     p.width = pWidth_->load();
     p.vintage = pVintage_->load();
     p.drive = pDrive_->load();
+    p.tremolo = pTremolo_->load();
+    p.phaser = pPhaser_->load();
     p.roomLevel = pRoomLevel_->load();
     p.roomSize = pRoomSize_->load();
     p.roomDecay = pRoomDecay_->load();

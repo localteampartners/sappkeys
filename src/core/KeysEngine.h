@@ -77,6 +77,10 @@ struct KeysParams {
     // Character
     float vintage = 0.0f;      // tape/EP age: random tune, wow/flutter, HF soften
     float drive = 0.0f;        // gentle saturation (EPs love it)
+    // v0.13 EP effects (MUSIC-QUALITY-PLAN E5): Suitcase-style stereo
+    // tremolo (counter-phase autopan at ~5.4 Hz) and a slow 4-stage phaser.
+    float tremolo = 0.0f;      // 0..1 depth
+    float phaser = 0.0f;       // 0..1 mix
     // Cleanliness — the suite-wide SappLink `clean` control (CC 3, sapptune
     // #30). One switch that takes every modeled imperfection out of the way:
     // 0 = as authored (backwards compatible), 1 = no modeled noise, wear or
@@ -224,6 +228,9 @@ private:
     float lpL_ = 0.0f, lpR_ = 0.0f;        // dynamics/una-corda/vintage filter
     float lidLpL_ = 0.0f, lidLpR_ = 0.0f;  // lid shelf crossover
     float wowPhase_ = 0.0f, flutterPhase_ = 0.0f;
+    float smTremolo_ = 0.0f, smPhaser_ = 0.0f;
+    float tremPhase_ = 0.0f, phaserPhase_ = 0.0f;
+    float apXL_[4] = {}, apYL_[4] = {}, apXR_[4] = {}, apYR_[4] = {};  // phaser allpass states
 
     // Safety limiter state. Attack is instantaneous at the block boundary
     // (the gain is chosen from the whole block's peak, so no sample can slip

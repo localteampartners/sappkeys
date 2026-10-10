@@ -32,7 +32,7 @@ struct CCMapping {
     Curve curve;
 };
 
-inline constexpr int kNumMappings = 13;
+inline constexpr int kNumMappings = 15;
 const std::array<CCMapping, kNumMappings>& mappings();
 
 // nullptr if this CC is not part of the SappLink contract.

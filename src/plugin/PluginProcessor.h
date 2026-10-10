@@ -144,6 +144,8 @@ private:
     std::atomic<float>* pWidth_ = nullptr;
     std::atomic<float>* pVintage_ = nullptr;
     std::atomic<float>* pDrive_ = nullptr;
+    std::atomic<float>* pTremolo_ = nullptr;
+    std::atomic<float>* pPhaser_ = nullptr;
     std::atomic<float>* pRoomLevel_ = nullptr;
     std::atomic<float>* pRoomSize_ = nullptr;
     std::atomic<float>* pRoomDecay_ = nullptr;
