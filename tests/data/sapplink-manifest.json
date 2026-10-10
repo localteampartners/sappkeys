@@ -38,7 +38,9 @@
         "EP Dyno",
         "EP Crunchy",
         "Una Corda Soft",
-        "Honky Tonk"
+        "Honky Tonk",
+        "Lounge Grand",
+        "Jazz Grand"
       ],
       "note": "Factory names in program order, then user presets as \"<name> (user)\". User presets are per-machine (scanned from disk when the plugin is constructed), so only the factory names are listed here."
     }
@@ -51,7 +53,9 @@
     { "name": "EP Dyno", "program": 4 },
     { "name": "EP Crunchy", "program": 5 },
     { "name": "Una Corda Soft", "program": 6 },
-    { "name": "Honky Tonk", "program": 7 }
+    { "name": "Honky Tonk", "program": 7 },
+    { "name": "Lounge Grand", "program": 8 },
+    { "name": "Jazz Grand", "program": 9 }
   ],
   "articulations": []
 }

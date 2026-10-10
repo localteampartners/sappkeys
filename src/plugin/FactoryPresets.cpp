@@ -64,6 +64,23 @@ const std::vector<Preset>& all()
             { "vintage", 0.85f }, { "drive", 0.25f }, { "width", 0.7f },
             { "roomLevel", 0.2f }, { "roomSize", 0.7f }, { "roomDecay", 0.5f } },
           { { "old-piano-fb", "" }, { "upright-piano", "UprightPiano" } } },
+
+        // v0.14 (sapptune PIANO-LEAD-LOUNGE-PLAN G1e): two grands for players,
+        // not demos. Appended at the END: program numbers are a contract.
+        // Lounge Grand — after midnight: lid low, light touch, a hair of una
+        // corda, a warm room with a little hang. Velvet Hour's piano.
+        { "Lounge Grand",
+          { { "touch", 0.35f }, { "lid", 0.35f }, { "unaCorda", 0.2f }, { "resonance", 0.55f },
+            { "mechNoise", 0.12f }, { "vintage", 0.1f }, { "width", 0.95f },
+            { "roomLevel", 0.3f }, { "roomSize", 0.9f }, { "roomDecay", 1.1f } },
+          { { "salamander", "SalamanderGrandPiano-V3" } } },
+        // Jazz Grand — a trio piano: medium lid, a touch more bite than
+        // Intimate, a shorter room so rootless comping stays clear.
+        { "Jazz Grand",
+          { { "touch", 0.45f }, { "lid", 0.65f }, { "resonance", 0.4f },
+            { "mechNoise", 0.14f }, { "vintage", 0.05f }, { "width", 1.0f },
+            { "roomLevel", 0.2f }, { "roomSize", 0.75f }, { "roomDecay", 0.55f } },
+          { { "salamander", "SalamanderGrandPiano-V3" } } },
     };
     return bank;
 }
