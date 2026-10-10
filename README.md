@@ -42,6 +42,12 @@ Full plugin build (Standalone/VST3/AU): see
   samples), stereo width.
 - **Character** — tape/vintage (per-note random tune, wow & flutter, softened
   highs) and gentle drive for EPs.
+- **EP tone (v0.12)** — an electric-piano library (its folder or name says
+  `fm-piano1` / rhodes / wurli / electric) loads with a velocity-tracking
+  low-pass and a tine filter envelope, so soft notes are round and hard notes
+  bark. It rides on SappSounds 0.4's SFZ filter opcodes; a library that
+  declares its own `fil_type` / `cutoff` keeps them. The fetched FreePats EP
+  must keep its folder name `fm-piano1` (`fetch-library.sh get fm-piano1`).
 - **Clean** — one control (SappLink CC 3, the same in every sapp* plugin) that
   scales every modeled imperfection by (1 − clean): 0 as authored, 1 no modeled
   noise, wear or jitter. Mechanics defaults to 0.18, not full scale.
