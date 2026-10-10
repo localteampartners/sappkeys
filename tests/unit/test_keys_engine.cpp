@@ -524,3 +524,25 @@ TEST_CASE("external CC 102 is dropped (reserved for mech policy)", "[engine]")
     // The hostile external CC must not silence the release samples.
     REQUIRE(withAttack > withoutAttack * 0.9f);
 }
+
+TEST_CASE("EP tone policy: an electric-piano library gets a velocity-tracking low-pass, a piano does not", "[policy][e5]")
+{
+    using sapp::sounds::RegionDefinition;
+    auto inst = makeReleaseTestInstrument();
+    auto def = inst->definition;
+    REQUIRE(applyEpTonePolicy(def, "C:/samples/salamander/SalamanderGrandPiano-V3.sfz") == 0);
+    REQUIRE(def.regions[0].filType == RegionDefinition::FilterType::None);
+
+    const int shaped = applyEpTonePolicy(def, "C:/samples/fm-piano1/FM-Piano1.sfz");
+    REQUIRE(shaped == 1);                                   // the attack region, not the release one
+    const auto& attack = def.regions[0];
+    REQUIRE(attack.filType == RegionDefinition::FilterType::Lpf2p);
+    REQUIRE(attack.cutoffHz > 1000.0f);
+    REQUIRE(attack.filVeltrack > 1000.0f);
+    REQUIRE(attack.filegDepthCents > 0.0f);
+    REQUIRE(def.regions[1].filType == RegionDefinition::FilterType::None);
+    // idempotent: a region that already has a filter is left alone
+    REQUIRE(applyEpTonePolicy(def, "FM-Piano1.sfz") == 0);
+    REQUIRE(looksLikeElectricPiano("Rhodes Mk I"));
+    REQUIRE_FALSE(looksLikeElectricPiano("Salamander Grand"));
+}

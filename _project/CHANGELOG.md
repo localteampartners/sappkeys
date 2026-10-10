@@ -2,6 +2,20 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-10-09 — 0.12.0: the electric piano gets a tone
+
+MUSIC-QUALITY-PLAN E5, first step. The EP library is a small FM multisample
+with two velocity groups: level changed with velocity, tone never did. On
+SappSounds 0.4 (per-voice SFZ filter, filter envelope, LFOs) an electric-
+piano library — the name or path says fm-piano / rhodes / wurli / electric
+— now loads with a velocity-tracking low-pass (1.8 kHz on a soft note,
+~5 kHz on a hard one), a little key tracking, and a short filter envelope
+for the tine attack (`applyEpTonePolicy`, `src/core/KeysInstrument.cpp`).
+Regions that carry their own filter are left alone; mech-noise release
+regions keep their air; pianos are untouched. Not listened to. Still open
+in E5: a real Rhodes / Wurli multisample or tine model, in-plugin tremolo /
+phaser / drive, "Jazz Grand" and "Ballad Grand" presets.
+
 ## 2026-10-08 — v0.11.0: three roads to the Diagnostic Orchestra closed (#5)
 
 - **The report.** "SappKeys still makes a super loud static digital mess at
