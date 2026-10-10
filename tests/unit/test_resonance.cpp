@@ -1,6 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <vector>
 
 #include "core/Resonance.h"
@@ -130,4 +132,41 @@ TEST_CASE("reseed makes detune deterministic", "[resonance]")
     auto b = renderOnce();
     REQUIRE(a.size() == b.size());
     for (size_t i = 0; i < a.size(); i += 97) REQUIRE(a[i] == b[i]);
+}
+
+// v0.15.1: the comb bank read its lines with the same single-precision wrap
+// as the room (DelayRead.h). Hold the pedal across every string the bank
+// models for a long stretch, re-claiming combs at every pitch. The exact
+// rounding case is pinned by test_room's delay-tap test (the comb's delays are
+// static, so this run does not happen to land on it); this is the long-run
+// guard under AddressSanitizer, and the bound is the audible contract.
+TEST_CASE("the comb bank never reads past a line across every string", "[resonance][v0.15.1]")
+{
+    SympatheticResonance res;
+    res.prepare(48000);
+    res.setPedal(true, nullptr);
+    constexpr int kBlock = 512;
+    std::vector<float> inL(kBlock), inR(kBlock), outL(kBlock), outR(kBlock);
+    uint32_t rng = 777u;
+    float peak = 0.0f;
+    bool finite = true;
+    int note = 21;
+    for (int b = 0; b < 60 * 48000 / kBlock; ++b) {
+        if (b % 8 == 0) {
+            res.noteOn(note);
+            note = note >= 96 ? 21 : note + 1;
+        }
+        for (int f = 0; f < kBlock; ++f) {
+            rng = rng * 1664525u + 1013904223u;
+            inL[size_t(f)] = inR[size_t(f)] = (float(rng >> 8) / 16777216.0f - 0.5f) * 0.2f;
+            outL[size_t(f)] = outR[size_t(f)] = 0.0f;
+        }
+        res.process(inL.data(), inR.data(), outL.data(), outR.data(), kBlock, 1.0f);
+        for (int f = 0; f < kBlock; ++f) {
+            finite = finite && std::isfinite(outL[size_t(f)]) && std::isfinite(outR[size_t(f)]);
+            peak = std::max({peak, std::abs(outL[size_t(f)]), std::abs(outR[size_t(f)])});
+        }
+    }
+    REQUIRE(finite);
+    REQUIRE(peak < 1.0f);
 }

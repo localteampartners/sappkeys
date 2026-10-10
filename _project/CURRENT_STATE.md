@@ -2,6 +2,17 @@
 
 <!-- UPDATE WHEN: something ships, breaks, or gets fixed -->
 
+## Shipped 2026-10-10 — v0.15.1: no more "partial cluster" renders
+
+- The room FDN read one float past its delay line (single-precision wrap
+  rounding to `size`); in ~1 render in 4 the heap word there was huge and the
+  limiter buried the piano under the room's modes. `DelayRead.h` (double +
+  clamp) now serves the room and the resonance combs. 24/24 identical
+  sappradio renders after; ASan core suite clean. Not committed or tagged.
+- `sappkeys-headless midi` — N-run consistency render of any song.
+- Known: host `--set`s issued right after a program change are overwritten
+  when the program applies on the timer (sappradio sets them in that order).
+
 ## Shipped 2026-10-10 — v0.15.0: the bank at one loudness
 
 - `presetTrim` (no CC; Master Gain follows CC 7 and every song restates it)

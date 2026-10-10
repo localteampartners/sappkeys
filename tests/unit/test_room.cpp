@@ -1,6 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <vector>
 
 #include "core/Room.h"
@@ -96,4 +98,92 @@ TEST_CASE("size parameter scales the delay pattern without instability", "[room]
         for (float v : ir) REQUIRE(std::isfinite(v));
         REQUIRE(rmsRange(ir, 72000, 96000) < rmsRange(ir, 1000, 24000));
     }
+}
+
+// ---------------------------------------------------------------- v0.15.1 --
+// The sapplisten "steady partial cluster": the FDN's fractional read wrapped
+// in single precision, so a position a hair below zero rounded up to exactly
+// `size` and the read landed one element past the line. What lives there is
+// whatever the heap put next to it — 0 in most renders, 1.17e13 in about one
+// in four, and that one sample was a full-scale impulse into the room.
+
+TEST_CASE("delay taps never leave the line, even when float rounding would", "[room][v0.15.1]")
+{
+    // The exact read the station hit: line 1 at roomSize 0.75, 48 kHz.
+    const int size = 1438, write = 643;
+    const float delay = 643.000061f;
+
+    // What the old code computed: the wrap lands ON size.
+    float old = float(write) - delay;
+    while (old < 0.0f) old += float(size);
+    REQUIRE(int(old) == size);
+
+    const DelayTap tap = delayTap(write, delay, size);
+    REQUIRE(tap.i0 >= 0);
+    REQUIRE(tap.i0 < size);
+    REQUIRE(tap.i1 >= 0);
+    REQUIRE(tap.i1 < size);
+    REQUIRE(tap.frac >= 0.0f);
+    REQUIRE(tap.frac <= 1.0f);
+    // It is the read just behind the write head, nearly all on the newest
+    // sample before it — not a jump to the far end of the line.
+    REQUIRE(tap.i0 == size - 1);
+    REQUIRE(tap.i1 == 0);
+
+    // Every write position against delays that sit within a few ulps of it,
+    // across the line lengths both the room and the comb bank use.
+    int outside = 0;
+    for (const int n : {64, 1438, 1928, 2298, 3407}) {
+        for (int w = 0; w < n; ++w) {
+            for (const float d0 : {float(w), float(w) + 1.0f, float(n - 1)}) {
+                float d = d0;
+                for (int step = 0; step < 6; ++step) {
+                    const DelayTap t = delayTap(w, d, n);
+                    if (t.i0 < 0 || t.i0 >= n || t.i1 < 0 || t.i1 >= n ||
+                        !(t.frac >= 0.0f && t.frac <= 1.0f))
+                        ++outside;
+                    d = std::nextafter(d, 1.0e9f);
+                }
+            }
+        }
+    }
+    REQUIRE(outside == 0);
+}
+
+TEST_CASE("the Jazz Grand room runs two minutes without an over-read or a blow-up",
+          "[room][v0.15.1]")
+{
+    // Same settings and the same sample clock the plugin runs (the room is
+    // processed every block from prepare(), so the read positions that went
+    // past the line in the station take recur here). Under AddressSanitizer
+    // (see CHANGELOG 0.15.1) the old code fails this with a heap over-read;
+    // in a plain build the bound below is the audible half of the contract.
+    SmallRoom room;
+    room.prepare(48000);
+    room.setParams(0.75f, 0.55f);
+    RoomEarly early;
+    early.prepare(48000);
+
+    constexpr int kBlock = 512;
+    std::vector<float> inL(kBlock), inR(kBlock), eL(kBlock), eR(kBlock), oL(kBlock), oR(kBlock);
+    uint32_t rng = 12345u;
+    float peak = 0.0f;
+    bool finite = true;
+    for (int b = 0; b < 120 * 48000 / kBlock; ++b) {
+        for (int f = 0; f < kBlock; ++f) {
+            rng = rng * 1664525u + 1013904223u;
+            const float noise = (float(rng >> 8) / 16777216.0f - 0.5f) * 0.2f;
+            inL[size_t(f)] = noise;
+            inR[size_t(f)] = -noise;
+        }
+        early.process(inL.data(), inR.data(), eL.data(), eR.data(), kBlock);
+        room.process(eL.data(), eR.data(), oL.data(), oR.data(), kBlock);
+        for (int f = 0; f < kBlock; ++f) {
+            finite = finite && std::isfinite(oL[size_t(f)]) && std::isfinite(oR[size_t(f)]);
+            peak = std::max({peak, std::abs(oL[size_t(f)]), std::abs(oR[size_t(f)])});
+        }
+    }
+    REQUIRE(finite);
+    // Noise at ±0.1 into a lossy room: the tail stays well under full scale.
+    REQUIRE(peak < 1.0f);
 }

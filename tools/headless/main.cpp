@@ -16,6 +16,13 @@
 //       Regression suite for sappkeys #4 (readiness must not lie). Exit 0 =
 //       all pass.
 //
+//   sappkeys-headless midi --midi SONG.mid [--channels 1,3] [--program N]
+//                          [--runs N] [--settle-floor MS] [--param ID=V]
+//                          [--out PREFIX]
+//       The sapplisten consistency check (v0.15.1): render a song N times the
+//       way `sappradio render` does and flag any run whose output differs
+//       from run 0 by more than 0.05. Exit 0 = every run the same piano.
+//
 //   sappkeys-headless render [--program N] [--out F.wav] [--root DIR]
 //                            [--settle MS] [--param ID=VALUE]
 //       One station-style render: select a program, settle on libraryReady,
@@ -505,6 +512,170 @@ int runSelftest(const juce::String& fixtureRoot)
     return fails == 0 ? 0 : 1;
 }
 
+
+// ------------------------------------------------------------------- midi --
+// The sapplisten repro (v0.15.1): render a song through the real processor
+// the way `sappradio render` does — host program, settle on libraryReady
+// while feeding silent blocks (the first one carries the program echo), then
+// the song in 512-frame blocks with the message loop pumped every 16 blocks.
+// Run it N times in one process and compare: the same MIDI must give the
+// same piano every time.
+
+struct MidiRun {
+    std::vector<float> left, right;
+    double readySeconds = 0.0;
+    int settleBlocks = 0;
+};
+
+MidiRun midiRender(const juce::MidiMessageSequence& song, double songSeconds, int program,
+                   const juce::StringPairArray& params, int settleFloorMs, int extraSettleBlocks)
+{
+    MidiRun out;
+    auto processor = std::make_unique<sappkeys::SappKeysProcessor>();
+    processor->prepareToPlay(kSampleRate, kBlock);
+    if (program >= 0) processor->setCurrentProgram(program);
+    for (const auto& id : params.getAllKeys())
+        if (auto* parameter = processor->valueTree().getParameter(id))
+            parameter->setValueNotifyingHost(
+                parameter->convertTo0to1(params[id].getFloatValue()));
+
+    juce::AudioBuffer<float> buffer(2, kBlock);
+    const auto t0 = juce::Time::getMillisecondCounterHiRes();
+    bool echo = program >= 0;
+    for (;;) {
+        pump(25);
+        juce::MidiBuffer midi;
+        if (echo) midi.addEvent(juce::MidiMessage::programChange(1, program), 0);
+        echo = false;
+        buffer.clear();
+        processor->processBlock(buffer, midi);
+        ++out.settleBlocks;
+        const double elapsed = juce::Time::getMillisecondCounterHiRes() - t0;
+        if (processor->libraryReady() && out.readySeconds <= 0.0) out.readySeconds = elapsed / 1000.0;
+        if (out.readySeconds > 0.0 && elapsed >= double(settleFloorMs)) break;
+        if (elapsed > 30000.0) break;
+    }
+    for (int i = 0; i < extraSettleBlocks; ++i) {
+        juce::MidiBuffer midi;
+        buffer.clear();
+        processor->processBlock(buffer, midi);
+        ++out.settleBlocks;
+    }
+    pump(50);
+
+    const int64_t total = int64_t((songSeconds + 4.0) * kSampleRate);
+    out.left.reserve(size_t(total) + kBlock);
+    out.right.reserve(size_t(total) + kBlock);
+    int next = 0;
+    int64_t blockCount = 0;
+    for (int64_t pos = 0; pos < total; pos += kBlock) {
+        if ((blockCount++ & 15) == 0) pump(1);
+        const double b0 = double(pos) / kSampleRate, b1 = double(pos + kBlock) / kSampleRate;
+        juce::MidiBuffer midi;
+        while (next < song.getNumEvents()) {
+            const auto& m = song.getEventPointer(next)->message;
+            if (m.getTimeStamp() >= b1) break;
+            ++next;
+            const int offset = juce::jlimit(0, kBlock - 1, int((m.getTimeStamp() - b0) * kSampleRate));
+            midi.addEvent(m, offset);
+        }
+        buffer.clear();
+        processor->processBlock(buffer, midi);
+        out.left.insert(out.left.end(), buffer.getReadPointer(0), buffer.getReadPointer(0) + kBlock);
+        out.right.insert(out.right.end(), buffer.getReadPointer(1), buffer.getReadPointer(1) + kBlock);
+    }
+    processor.reset();
+    return out;
+}
+
+bool loadSong(const juce::String& path, const juce::String& channels,
+              juce::MidiMessageSequence& song, double& seconds)
+{
+    juce::FileInputStream in{juce::File(path)};
+    juce::MidiFile file;
+    if (!in.openedOk() || !file.readFrom(in)) return false;
+    file.convertTimestampTicksToSeconds();
+    juce::Array<int> wanted;
+    for (const auto& c : juce::StringArray::fromTokens(channels, ",", ""))
+        if (c.getIntValue() > 0) wanted.add(c.getIntValue());
+    for (int t = 0; t < file.getNumTracks(); ++t) {
+        const auto* track = file.getTrack(t);
+        for (int i = 0; i < track->getNumEvents(); ++i) {
+            const auto& m = track->getEventPointer(i)->message;
+            if (m.getChannel() <= 0 || (!wanted.isEmpty() && !wanted.contains(m.getChannel())))
+                continue;
+            song.addEvent(m);
+        }
+    }
+    song.sort();
+    seconds = song.getEndTime();
+    return true;
+}
+
+// RMS (dBFS) of [t0, t1) seconds.
+double windowDb(const MidiRun& r, double t0, double t1)
+{
+    const size_t a = size_t(t0 * kSampleRate), b = std::min(r.left.size(), size_t(t1 * kSampleRate));
+    double sum = 0.0;
+    for (size_t i = a; i < b; ++i) sum += double(r.left[i]) * r.left[i] + double(r.right[i]) * r.right[i];
+    return b > a ? toDb(std::sqrt(sum / double(2 * (b - a)))) : -200.0;
+}
+
+int runMidi(const juce::String& path, const juce::String& channels, int program,
+            const juce::StringPairArray& params, int runs, int settleFloorMs,
+            const juce::String& outPrefix)
+{
+    juce::MidiMessageSequence song;
+    double seconds = 0.0;
+    if (!loadSong(path, channels, song, seconds)) {
+        std::printf("FAIL: cannot read %s\n", path.toRawUTF8());
+        return 2;
+    }
+    std::printf("song: %.1f s, %d events on channels [%s], program %d, %d runs\n", seconds,
+                song.getNumEvents(), channels.toRawUTF8(), program, runs);
+    std::vector<float> refL, refR;
+    int diverged = 0;
+    for (int run = 0; run < runs; ++run) {
+        // Vary how many silent blocks the plugin sees before the take, the
+        // way a host's settle does (it depends on how long the load took).
+        const auto r = midiRender(song, seconds, program, params, settleFloorMs, (run * 37) % 101);
+        double maxDiff = 0.0;
+        if (run == 0) { refL = r.left; refR = r.right; }
+        else
+            for (size_t i = 0; i < std::min(refL.size(), r.left.size()); ++i)
+                maxDiff = std::max({maxDiff, double(std::abs(r.left[i] - refL[i])),
+                                    double(std::abs(r.right[i] - refR[i]))});
+        // Not bit-exact by design: the room keeps running through the settle,
+        // so its LFO phase at bar 1 depends on how long the load took (good
+        // takes differ by <= 0.015). The v0.15.1 fault was a 0.9-amplitude
+        // cluster, so anything past 0.05 is a different piano.
+        const bool bad = maxDiff > 0.05;
+        diverged += bad ? 1 : 0;
+        std::printf("run %2d  ready@%.2fs settle=%4d blocks  10-20 %6.2f  20-30 %6.2f  30-40 %6.2f"
+                    "  40-50 %6.2f dBFS  max|diff| %.6f %s\n",
+                    run, r.readySeconds, r.settleBlocks, windowDb(r, 10, 20), windowDb(r, 20, 30),
+                    windowDb(r, 30, 40), windowDb(r, 40, 50), maxDiff, bad ? "DIVERGED" : "");
+        std::fflush(stdout);
+        if (outPrefix.isNotEmpty()) {
+            juce::File file(outPrefix + juce::String(run) + ".wav");
+            file.deleteFile();
+            juce::WavAudioFormat wav;
+            std::unique_ptr<juce::FileOutputStream> stream(file.createOutputStream());
+            if (stream != nullptr) {
+                std::unique_ptr<juce::AudioFormatWriter> writer(
+                    wav.createWriterFor(stream.get(), kSampleRate, 2, 24, {}, 0));
+                if (writer != nullptr) {
+                    stream.release();
+                    const float* chans[2] = {r.left.data(), r.right.data()};
+                    writer->writeFromFloatArrays(chans, 2, int(r.left.size()));
+                }
+            }
+        }
+    }
+    std::printf("midi: %d/%d runs diverged from run 0\n", diverged, runs);
+    return diverged == 0 ? 0 : 1;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -512,7 +683,8 @@ int main(int argc, char** argv)
     juce::ScopedJuceInitialiser_GUI juceInit;
 
     const juce::String command = argc > 1 ? juce::String(argv[1]) : juce::String();
-    juce::String root, out, fixture;
+    juce::String root, out, fixture, midiPath, channels;
+    int runs = 4, settleFloorMs = 1000;
     RenderOptions options;
     for (int i = 2; i < argc; ++i) {
         const juce::String arg(argv[i]);
@@ -523,6 +695,10 @@ int main(int argc, char** argv)
         else if (arg == "--fixture") fixture = next();
         else if (arg == "--out") out = next();
         else if (arg == "--settle") options.settleMs = next().getIntValue();
+        else if (arg == "--midi") midiPath = next();
+        else if (arg == "--channels") channels = next();
+        else if (arg == "--runs") runs = next().getIntValue();
+        else if (arg == "--settle-floor") settleFloorMs = next().getIntValue();
         else if (arg == "--program") {
             options.select = Select::HostProgram;
             options.program = next().getIntValue();
@@ -539,6 +715,13 @@ int main(int argc, char** argv)
         if (fixture.isEmpty()) fixture = juce::String(SAPPKEYS_TEST_DATA_DIR) + "/keys-headless";
 #endif
         return runSelftest(fixture);
+    }
+
+    if (command == "midi") {
+        if (root.isNotEmpty())
+            setEnv(sappkeys::kSamplesRootEnvVar, root);
+        return runMidi(midiPath, channels, options.select == Select::HostProgram ? options.program : -1,
+                       options.params, runs, settleFloorMs, out);
     }
 
     if (command == "render") {
@@ -582,6 +765,8 @@ int main(int argc, char** argv)
     std::fprintf(stderr,
                  "sappkeys-headless — station harness (no GUI)\n"
                  "  sappkeys-headless selftest [--fixture DIR]\n"
+                 "  sappkeys-headless midi     --midi F.mid [--channels 1,3] [--program N]\n"
+                 "                             [--runs N] [--settle-floor MS] [--out PREFIX]\n"
                  "  sappkeys-headless render   [--program N] [--out F.wav]\n"
                  "                             [--root DIR] [--settle MS] [--param ID=V]\n");
     return 2;

@@ -40,6 +40,21 @@ installs VST3/AU into the user plugin folders on build.
 
 Samples live in `~/Samples/`, never in git.
 
+## Render consistency (same MIDI, same piano)
+
+```bash
+build-plugin/SappKeysHeadless_artefacts/Release/sappkeys-headless midi \
+  --midi <take>/song.mid --channels 1,3 --program 9 --runs 8
+```
+Renders the song N times the way `sappradio render` does (program, settle on
+`libraryReady`, 512-frame blocks, loop pumped every 16) and exits 1 if any run
+differs from run 0 by more than 0.05. Not bit-exact by design (room LFO phase
+depends on settle length). For heap over-reads, run the core tests under
+ASan: `cmake -B build-asan -DSAPPKEYS_BUILD_PLUGIN=OFF -DCMAKE_BUILD_TYPE=Debug
+-DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+-DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"` then
+`ASAN_OPTIONS=detect_leaks=0 build-asan/SappKeysTests`.
+
 ## Demo render
 
 ```bash

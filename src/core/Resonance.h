@@ -16,6 +16,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "DelayRead.h"
+
 namespace sapp::keys {
 
 class SympatheticResonance {
@@ -89,14 +91,11 @@ public:
                 Comb& c = combs_[i];
                 if (!c.active) continue;
                 // Fractional delay read (linear — fine for a quiet layer).
+                // Never a float wrap here (v0.15.1): see DelayRead.h.
                 const int size = int(c.line.size());
-                float pos = float(c.write) - c.delay;
-                if (pos < 0.0f) pos += float(size);
-                const int i0 = int(pos);
-                const float frac = pos - float(i0);
-                const int i1 = i0 + 1 >= size ? 0 : i0 + 1;
-                const float read = c.line[size_t(i0)] * (1.0f - frac) +
-                                   c.line[size_t(i1)] * frac;
+                const DelayTap tap = delayTap(c.write, c.delay, size);
+                const float read = c.line[size_t(tap.i0)] * (1.0f - tap.frac) +
+                                   c.line[size_t(tap.i1)] * tap.frac;
 
                 // Feedback with in-loop damping (strings lose highs fast).
                 c.damp += c.dampCoef * (read * c.feedback - c.damp);

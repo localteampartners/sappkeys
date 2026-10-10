@@ -4,6 +4,9 @@
 
 Work in flight: none.
 
+v0.15.1 (2026-10-10, room delay-line over-read — see CHANGELOG) is in the
+working tree, NOT committed, pushed or tagged. Release is driven separately.
+
 Last shipped: v0.10.0 (2026-08-11) — issue #4. `libraryReady` no longer reports
 a library that is not in. A program change or preset move queued for the timer
 now counts as a load window (`changePending()` in `SappKeysProcessor`) for both

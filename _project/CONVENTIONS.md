@@ -20,6 +20,12 @@
 - **Defaults are a broadcast decision.** Several modeled instruments in one
   unattended mix stack their imperfection; ship character on, but low
   (Mechanics 0.18), never at full scale.
+- **Fractional delay reads go through `delayTap()`** (`src/core/DelayRead.h`).
+  Never `float pos = w - d; pos += float(size); int(pos)`: −1e-5 + size
+  rounds to `size` and reads past the line (v0.15.1, sappsynth #3).
+- **A program change resets every parameter when it applies** (on the timer,
+  later than the call). Parameter writes meant to survive it must come after
+  `libraryReady`, not straight after `setCurrentProgram()`.
 - **No JUCE in `src/core/`** — the CLI and tests must link without it.
 - **verify.sh is the loop** (core+CLI+tests, plugin off). Full plugin builds
   go in `build-plugin/` so the fast loop's `build/` stays lean.

@@ -2,6 +2,51 @@
 
 <!-- UPDATE WHEN: anything meaningful ships -->
 
+## 2026-10-10 — 0.15.1: the room read one sample past its line
+
+From the Mac listening rig (sapplisten velvet-hour takes): the same MIDI gave
+a different piano about one render in four — a steady, out-of-tune partial
+cluster (140/226/352/368/452/595 Hz) at about −18 dBFS on the Piano LH stem,
+in ~6 s bursts every ~8.6 s, burying the attacks.
+
+- **Root cause.** The room FDN (`SmallRoom`, `Room.h`) wrapped its modulated
+  fractional read in single precision: `pos = write − delay; pos += size`.
+  A position a hair below zero (line 1 at Room Size 0.75: write 643, delay
+  643.000061 → −6.1e-5) rounds to exactly `size`, so the read took the float
+  ONE PAST the end of the line. It happens 17 times per velvet-hour render, at
+  the same samples every time (the LFO and write heads are deterministic) —
+  what varies is the heap: the word after the line was 0 in most runs and
+  1.17e13 in the bad ones. That one sample hit the FDN as a full-scale
+  impulse, the safety limiter went to gain 0 for ~2 s while it decayed, and
+  what was left audible was the room's own modes (a 74.25 Hz harmonic series =
+  line 1's 13.4 ms) — the "cluster". Bursts recur every 809 blocks because the
+  same LFO/write-head alignment does. AddressSanitizer: heap-buffer-overflow
+  "0 bytes after 5752-byte region" (1438 floats = line 1).
+- **Fix.** `src/core/DelayRead.h` — `delayTap()` wraps in double precision
+  both ways and clamps, the idiom sappsynth (#3), sapporchestra and sappkit
+  already use. The room and the sympathetic-resonance comb bank (same
+  single-precision wrap, latent) both read through it.
+- **Not the cause** (ruled out with a trace build through sappradio): loader
+  races (voice starts, instrument adoption and parameter changes are
+  identical in good and bad runs), stale delay/filter state, voice reuse in
+  SappSounds. The "idle machine" correlation was heap layout, not disk speed.
+- **Gotcha found on the way:** a host `--set` written right after a program
+  change is clobbered when the deferred program applies on the timer (it
+  resets every parameter to the preset). The rig's "resonance = 0" test, and a
+  "Room Level 0" test here, never took effect.
+- **Tests:** `test_room.cpp` pins the exact rounding case and sweeps every
+  write position against near-integer delays; a 2-minute Jazz Grand room run
+  and a 60 s comb-bank run are the long guards. Core tests 63/63, and 63/63
+  under `-fsanitize=address,undefined` (the room test fails with the old read).
+  `sappkeys-headless midi` (new) renders a song N times the sappradio way and
+  flags a run that differs from run 0 by more than 0.05.
+- **Proof:** before, 8 of 31 sappradio renders of the bad take's MIDI (0.15.0 as installed) carried
+  the cluster. After, 24/24 consecutive piano-only renders and 4/4 full
+  take.sh repros identical (10–50 s RMS equal to 0.01 dB, max |diff| ≤ 0.008 —
+  the room LFO phase at bar 1 still depends on settle length), plus 5/5 with
+  the library load throttled 4–15 s (no `sudo purge` without a password).
+  verify.sh green; installed VST3 is 0.15.1.
+
 ## 2026-10-10 — 0.15.0: one loudness for the bank, a clearer Lounge Grand
 
 From the station: Lounge Grand as a lead 8.7 dB short of target, Una Corda
